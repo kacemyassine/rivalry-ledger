@@ -1721,17 +1721,7 @@
         }
       ],
       "date": "2026-02-10T20:42:26.695Z"
-    },
-    {
-      "id": "match-1770859300133",
-      "homeTeamId": "team1",
-      "awayTeamId": "team2",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 3,
-      "awayGoals": 2,
-      "scorers": [],
-      "date": "2026-02-12T01:21:40.133Z"
     }
+    
   ]
 }
