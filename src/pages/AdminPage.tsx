@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminProvider } from '@/contexts/AdminContext';
 import { LeagueHeader } from '@/components/LeagueHeader';
 import { StandingsTable } from '@/components/StandingsTable';
@@ -10,7 +11,8 @@ import { TeamLogoUploader } from '@/components/TeamLogoUploader';
 import { Button } from '@/components/ui/button';
 import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
-import { UserPlus, Play, RotateCcw, Save, Loader2 } from 'lucide-react';
+import { UserPlus, Play, RotateCcw, Save, Loader2, LogOut } from 'lucide-react';
+import { AuthService } from '@/lib/authService';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 const AdminPage = () => {
+  const navigate = useNavigate();
   const [playerFormOpen, setPlayerFormOpen] = useState(false);
   const [matchFormOpen, setMatchFormOpen] = useState(false);
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
@@ -61,6 +64,11 @@ const AdminPage = () => {
   const handlePlayerFormClose = (open: boolean) => {
     setPlayerFormOpen(open);
     if (!open) setEditingPlayerId(null);
+  };
+
+  const handleLogout = () => {
+    AuthService.logout();
+    navigate('/');
   };
 
   if (loading) {
@@ -128,6 +136,10 @@ const AdminPage = () => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+
+              <Button onClick={handleLogout} variant="secondary" className="gap-2 bg-red-600 hover:bg-red-700 text-white">
+                <LogOut className="w-4 h-4" /> 🚪 Logout
+              </Button>
             </div>
           </div>
         </div>

@@ -126,6 +126,17 @@ export function MatchHistory() {
               const homeWin = selectedMatch.homeGoals > selectedMatch.awayGoals;
               const awayWin = selectedMatch.awayGoals > selectedMatch.homeGoals;
               const isDraw = selectedMatch.homeGoals === selectedMatch.awayGoals;
+              
+              // Get scorers for each team
+              const homeScorers = selectedMatch.scorers?.filter((s: any) => {
+                const player = players.find((p: any) => p.id === s.playerId);
+                return player?.teamId === selectedMatch.homeTeamId;
+              }) || [];
+              
+              const awayScorers = selectedMatch.scorers?.filter((s: any) => {
+                const player = players.find((p: any) => p.id === s.playerId);
+                return player?.teamId === selectedMatch.awayTeamId;
+              }) || [];
 
               return (
                 <div className="space-y-4">
@@ -138,9 +149,11 @@ export function MatchHistory() {
                     </p>
                   )}
 
-                  {/* Score */}
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex flex-col items-center gap-2 flex-1">
+                  {/* Teams with logos and score */}
+                  <div className="flex items-center justify-center gap-12 px-6">
+                    {/* Home Team */}
+                    <div className="flex flex-col items-center gap-2">
+                      {/* Home Logo */}
                       <div className="w-12 h-12 rounded-lg overflow-hidden border border-primary/30 bg-muted/30 flex items-center justify-center">
                         {homeTeam?.logo ? (
                           <img src={homeTeam.logo} alt={homeTeam.name} className="w-full h-full object-cover" />
@@ -148,18 +161,22 @@ export function MatchHistory() {
                           <Shield className="w-6 h-6 text-primary/50" />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center', homeWin && 'text-green-400')}>
+                      {/* Home Team Name */}
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap', homeWin && 'text-green-400')}>
                         {homeTeam?.name}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <span className="text-3xl font-bold text-gold">{selectedMatch.homeGoals}</span>
+                    {/* Score */}
+                    <div className="flex items-center gap-1 px-4">
+                      <span className="text-4xl font-bold text-gold">{selectedMatch.homeGoals}</span>
                       <span className="text-muted-foreground text-lg">-</span>
-                      <span className="text-3xl font-bold text-gold">{selectedMatch.awayGoals}</span>
+                      <span className="text-4xl font-bold text-gold">{selectedMatch.awayGoals}</span>
                     </div>
 
-                    <div className="flex flex-col items-center gap-2 flex-1">
+                    {/* Away Team */}
+                    <div className="flex flex-col items-center gap-2">
+                      {/* Away Logo */}
                       <div className="w-12 h-12 rounded-lg overflow-hidden border border-secondary/30 bg-muted/30 flex items-center justify-center">
                         {awayTeam?.logo ? (
                           <img src={awayTeam.logo} alt={awayTeam.name} className="w-full h-full object-cover" />
@@ -167,7 +184,8 @@ export function MatchHistory() {
                           <Shield className="w-6 h-6 text-secondary/50" />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center', awayWin && 'text-green-400')}>
+                      {/* Away Team Name */}
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap', awayWin && 'text-green-400')}>
                         {awayTeam?.name}
                       </span>
                     </div>
@@ -176,7 +194,7 @@ export function MatchHistory() {
                   {/* Result */}
                   <div className="text-center">
                     <span className={cn(
-                      'text-xs font-medium px-3 py-1 rounded-full',
+                      'text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap',
                       homeWin && 'bg-green-400/20 text-green-400',
                       awayWin && 'bg-green-400/20 text-green-400',
                       isDraw && 'bg-yellow-400/20 text-yellow-400'
@@ -185,27 +203,45 @@ export function MatchHistory() {
                     </span>
                   </div>
 
-                  {/* Scorers */}
-                  {selectedMatch.scorers && selectedMatch.scorers.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-semibold text-muted-foreground mb-2">⚽ Goal Scorers</h4>
-                      <div className="space-y-1">
-                        {selectedMatch.scorers.map((scorer: any, i: number) => {
-                          const player = players.find((p: any) => p.id === scorer.playerId);
-                          const playerTeam = player ? teams.find((t: any) => t.id === player.teamId) : null;
-                          return (
-                            <div key={i} className="flex items-center justify-between text-sm py-1 px-2 rounded bg-muted/10">
-                              <span className="text-foreground">{player?.name || 'Unknown'}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">{playerTeam?.name}</span>
-                                <span className="text-gold font-bold">×{scorer.goals}</span>
+                  {/* Scorers Section */}
+                  <div className="flex items-stretch justify-between gap-3">
+                    {/* Home Team Scorers */}
+                    <div className="flex-1">
+                      {homeScorers.length > 0 && (
+                        <div className="w-full space-y-1">
+                          {homeScorers.map((scorer: any, i: number) => {
+                            const player = players.find((p: any) => p.id === scorer.playerId);
+                            return (
+                              <div key={i} className="text-xs py-1 px-2 rounded bg-green-400/10 text-center">
+                                <span className="text-foreground">{player?.name || 'Unknown'}</span>
+                                <span className="text-gold font-bold ml-1">×{scorer.goals}</span>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  )}
+
+                    {/* Empty center space */}
+                    <div className="w-12" />
+
+                    {/* Away Team Scorers */}
+                    <div className="flex-1">
+                      {awayScorers.length > 0 && (
+                        <div className="w-full space-y-1">
+                          {awayScorers.map((scorer: any, i: number) => {
+                            const player = players.find((p: any) => p.id === scorer.playerId);
+                            return (
+                              <div key={i} className="text-xs py-1 px-2 rounded bg-green-400/10 text-center">
+                                <span className="text-foreground">{player?.name || 'Unknown'}</span>
+                                <span className="text-gold font-bold ml-1">×{scorer.goals}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               );
             })()}

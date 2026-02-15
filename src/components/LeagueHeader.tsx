@@ -2,9 +2,24 @@ import { Trophy, Shield } from 'lucide-react';
 import { useLeagueStore } from '@/store/leagueStore';
 
 export function LeagueHeader() {
-  const { teams } = useLeagueStore();
+  const { teams, matches } = useLeagueStore();
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
+
+  // Calculate league completion progress
+  // Fixed target: 50 matches for 100% completion
+  const targetMatches = 50;
+  const matchProgress = Math.min((matches.length / targetMatches) * 100, 100);
+  
+  // Calculate total completion (matches, teams, champion)
+  // Teams progress (2 teams = 100%)
+  const teamsProgress = (teams.length / 2) * 100;
+  
+  // Champion progress (simple: if we have matches, we have a champion candidate)
+  const championProgress = matches.length > 0 ? 100 : 0;
+  
+  // Overall league completion average
+  const overallProgress = Math.round((matchProgress + teamsProgress + championProgress) / 3);
 
   return (
     <header className="relative py-12 text-center">
@@ -23,8 +38,9 @@ export function LeagueHeader() {
           <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-gold drop-shadow-lg shrink-0" />
         </div>
         <p className="text-sm sm:text-lg text-muted-foreground font-body tracking-wide text-center px-2">
-          50 Matches • 2 Teams • 1 Champion
+          {matches.length} Matches • {teams.length} Teams • {matches.length > 0 ? '1 Champion' : 'Coming Soon'}
         </p>
+        
         <div className="mt-6 flex justify-center gap-12">
           <div className="text-center flex flex-col items-center gap-2">
             <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-primary/50 bg-muted/30 flex items-center justify-center">
@@ -48,6 +64,25 @@ export function LeagueHeader() {
             </div>
             <p className="text-sm text-muted-foreground uppercase tracking-wider">{team2?.name}</p>
             <p className="text-secondary font-medium">Coach {team2?.coach}</p>
+          </div>
+        </div>
+
+        {/* League Completion Progress Bar */}
+        <div className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-[hsl(45_85%_55%)]">📊 League Progress</span>
+            <span className="text-sm font-bold text-[hsl(180_80%_50%)]">{overallProgress}%</span>
+          </div>
+          <div className="relative h-3 bg-[hsl(210_45%_12%)] rounded-full overflow-hidden border border-[hsl(200_40%_25%)] shadow-lg">
+            <div 
+              className="h-full bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(120_80%_50%)] transition-all duration-1000 ease-out rounded-full shadow-[0_0_10px_hsl(180_80%_50%)]"
+              style={{ width: `${overallProgress}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-[hsl(180_20%_65%)] mt-2">
+            <span>🎯 {matches.length} / {targetMatches} matches</span>
+            <span>👥 {teams.length} / 2 teams</span>
+            <span>🏆 {matches.length > 0 ? 'In Progress' : 'Pending'}</span>
           </div>
         </div>
       </div>
