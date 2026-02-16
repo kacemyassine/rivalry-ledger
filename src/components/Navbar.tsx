@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Menu, X } from "lucide-react";
@@ -20,11 +21,18 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Subscribe to AuthService updates
   useEffect(() => {
     setIsAuthenticated(AuthService.isAuthenticated());
-    const listener = (state: boolean) => setIsAuthenticated(state);
+
+    const listener = (state: boolean) => {
+      setIsAuthenticated(state);
+    };
     AuthService.addListener(listener);
-    return () => AuthService.removeListener(listener);
+
+    return () => {
+      AuthService.removeListener(listener);
+    };
   }, []);
 
   const handleAdminAccess = () => {
@@ -82,12 +90,65 @@ const Navbar = () => {
             ))}
 
             {/* Admin Button */}
-            <Button
-              onClick={handleAdminClick}
-              className="ml-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
-            >
-              {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
-            </Button>
+            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={handleAdminClick}
+                  className="ml-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
+                >
+                  {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
+                </Button>
+              </DialogTrigger>
+
+              {!isAuthenticated && (
+                <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
+                      🔐 Admin Access 🔐
+                    </DialogTitle>
+                    <DialogDescription className="text-[hsl(180_20%_65%)] text-base text-center">
+                      🌊 Enter your secret password to access the Atlantis Command Center
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="grid gap-4 py-6">
+                    <div className="flex items-center justify-center text-5xl mb-4">🗝️</div>
+                    <div className="grid gap-2">
+                      <label className="text-sm font-semibold text-[hsl(180_30%_95%)] text-center">
+                        🔑 Enter Security Code:
+                      </label>
+                      <Input
+                        type="password"
+                        placeholder="••••"
+                        value={password}
+                        onChange={(e) => { setPassword(e.target.value); setError(""); }}
+                        onKeyPress={handleKeyPress}
+                        autoFocus
+                        className="bg-[hsl(210_40%_20%)] border-[hsl(180_80%_50%)]/40 text-[hsl(180_30%_95%)] placeholder:text-[hsl(180_20%_65%)] placeholder:text-lg focus:border-[hsl(180_80%_50%)] focus:ring-[hsl(180_80%_50%)]/50 py-6 text-center text-xl tracking-widest"
+                      />
+                      {error && <p className="text-red-500 text-sm font-semibold text-center">{error}</p>}
+                    </div>
+                    <div className="text-center text-sm text-[hsl(180_20%_65%)]">💡 Need the password? Contact the Atlantis Council</div>
+                  </div>
+
+                  <div className="flex justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
+                      className="border-[hsl(200_40%_25%)] text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] font-semibold"
+                    >
+                      ❌ Cancel
+                    </Button>
+                    <Button
+                      onClick={handleAdminAccess}
+                      className="bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
+                    >
+                      ✅ Access
+                    </Button>
+                  </div>
+                </DialogContent>
+              )}
+            </Dialog>
           </div>
 
           {/* Mobile Menu Button */}
@@ -102,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Items */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full z-50 flex flex-col gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
+        <div className="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
           {navItems.map((item) => (
             <Button
               key={item.label}
@@ -114,66 +175,18 @@ const Navbar = () => {
             </Button>
           ))}
 
-          {/* Mobile Admin Button */}
-          <Button
-            onClick={handleAdminClick}
-            className="mt-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
-          >
-            {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
-          </Button>
+          {/* Admin Button */}
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button
+                onClick={handleAdminClick}
+                className="mt-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
+              >
+                {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
+              </Button>
+            </DialogTrigger>
+          </Dialog>
         </div>
-      )}
-
-      {/* Admin Dialog */}
-      {!isAuthenticated && openDialog && (
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <DialogHeader>
-              <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
-                🔐 Admin Access 🔐
-              </DialogTitle>
-              <DialogDescription className="text-[hsl(180_20%_65%)] text-base text-center">
-                🌊 Enter your secret password to access the Atlantis Command Center
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid gap-4 py-6">
-              <div className="flex items-center justify-center text-5xl mb-4">🗝️</div>
-              <div className="grid gap-2">
-                <label className="text-sm font-semibold text-[hsl(180_30%_95%)] text-center">
-                  🔑 Enter Security Code:
-                </label>
-                <Input
-                  type="password"
-                  placeholder="••••"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                  onKeyPress={handleKeyPress}
-                  autoFocus
-                  className="bg-[hsl(210_40%_20%)] border-[hsl(180_80%_50%)]/40 text-[hsl(180_30%_95%)] placeholder:text-[hsl(180_20%_65%)] placeholder:text-lg focus:border-[hsl(180_80%_50%)] focus:ring-[hsl(180_80%_50%)]/50 py-6 text-center text-xl tracking-widest"
-                />
-                {error && <p className="text-red-500 text-sm font-semibold text-center">{error}</p>}
-              </div>
-              <div className="text-center text-sm text-[hsl(180_20%_65%)]">💡 Need the password? Contact the Atlantis Council</div>
-            </div>
-
-            <div className="flex justify-center gap-3">
-              <Button
-                variant="outline"
-                onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
-                className="border-[hsl(200_40%_25%)] text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] font-semibold"
-              >
-                ❌ Cancel
-              </Button>
-              <Button
-                onClick={handleAdminAccess}
-                className="bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
-              >
-                ✅ Access
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       )}
     </nav>
   );
