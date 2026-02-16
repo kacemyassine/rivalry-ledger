@@ -151,7 +151,7 @@ const Navbar = () => {
             </Dialog>
           </div>
 
-          {/* Mobile Hamburger */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] rounded-lg transition-colors"
@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Items */}
       {mobileMenuOpen && (
-        <div className="md:hidden flex flex-col gap-2 mt-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
+        <div className="md:hidden absolute top-16 left-0 w-full z-50 flex flex-col gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
           {navItems.map((item) => (
             <Button
               key={item.label}
@@ -185,7 +185,6 @@ const Navbar = () => {
                 {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
               </Button>
             </DialogTrigger>
-
             {!isAuthenticated && (
               <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
                 {/* ... dialog content unchanged ... */}
