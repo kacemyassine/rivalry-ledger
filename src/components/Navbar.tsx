@@ -101,7 +101,7 @@ const Navbar = () => {
               </DialogTrigger>
 
               {!isAuthenticated && (
-                <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+                <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
                   <DialogHeader>
                     <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
                       🔐 Admin Access 🔐
@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Items */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
+        <div className="md:hidden absolute top-16 left-0 w-full z-50 flex flex-col gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
           {navItems.map((item) => (
             <Button
               key={item.label}
@@ -185,6 +185,11 @@ const Navbar = () => {
                 {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
               </Button>
             </DialogTrigger>
+            {!isAuthenticated && (
+              <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
+                {/* dialog content same as desktop */}
+              </DialogContent>
+            )}
           </Dialog>
         </div>
       )}
