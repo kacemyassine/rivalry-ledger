@@ -2,7 +2,11 @@
 const AUTH_TOKEN_KEY = 'atlantis_admin_token';
 const ADMIN_PASSWORD = '0217';
 
+type Listener = (isAuthenticated: boolean) => void;
+
 export const AuthService = {
+  listeners: [] as Listener[],
+
   // Generate a simple token
   generateToken: (): string => {
     return `admin_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -13,6 +17,7 @@ export const AuthService = {
     if (password === ADMIN_PASSWORD) {
       const token = AuthService.generateToken();
       sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+      AuthService.notifyListeners(true);
       return true;
     }
     return false;
@@ -24,13 +29,23 @@ export const AuthService = {
     return !!token;
   },
 
-  // Get current token
-  getToken: (): string | null => {
-    return sessionStorage.getItem(AUTH_TOKEN_KEY);
-  },
-
   // Logout and clear session
   logout: (): void => {
     sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    AuthService.notifyListeners(false);
+  },
+
+  // Listener management
+  addListener: (callback: Listener) => {
+    AuthService.listeners.push(callback);
+  },
+
+  removeListener: (callback: Listener) => {
+    AuthService.listeners = AuthService.listeners.filter((cb) => cb !== callback);
+  },
+
+  // Notify all listeners about auth state change
+  notifyListeners: (state: boolean) => {
+    AuthService.listeners.forEach((cb) => cb(state));
   },
 };
