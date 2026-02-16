@@ -1,157 +1,275 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import AuthService from "@/services/AuthService";
+import { Input } from "@/components/ui/input";
+import { Menu, X, LogOut } from "lucide-react";
+import { AuthService } from "@/lib/authService";
 
 const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [error, setError] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     setIsAuthenticated(AuthService.isAuthenticated());
   }, []);
 
-  const handleLogin = () => {
-    const success = AuthService.login(password);
-
-    if (success) {
+  const handleAdminAccess = () => {
+    if (AuthService.authenticate(password)) {
       setIsAuthenticated(true);
+      navigate("/admin");
       setOpenDialog(false);
       setPassword("");
       setError("");
-      navigate("/admin");
     } else {
-      setError("Incorrect password");
+      setError("❌ Incorrect password");
+      setPassword("");
     }
   };
 
+  const handleLogout = () => {
+    AuthService.logout();
+    setIsAuthenticated(false);
+    navigate("/");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleAdminAccess();
+    }
+  };
+
+  const navItems = [
+    { label: "🏠 Home", onClick: () => { navigate("/"); setMobileMenuOpen(false); } },
+    { label: "📦 Archived Leagues", onClick: () => { navigate("/archived-leagues"); setMobileMenuOpen(false); } },
+    { label: "📊 Statistics", onClick: () => { navigate("/statistics"); setMobileMenuOpen(false); } },
+    { label: "🏆 Cups", onClick: () => { navigate("/cups"); setMobileMenuOpen(false); } },
+  ];
+
   return (
-    <nav className="w-full px-6 py-4 flex items-center justify-between bg-[hsl(210_50%_8%)] text-white">
-      {/* Left Side */}
-      <div className="flex items-center gap-6">
-        <Link to="/" className="font-bold text-lg">
-          Home
-        </Link>
-      </div>
-
-      {/* Desktop Right Side */}
-      <div className="hidden md:flex items-center gap-4">
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => {
-                if (isAuthenticated) {
-                  navigate("/admin");
-                }
-              }}
-              className="ml-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-semibold"
-            >
-              {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
-            </Button>
-          </DialogTrigger>
-
-          {!isAuthenticated && (
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Enter Admin Password</DialogTitle>
-              </DialogHeader>
-
-              <div className="flex flex-col gap-4 mt-4">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="px-4 py-2 border rounded-md text-black"
-                />
-
-                {error && (
-                  <p className="text-red-500 text-sm">{error}</p>
-                )}
-
-                <Button onClick={handleLogin}>
-                  Login
-                </Button>
-              </div>
-            </DialogContent>
-          )}
-        </Dialog>
-      </div>
-
-      {/* Mobile Menu Button */}
-      <div className="md:hidden">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-[hsl(210_50%_8%)] flex flex-col items-center gap-4 py-6 md:hidden">
-          <Link
-            to="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="font-bold"
+    <nav className="relative w-full bg-gradient-to-b from-[hsl(210_60%_6%)] via-[hsl(200_50%_12%)] to-[hsl(210_45%_12%)] border-b border-[hsl(200_40%_25%)] shadow-2xl shadow-[hsl(180_80%_50%)]/10">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* League Name - Left */}
+          <div 
+            onClick={() => navigate("/")}
+            className="cursor-pointer flex items-center gap-2"
           >
-            Home
-          </Link>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(180_80%_50%)] bg-clip-text text-transparent hover:scale-105 transition-transform">
+              ⚽ COSMUS LEAGUE 🏆
+            </h1>
+          </div>
 
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
+          {/* Desktop Navigation - Right */}
+          <div className="hidden md:flex items-center gap-1 lg:gap-2">
+            {navItems.map((item) => (
               <Button
-                onClick={() => {
-                  if (isAuthenticated) {
-                    navigate("/admin");
-                    setMobileMenuOpen(false);
-                  }
-                }}
-                className="w-40 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
+                key={item.label}
+                variant="ghost"
+                onClick={item.onClick}
+                className="text-[hsl(180_30%_95%)] hover:text-[hsl(45_85%_55%)] hover:bg-[hsl(200_40%_20%)] transition-all duration-300 whitespace-nowrap font-body text-sm lg:text-base"
               >
-                {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
+                {item.label}
               </Button>
-            </DialogTrigger>
-
-            {!isAuthenticated && (
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Enter Admin Password</DialogTitle>
-                </DialogHeader>
-
-                <div className="flex flex-col gap-4 mt-4">
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    className="px-4 py-2 border rounded-md text-black"
-                  />
-
-                  {error && (
-                    <p className="text-red-500 text-sm">{error}</p>
-                  )}
-
-                  <Button onClick={handleLogin}>
-                    Login
+            ))}
+            
+            {isAuthenticated ? (
+              <Button
+                onClick={handleLogout}
+                className="ml-2 bg-gradient-to-r from-[hsl(0_70%_50%)] to-[hsl(0_85%_55%)] text-white hover:shadow-lg hover:shadow-[hsl(0_80%_50%)]/50 transition-all duration-300 font-body font-semibold flex items-center gap-2"
+              >
+                <LogOut size={18} />
+                🚪 Logout
+              </Button>
+            ) : (
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="ml-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
+                  >
+                    🔐 Admin
                   </Button>
-                </div>
-              </DialogContent>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
+                      🔐 Admin Access 🔐
+                    </DialogTitle>
+                    <DialogDescription className="text-[hsl(180_20%_65%)] text-base text-center">
+                      🌊 Enter your secret password to access the Atlantis Command Center
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-6">
+                    <div className="flex items-center justify-center text-5xl mb-4">
+                      🗝️
+                    </div>
+                    <div className="grid gap-2">
+                      <label className="text-sm font-semibold text-[hsl(180_30%_95%)] text-center">
+                        🔑 Enter Security Code:
+                      </label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setError("");
+                        }}
+                        onKeyPress={handleKeyPress}
+                        autoFocus
+                        className="bg-[hsl(210_40%_20%)] border-[hsl(180_80%_50%)]/40 text-[hsl(180_30%_95%)] placeholder:text-[hsl(180_20%_65%)] placeholder:text-lg focus:border-[hsl(180_80%_50%)] focus:ring-[hsl(180_80%_50%)]/50 py-6 text-center text-xl tracking-widest"
+                      />
+                      {error && (
+                        <p className="text-red-500 text-sm font-semibold text-center">
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-center text-sm text-[hsl(180_20%_65%)]">
+                      💡 Need the password? Contact the Atlantis Council
+                    </div>
+                  </div>
+                  <div className="flex justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setOpenDialog(false);
+                        setPassword("");
+                        setError("");
+                      }}
+                      className="border-[hsl(200_40%_25%)] text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] font-semibold"
+                    >
+                      ❌ Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleAdminAccess}
+                      className="bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
+                    >
+                      ✅ Access
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             )}
-          </Dialog>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] rounded-lg transition-colors"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-      )}
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden pb-4 flex flex-col gap-2">
+            {navItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                onClick={item.onClick}
+                className="text-[hsl(180_30%_95%)] hover:text-[hsl(45_85%_55%)] hover:bg-[hsl(200_40%_20%)] transition-all duration-300 justify-start font-body w-full"
+              >
+                {item.label}
+              </Button>
+            ))}
+            
+            {isAuthenticated ? (
+              <Button
+                onClick={handleLogout}
+                className="w-full bg-gradient-to-r from-[hsl(0_70%_50%)] to-[hsl(0_85%_55%)] text-white transition-all duration-300 font-body font-semibold mt-2 flex items-center justify-center gap-2"
+              >
+                <LogOut size={18} />
+                🚪 Logout
+              </Button>
+            ) : (
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="w-full bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] transition-all duration-300 font-body font-semibold mt-2"
+                  >
+                    🔐 Admin
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
+                      🔐 Admin Access 🔐
+                    </DialogTitle>
+                    <DialogDescription className="text-[hsl(180_20%_65%)] text-base text-center">
+                      🌊 Enter your secret password to access the Atlantis Command Center
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-6">
+                    <div className="flex items-center justify-center text-5xl mb-4">
+                      🗝️
+                    </div>
+                    <div className="grid gap-2">
+                      <label className="text-sm font-semibold text-[hsl(180_30%_95%)] text-center">
+                        🔑 Enter Security Code:
+                      </label>
+                      <Input
+                        id="password-mobile"
+                        type="password"
+                        placeholder="••••"
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setError("");
+                        }}
+                        onKeyPress={handleKeyPress}
+                        autoFocus
+                        className="bg-[hsl(210_40%_20%)] border-[hsl(180_80%_50%)]/40 text-[hsl(180_30%_95%)] placeholder:text-[hsl(180_20%_65%)] placeholder:text-lg focus:border-[hsl(180_80%_50%)] focus:ring-[hsl(180_80%_50%)]/50 py-6 text-center text-xl tracking-widest"
+                      />
+                      {error && (
+                        <p className="text-red-500 text-sm font-semibold text-center">
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-center text-sm text-[hsl(180_20%_65%)]">
+                      💡 Need the password? Contact the Atlantis Council
+                    </div>
+                  </div>
+                  <div className="flex justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setOpenDialog(false);
+                        setPassword("");
+                        setError("");
+                      }}
+                      className="border-[hsl(200_40%_25%)] text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] font-semibold"
+                    >
+                      ❌ Cancel
+                    </Button>
+                    <Button 
+                      onClick={handleAdminAccess}
+                      className="bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
+                    >
+                      ✅ Access
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
