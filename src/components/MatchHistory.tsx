@@ -11,7 +11,6 @@ export function MatchHistory() {
   const allMatches = [...matches].reverse();
   const displayedMatches = showAll ? allMatches : allMatches.slice(0, 10);
 
-  // New: dynamic title
   const titleText = showAll ? 'All Matches' : 'Recent Matches';
 
   return (
@@ -53,7 +52,7 @@ export function MatchHistory() {
                         </div>
                         <span
                           className={cn(
-                            'font-medium text-xs md:text-sm truncate',
+                            'font-medium text-xs md:text-sm truncate whitespace-nowrap',
                             homeWin ? 'text-green-400' : 'text-foreground'
                           )}
                         >
@@ -68,7 +67,7 @@ export function MatchHistory() {
                       <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span
                           className={cn(
-                            'font-medium text-xs md:text-sm text-right truncate',
+                            'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
                             awayWin ? 'text-green-400' : 'text-foreground'
                           )}
                         >
@@ -88,7 +87,6 @@ export function MatchHistory() {
               })}
             </div>
 
-            {/* Show All / Show Less button */}
             {allMatches.length > 10 && (
               <button
                 onClick={() => setShowAll(!showAll)}
@@ -129,13 +127,12 @@ export function MatchHistory() {
               const homeWin = selectedMatch.homeGoals > selectedMatch.awayGoals;
               const awayWin = selectedMatch.awayGoals > selectedMatch.homeGoals;
               const isDraw = selectedMatch.homeGoals === selectedMatch.awayGoals;
-              
-              // Get scorers for each team
+
               const homeScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
                 return player?.teamId === selectedMatch.homeTeamId;
               }) || [];
-              
+
               const awayScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
                 return player?.teamId === selectedMatch.awayTeamId;
@@ -143,7 +140,6 @@ export function MatchHistory() {
 
               return (
                 <div className="space-y-4">
-                  {/* Date */}
                   {selectedMatch.date && (
                     <p className="text-xs text-muted-foreground text-center">
                       {new Date(selectedMatch.date).toLocaleDateString('en-US', {
@@ -152,10 +148,10 @@ export function MatchHistory() {
                     </p>
                   )}
 
-                  {/* Teams with logos and score */}
-                  <div className="flex items-center justify-center gap-12 px-6">
+                  {/* Teams and Score in ONE ROW */}
+                  <div className="flex items-center justify-between px-4">
                     {/* Home Team */}
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center min-w-[80px] max-w-[35%]">
                       <div className="w-12 h-12 rounded-lg overflow-hidden border border-primary/30 bg-muted/30 flex items-center justify-center">
                         {homeTeam?.logo ? (
                           <img src={homeTeam.logo} alt={homeTeam.name} className="w-full h-full object-cover" />
@@ -163,20 +159,20 @@ export function MatchHistory() {
                           <Shield className="w-6 h-6 text-primary/50" />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap', homeWin && 'text-green-400')}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', homeWin && 'text-green-400')}>
                         {homeTeam?.name}
                       </span>
                     </div>
 
                     {/* Score */}
-                    <div className="flex items-center gap-1 px-4">
+                    <div className="flex items-center gap-1 px-2 shrink-0">
                       <span className="text-4xl font-bold text-gold">{selectedMatch.homeGoals}</span>
                       <span className="text-muted-foreground text-lg">-</span>
                       <span className="text-4xl font-bold text-gold">{selectedMatch.awayGoals}</span>
                     </div>
 
                     {/* Away Team */}
-                    <div className="flex flex-col items-center gap-2">
+                    <div className="flex flex-col items-center min-w-[80px] max-w-[35%]">
                       <div className="w-12 h-12 rounded-lg overflow-hidden border border-secondary/30 bg-muted/30 flex items-center justify-center">
                         {awayTeam?.logo ? (
                           <img src={awayTeam.logo} alt={awayTeam.name} className="w-full h-full object-cover" />
@@ -184,7 +180,7 @@ export function MatchHistory() {
                           <Shield className="w-6 h-6 text-secondary/50" />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap', awayWin && 'text-green-400')}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', awayWin && 'text-green-400')}>
                         {awayTeam?.name}
                       </span>
                     </div>
@@ -202,7 +198,7 @@ export function MatchHistory() {
                     </span>
                   </div>
 
-                  {/* Scorers Section */}
+                  {/* Scorers */}
                   <div className="flex items-stretch justify-between gap-3">
                     <div className="flex-1">
                       {homeScorers.length > 0 && (
