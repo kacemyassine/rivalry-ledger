@@ -21,13 +21,30 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
+  // Update auth state
+  const updateAuthState = () => {
     setIsAuthenticated(AuthService.isAuthenticated());
+  };
+
+  useEffect(() => {
+    updateAuthState();
+
+    // Listen to storage events in case session changes in other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "atlantis_admin_token") {
+        updateAuthState();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const handleAdminAccess = () => {
     if (AuthService.authenticate(password)) {
-      setIsAuthenticated(true);
+      updateAuthState();
       navigate("/admin");
       setOpenDialog(false);
       setPassword("");
