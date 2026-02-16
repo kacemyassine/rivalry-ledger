@@ -6,20 +6,10 @@ export function LeagueHeader() {
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
 
-  // Calculate league completion progress
   // Fixed target: 50 matches for 100% completion
   const targetMatches = 50;
   const matchProgress = Math.min((matches.length / targetMatches) * 100, 100);
-  
-  // Calculate total completion (matches, teams, champion)
-  // Teams progress (2 teams = 100%)
-  const teamsProgress = (teams.length / 2) * 100;
-  
-  // Champion progress (simple: if we have matches, we have a champion candidate)
-  const championProgress = matches.length > 0 ? 100 : 0;
-  
-  // Overall league completion average
-  const overallProgress = Math.round((matchProgress + teamsProgress + championProgress) / 3);
+  const overallProgress = Math.round(matchProgress);
 
   return (
     <header className="relative py-12 text-center">
@@ -37,10 +27,11 @@ export function LeagueHeader() {
           </h1>
           <Trophy className="w-6 h-6 sm:w-10 sm:h-10 text-gold drop-shadow-lg shrink-0" />
         </div>
+
         <p className="text-sm sm:text-lg text-muted-foreground font-body tracking-wide text-center px-2">
           {matches.length} Matches • {teams.length} Teams • {matches.length > 0 ? '1 Champion' : 'Coming Soon'}
         </p>
-        
+
         <div className="mt-6 flex justify-center gap-12">
           <div className="text-center flex flex-col items-center gap-2">
             <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-primary/50 bg-muted/30 flex items-center justify-center">
