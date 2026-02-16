@@ -21,25 +21,15 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Update auth state
+  // Function to update navbar state
   const updateAuthState = () => {
     setIsAuthenticated(AuthService.isAuthenticated());
   };
 
   useEffect(() => {
     updateAuthState();
-
-    // Listen to storage events in case session changes in other tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "atlantis_admin_token") {
-        updateAuthState();
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
+    // Subscribe to AuthService logout notifications
+    AuthService.addListener(updateAuthState);
   }, []);
 
   const handleAdminAccess = () => {
@@ -81,6 +71,7 @@ const Navbar = () => {
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
 
+          {/* League Name */}
           <div 
             onClick={() => navigate("/")}
             className="cursor-pointer flex items-center gap-2"
@@ -185,6 +176,7 @@ const Navbar = () => {
             </Dialog>
           </div>
 
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] rounded-lg transition-colors"
