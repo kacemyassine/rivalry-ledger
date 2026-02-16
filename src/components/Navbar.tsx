@@ -76,6 +76,7 @@ const Navbar = () => {
             </h1>
           </div>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-1 lg:gap-2">
             {navItems.map((item) => (
               <Button
@@ -88,7 +89,7 @@ const Navbar = () => {
               </Button>
             ))}
 
-            {/* Admin Button ALWAYS visible */}
+            {/* Admin Button */}
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger asChild>
                 <Button
@@ -150,6 +151,7 @@ const Navbar = () => {
             </Dialog>
           </div>
 
+          {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] rounded-lg transition-colors"
@@ -158,6 +160,40 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu Items */}
+      {mobileMenuOpen && (
+        <div className="md:hidden flex flex-col gap-2 mt-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
+          {navItems.map((item) => (
+            <Button
+              key={item.label}
+              variant="ghost"
+              onClick={item.onClick}
+              className="text-[hsl(180_30%_95%)] hover:text-[hsl(45_85%_55%)] hover:bg-[hsl(200_40%_20%)] transition-all duration-300 whitespace-nowrap font-body text-sm"
+            >
+              {item.label}
+            </Button>
+          ))}
+
+          {/* Admin Button */}
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button
+                onClick={handleAdminClick}
+                className="mt-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
+              >
+                {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
+              </Button>
+            </DialogTrigger>
+
+            {!isAuthenticated && (
+              <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20">
+                {/* ... dialog content unchanged ... */}
+              </DialogContent>
+            )}
+          </Dialog>
+        </div>
+      )}
     </nav>
   );
 };
