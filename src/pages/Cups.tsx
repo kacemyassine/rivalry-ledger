@@ -39,25 +39,6 @@ const Cups = () => {
             </div>
           </div>
 
-          {/* Features Coming Soon */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-8">
-            <div className="bg-[hsl(210_45%_12%)] border border-[hsl(200_40%_25%)] rounded-lg p-6">
-              <div className="text-3xl mb-3">🥇</div>
-              <h3 className="text-[hsl(180_30%_95%)] font-semibold mb-2">Bracket System</h3>
-              <p className="text-sm text-[hsl(180_20%_65%)]">Knockout and group stages</p>
-            </div>
-            <div className="bg-[hsl(210_45%_12%)] border border-[hsl(200_40%_25%)] rounded-lg p-6">
-              <div className="text-3xl mb-3">📋</div>
-              <h3 className="text-[hsl(180_30%_95%)] font-semibold mb-2">Manage Cups</h3>
-              <p className="text-sm text-[hsl(180_20%_65%)]">Create and organize events</p>
-            </div>
-            <div className="bg-[hsl(210_45%_12%)] border border-[hsl(200_40%_25%)] rounded-lg p-6">
-              <div className="text-3xl mb-3">🎯</div>
-              <h3 className="text-[hsl(180_30%_95%)] font-semibold mb-2">Track Progress</h3>
-              <p className="text-sm text-[hsl(180_20%_65%)]">Follow tournament results</p>
-            </div>
-          </div>
-
           {/* Action Button */}
           <div className="pt-8">
             <Button
