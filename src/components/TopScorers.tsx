@@ -5,24 +5,43 @@ import { cn } from '@/lib/utils';
 
 interface TopScorersProps {
   onEditPlayer?: (playerId: string) => void;
-  hideButtons?: boolean; // Hide Edit/Delete buttons if true
+  hideButtons?: boolean;
+  theme?: 'default' | 'ramadan';
 }
 
-export function TopScorers({ onEditPlayer, hideButtons = false }: TopScorersProps) {
+export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default' }: TopScorersProps) {
   const { players = [], teams = [], deletePlayer } = useLeagueStore();
+  const isRamadan = theme === 'ramadan';
 
   const sortedPlayers = [...players].sort((a: any, b: any) => (b.goals || 0) - (a.goals || 0));
-
   const getTeam = (teamId: string) => teams.find((t: any) => t.id === teamId);
 
   return (
-    <div className="atlantis-card p-4 md:p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-      <h2 className="text-xl md:text-2xl font-display font-semibold mb-4 md:mb-6 glow-text text-primary">
-        Top Scorers
-      </h2>
+    <div
+      className={cn(
+        'p-4 md:p-6 animate-fade-in rounded-2xl border',
+        isRamadan
+          ? 'bg-gradient-to-br from-[#0d1133] to-[#0a0e2a] border-yellow-400/20 shadow-[0_0_30px_rgba(234,179,8,0.05)]'
+          : 'atlantis-card'
+      )}
+      style={{ animationDelay: '0.2s' }}
+    >
+      {/* Title */}
+      <div className="flex items-center gap-2 mb-4 md:mb-6">
+        {isRamadan && <span className="text-yellow-400">⚽</span>}
+        <h2 className={cn(
+          'text-xl md:text-2xl font-display font-semibold',
+          isRamadan
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500'
+            : 'glow-text text-primary'
+        )}>
+          Top Scorers
+        </h2>
+        {isRamadan && <span className="text-yellow-400">⚽</span>}
+      </div>
 
       {sortedPlayers.length === 0 ? (
-        <p className="text-muted-foreground text-center py-8 text-sm md:text-base">
+        <p className={cn('text-center py-8 text-sm md:text-base', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
           No players added yet. Add players to track their goals!
         </p>
       ) : (
@@ -36,50 +55,65 @@ export function TopScorers({ onEditPlayer, hideButtons = false }: TopScorersProp
                 <div
                   key={player.id}
                   className={cn(
-                    'flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-lg transition-all hover:bg-muted/30 mb-2',
-                    isTopThree && 'bg-muted/20'
+                    'flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-lg transition-all mb-2',
+                    isRamadan
+                      ? cn('hover:bg-yellow-400/5', isTopThree && 'bg-yellow-400/10')
+                      : cn('hover:bg-muted/30', isTopThree && 'bg-muted/20')
                   )}
                 >
-                  <div
-                    className={cn(
-                      'w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold shrink-0',
-                      index === 0 && 'bg-gold text-primary-foreground',
-                      index === 1 && 'bg-gray-400 text-primary-foreground',
-                      index === 2 && 'bg-amber-700 text-primary-foreground',
-                      index > 2 && 'bg-muted text-muted-foreground'
-                    )}
-                  >
+                  {/* Rank badge */}
+                  <div className={cn(
+                    'w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold shrink-0',
+                    index === 0 && (isRamadan ? 'bg-yellow-400 text-[#0a0e2a]' : 'bg-gold text-primary-foreground'),
+                    index === 1 && 'bg-gray-400 text-primary-foreground',
+                    index === 2 && 'bg-amber-700 text-primary-foreground',
+                    index > 2 && (isRamadan ? 'bg-yellow-400/10 text-yellow-200/50' : 'bg-muted text-muted-foreground')
+                  )}>
                     {index + 1}
                   </div>
 
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-border shrink-0 bg-muted">
+                  {/* Player image */}
+                  <div className={cn(
+                    'w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 shrink-0 bg-muted',
+                    isRamadan ? 'border-yellow-400/30' : 'border-border'
+                  )}>
                     {player.image ? (
                       <img src={player.image} alt={player.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <User className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
+                        <User className={cn('w-5 h-5 md:w-6 md:h-6', isRamadan ? 'text-yellow-400/50' : 'text-muted-foreground')} />
                       </div>
                     )}
                   </div>
 
+                  {/* Player info */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate text-sm md:text-base">{player.name}</p>
-                    <p className={cn('text-xs md:text-sm', player.teamId === 'team1' ? 'text-primary' : 'text-secondary')}>
+                    <p className={cn('font-semibold truncate text-sm md:text-base', isRamadan ? 'text-yellow-100' : '')}>
+                      {player.name}
+                    </p>
+                    <p className={cn(
+                      'text-xs md:text-sm',
+                      isRamadan ? 'text-yellow-400/70' : player.teamId === 'team1' ? 'text-primary' : 'text-secondary'
+                    )}>
                       {team?.name}
                     </p>
                   </div>
 
+                  {/* Goals */}
                   <div className="text-right shrink-0">
-                    <p className="text-xl md:text-2xl font-bold text-gold">{player.goals || 0}</p>
-                    <p className="text-xs text-muted-foreground">goals</p>
+                    <p className={cn('text-xl md:text-2xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>
+                      {player.goals || 0}
+                    </p>
+                    <p className={cn('text-xs', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>goals</p>
                   </div>
 
+                  {/* Buttons */}
                   {!hideButtons && (
                     <div className="flex gap-1 shrink-0">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-primary"
+                        className={cn('h-7 w-7 md:h-8 md:w-8', isRamadan ? 'text-yellow-200/50 hover:text-yellow-400' : 'text-muted-foreground hover:text-primary')}
                         onClick={() => onEditPlayer?.(player.id)}
                       >
                         <Edit2 className="w-3 h-3 md:w-4 md:h-4" />

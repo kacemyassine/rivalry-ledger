@@ -69,17 +69,17 @@ const CosmusLeague = () => {
           />
           <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <LeagueHeader />
+            <LeagueHeader theme="default" />
           </div>
         </div>
         <div className="relative z-10 container mx-auto px-3 md:px-4 py-12 max-w-full overflow-x-hidden">
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-4 md:space-y-6 min-w-0">
-              <StandingsTable />
-              <MatchHistory />
+              <StandingsTable theme="default" />
+              <MatchHistory theme="default" />
             </div>
             <div className="min-w-0">
-              <TopScorers hideButtons={true} />
+              <TopScorers theme="default" hideButtons={true} />
             </div>
           </div>
         </div>
