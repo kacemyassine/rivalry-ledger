@@ -7,7 +7,7 @@ import VisitorPage from "./pages/VisitorPage";
 import AdminPage from "./pages/AdminPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import ArchivedLeagues from "./pages/ArchivedLeagues";
-import CosmusLeague from "./pages/archives/CosmusLeague";
+import CosmusLeague from "./pages/archives/CosmusLeague.tsx";
 import Cups from "./pages/Cups";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
