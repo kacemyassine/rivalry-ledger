@@ -69,7 +69,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div onClick={() => navigate("/")} className="cursor-pointer flex items-center gap-2">
             <h1 className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(180_80%_50%)] bg-clip-text text-transparent hover:scale-105 transition-transform">
-              ⚽ COSMUS LEAGUE 🏆
+              🌙⚽ RAMADAN LEAGUE 2026 🏆✨
             </h1>
           </div>
 
