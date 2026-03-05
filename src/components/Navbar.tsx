@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -10,27 +9,36 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Menu, X, Home, Archive, BarChart2, Trophy, Lock, Unlock } from "lucide-react";
 import { AuthService } from "@/lib/authService";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [password, setPassword] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [error, setError] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setIsAuthenticated(AuthService.isAuthenticated());
-    const listener = (state: boolean) => {
-      setIsAuthenticated(state);
-    };
+    const listener = (state: boolean) => setIsAuthenticated(state);
     AuthService.addListener(listener);
-    return () => {
-      AuthService.removeListener(listener);
-    };
+    return () => AuthService.removeListener(listener);
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const handleAdminAccess = () => {
     if (AuthService.authenticate(password)) {
@@ -39,148 +47,176 @@ const Navbar = () => {
       setPassword("");
       setError("");
     } else {
-      setError("❌ Incorrect password");
+      setError("Incorrect password");
       setPassword("");
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") handleAdminAccess();
-  };
-
   const handleAdminClick = () => {
-    if (isAuthenticated) {
-      navigate("/admin");
-    } else {
-      setOpenDialog(true);
-    }
+    if (isAuthenticated) navigate("/admin");
+    else setOpenDialog(true);
   };
 
   const navItems = [
-    { label: "🏠 Home", onClick: () => { navigate("/"); setMobileMenuOpen(false); } },
-    { label: "📦 Archived Leagues", onClick: () => { navigate("/archived-leagues"); setMobileMenuOpen(false); } },
-    { label: "📊 Statistics", onClick: () => { navigate("/statistics"); setMobileMenuOpen(false); } },
-    { label: "🏆 Cups", onClick: () => { navigate("/cups"); setMobileMenuOpen(false); } },
+    { label: "Home", path: "/", icon: Home },
+    { label: "Archived", path: "/archived-leagues", icon: Archive },
+    { label: "Statistics", path: "/statistics", icon: BarChart2 },
+    { label: "Cups", path: "/cups", icon: Trophy },
   ];
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <nav className="relative w-full bg-gradient-to-b from-[hsl(210_60%_6%)] via-[hsl(200_50%_12%)] to-[hsl(210_45%_12%)] border-b border-[hsl(200_40%_25%)] shadow-2xl shadow-[hsl(180_80%_50%)]/10">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div onClick={() => navigate("/")} className="cursor-pointer flex items-center gap-2">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(180_80%_50%)] bg-clip-text text-transparent hover:scale-105 transition-transform">
-              🌙⚽ RAMADAN LEAGUE 2026 🏆✨
-            </h1>
-          </div>
+    <>
+      {/* Floating pill navbar */}
+      <div className="fixed top-4 left-0 w-full z-[999] px-4 flex justify-center pointer-events-none">
+        <nav className={`pointer-events-auto w-full max-w-4xl transition-all duration-500 ${
+          scrolled
+            ? 'bg-[#0a0e2a]/80 backdrop-blur-xl shadow-2xl shadow-yellow-400/10'
+            : 'bg-[#0a0e2a]/60 backdrop-blur-md'
+        } rounded-2xl border border-yellow-400/15`}>
 
-          <div className="hidden md:flex items-center gap-1 lg:gap-2">
-            {navItems.map((item) => (
-              <Button
-                key={item.label}
-                variant="ghost"
-                onClick={item.onClick}
-                className="text-[hsl(180_30%_95%)] hover:text-[hsl(45_85%_55%)] hover:bg-[hsl(200_40%_20%)] transition-all duration-300 whitespace-nowrap font-body text-sm lg:text-base"
-              >
-                {item.label}
-              </Button>
-            ))}
+          {/* Subtle top glow line */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent rounded-full" />
 
-            <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-              <DialogTrigger asChild>
-                <Button
-                  onClick={handleAdminClick}
-                  className="ml-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
+          <div className="flex items-center justify-between px-5 h-14">
+
+            {/* Logo */}
+            <div
+              onClick={() => navigate("/")}
+              className="cursor-pointer flex items-center gap-2 group shrink-0"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-yellow-400 rounded-full blur-md opacity-30 group-hover:opacity-60 transition-opacity" />
+                <span className="relative text-xl">🌙</span>
+              </div>
+              <div className="flex flex-col leading-none">
+                <span className="text-xs text-yellow-400/60 uppercase tracking-widest hidden sm:block">Ramadan</span>
+                <span className="font-bold text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400 whitespace-nowrap">
+                  League <span className="text-yellow-500/70">2026</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Desktop nav links — centered */}
+            <div className="hidden md:flex items-center gap-1">
+              {navItems.map(({ label, path, icon: Icon }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                    isActive(path)
+                      ? 'text-yellow-300 bg-yellow-400/15'
+                      : 'text-yellow-100/50 hover:text-yellow-200 hover:bg-yellow-400/10'
+                  }`}
                 >
-                  {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
-                </Button>
-              </DialogTrigger>
+                  <Icon className="w-3.5 h-3.5" />
+                  {label}
+                  {isActive(path) && (
+                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-yellow-400 rounded-full" />
+                  )}
+                </button>
+              ))}
+            </div>
 
-              {!isAuthenticated && (
-                <DialogContent className="sm:max-w-[425px] bg-gradient-to-b from-[hsl(210_45%_12%)] to-[hsl(210_50%_8%)] border border-[hsl(180_80%_50%)]/30 shadow-2xl shadow-[hsl(180_80%_50%)]/20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 fixed">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl text-[hsl(180_30%_95%)] text-center">
-                      🔐 Admin Access 🔐
-                    </DialogTitle>
-                    <DialogDescription className="text-[hsl(180_20%_65%)] text-base text-center">
-                      🌊 Enter your secret password to access the Atlantis Command Center
-                    </DialogDescription>
-                  </DialogHeader>
+            {/* Admin button */}
+            <div className="hidden md:flex items-center shrink-0">
+              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                <DialogTrigger asChild>
+                  <button
+                    onClick={handleAdminClick}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-yellow-400/25 text-yellow-300/70 hover:text-yellow-300 hover:border-yellow-400/50 hover:bg-yellow-400/10 text-sm font-medium transition-all duration-200"
+                  >
+                    {isAuthenticated
+                      ? <><Unlock className="w-3.5 h-3.5" /> Admin</>
+                      : <><Lock className="w-3.5 h-3.5" /> Admin</>
+                    }
+                  </button>
+                </DialogTrigger>
 
-                  <div className="grid gap-4 py-6">
-                    <div className="flex items-center justify-center text-5xl mb-4">🗝️</div>
-                    <div className="grid gap-2">
-                      <label className="text-sm font-semibold text-[hsl(180_30%_95%)] text-center">
-                        🔑 Enter Security Code:
-                      </label>
+                {!isAuthenticated && (
+                  <DialogContent className="sm:max-w-[400px] bg-[#0d1133] border border-yellow-400/20 shadow-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl text-yellow-300 text-center">Admin Access</DialogTitle>
+                      <DialogDescription className="text-yellow-200/40 text-sm text-center">
+                        Enter your password to continue
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-4 py-4">
+                      <div className="text-center text-4xl">🗝️</div>
                       <Input
                         type="password"
-                        placeholder="••••"
+                        placeholder="••••••"
                         value={password}
                         onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                        onKeyPress={handleKeyPress}
+                        onKeyPress={(e) => e.key === "Enter" && handleAdminAccess()}
                         autoFocus
-                        className="bg-[hsl(210_40%_20%)] border-[hsl(180_80%_50%)]/40 text-[hsl(180_30%_95%)] placeholder:text-[hsl(180_20%_65%)] placeholder:text-lg focus:border-[hsl(180_80%_50%)] focus:ring-[hsl(180_80%_50%)]/50 py-6 text-center text-xl tracking-widest"
+                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20 focus:border-yellow-400/50 py-5 text-center text-lg tracking-widest"
                       />
-                      {error && <p className="text-red-500 text-sm font-semibold text-center">{error}</p>}
+                      {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+                      <div className="flex gap-3 mt-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
+                          className="flex-1 border-yellow-400/20 text-yellow-200/50 hover:bg-yellow-400/10 hover:text-yellow-200"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleAdminAccess}
+                          className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
+                        >
+                          Enter
+                        </Button>
+                      </div>
                     </div>
-                    <div className="text-center text-sm text-[hsl(180_20%_65%)]">💡 Need the password? Contact the Atlantis Council</div>
-                  </div>
+                  </DialogContent>
+                )}
+              </Dialog>
+            </div>
 
-                  <div className="flex justify-center gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
-                      className="border-[hsl(200_40%_25%)] text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] font-semibold"
-                    >
-                      ❌ Cancel
-                    </Button>
-                    <Button
-                      onClick={handleAdminAccess}
-                      className="bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] font-semibold"
-                    >
-                      ✅ Access
-                    </Button>
-                  </div>
-                </DialogContent>
-              )}
-            </Dialog>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-yellow-300/70 hover:text-yellow-300 hover:bg-yellow-400/10 rounded-xl transition-colors"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-[hsl(180_30%_95%)] hover:bg-[hsl(200_40%_20%)] rounded-lg transition-colors"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+          {/* Mobile menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-yellow-400/10 px-4 py-3 flex flex-col gap-1">
+              {navItems.map(({ label, path, icon: Icon }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                    isActive(path)
+                      ? 'text-yellow-300 bg-yellow-400/15'
+                      : 'text-yellow-100/50 hover:text-yellow-200 hover:bg-yellow-400/10'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </button>
+              ))}
+              <button
+                onClick={handleAdminClick}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-yellow-300/60 hover:text-yellow-300 hover:bg-yellow-400/10 transition-all border-t border-yellow-400/10 mt-1 pt-4"
+              >
+                {isAuthenticated ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                Admin
+              </button>
+            </div>
+          )}
+
+        </nav>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full z-50 flex flex-col gap-2 bg-[hsl(210_45%_12%)] p-4 rounded-lg border border-[hsl(180_80%_50%)]/30 shadow-lg shadow-[hsl(180_80%_50%)]/20">
-          {navItems.map((item) => (
-            <Button
-              key={item.label}
-              variant="ghost"
-              onClick={item.onClick}
-              className="text-[hsl(180_30%_95%)] hover:text-[hsl(45_85%_55%)] hover:bg-[hsl(200_40%_20%)] transition-all duration-300 whitespace-nowrap font-body text-sm"
-            >
-              {item.label}
-            </Button>
-          ))}
-
-          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
-              <Button
-                onClick={handleAdminClick}
-                className="mt-2 bg-gradient-to-r from-[hsl(180_70%_45%)] to-[hsl(45_85%_55%)] text-[hsl(210_50%_8%)] hover:shadow-lg hover:shadow-[hsl(180_80%_50%)]/50 transition-all duration-300 font-body font-semibold"
-              >
-                {isAuthenticated ? "🔓 Admin" : "🔒 Admin"}
-              </Button>
-            </DialogTrigger>
-          </Dialog>
-        </div>
-      )}
-    </nav>
+      {/* Spacer */}
+      <div className="h-20" />
+    </>
   );
 };
 

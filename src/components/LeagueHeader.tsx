@@ -6,11 +6,10 @@ interface LeagueHeaderProps {
 }
 
 export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
-  const { teams, matches } = useLeagueStore();
+  const { teams, matches , targetMatches} = useLeagueStore();
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
 
-  const targetMatches = 30; // Assuming a 30-match league for progress calculation
   const matchProgress = Math.min((matches.length / targetMatches) * 100, 100);
   const overallProgress = Math.round(matchProgress);
 

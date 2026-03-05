@@ -1,4 +1,5 @@
-{
+{ 
+  "targetMatches": 50,
   "teams": [
     {
       "id": "team1",

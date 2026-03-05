@@ -41,11 +41,13 @@ interface LeagueState {
   teams: Team[];
   players: Player[];
   matches: Match[];
+  targetMatches: number;
   selectedHomeTeam: Team | null;
   selectedAwayTeam: Team | null;
   setTeams: (teams: Team[]) => void;
   setPlayers: (players: Player[]) => void;
   setMatches: (matches: Match[]) => void;
+  setTargetMatches: (n: number) => void;
   setSelectedHomeTeam: (team: Team | null) => void;
   setSelectedAwayTeam: (team: Team | null) => void;
   addMatch: (homeGoals: number, awayGoals: number, scorers?: { playerId: string; goals: number }[]) => void;
@@ -87,12 +89,14 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   teams: initialState.teams,
   players: initialState.players,
   matches: initialState.matches,
+  targetMatches: initialState.targetMatches ?? 50,
   selectedHomeTeam: null,
   selectedAwayTeam: null,
 
   setTeams: (teams) => set({ teams }),
   setPlayers: (players) => set({ players }),
   setMatches: (matches) => set({ matches }),
+  setTargetMatches: (targetMatches) => set({ targetMatches }),
   setSelectedHomeTeam: (team) => set({ selectedHomeTeam: team }),
   setSelectedAwayTeam: (team) => set({ selectedAwayTeam: team }),
 
@@ -216,6 +220,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       teams: defaultLeagueData.teams,
       players: defaultLeagueData.players,
       matches: defaultLeagueData.matches,
+      targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
     });
   },
 }));

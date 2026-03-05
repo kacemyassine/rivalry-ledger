@@ -13,6 +13,7 @@ export interface LeagueData {
   teams: any[];
   players: any[];
   matches: any[];
+  targetMatches?: number;
 }
 
 // helper to decode base64 → UTF-8 safely

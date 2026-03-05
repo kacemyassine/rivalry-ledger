@@ -20,7 +20,7 @@ function base64ToUtf8(str: string) {
 
 const CosmusLeague = () => {
   const [loading, setLoading] = useState(true);
-  const { setTeams, setPlayers, setMatches } = useLeagueStore();
+  const { setTeams, setPlayers, setMatches, setTargetMatches } = useLeagueStore();
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,6 +35,7 @@ const CosmusLeague = () => {
         setTeams(data.teams);
         setPlayers(data.players);
         setMatches(data.matches);
+        setTargetMatches(data.targetMatches ?? 50);
       } catch (e) {
         console.error(e);
       }

@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 
 const VisitorPage = () => {
   const [loading, setLoading] = useState(true);
-  const { setTeams, setPlayers, setMatches } = useLeagueStore();
+  const { setTeams, setPlayers, setMatches, setTargetMatches } = useLeagueStore();
   const { fetchData } = useGitHubData();
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const VisitorPage = () => {
         setTeams(data.teams);
         setPlayers(data.players);
         setMatches(data.matches);
+        setTargetMatches(data.targetMatches ?? 50);
       }
       setLoading(false);
     };
@@ -51,7 +52,7 @@ const VisitorPage = () => {
           <video
             autoPlay loop muted
             className="absolute top-0 left-0 w-full h-full object-cover"
-            src="/videos/PixVerse_V5.6_Image_Text_360P_Picture_the_scen (2).mp4"
+            src="/videos/ramadanleaguevideo.mp4"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]" />
 
