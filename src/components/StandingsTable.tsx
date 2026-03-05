@@ -119,7 +119,7 @@ export function StandingsTable({ theme = 'default' }: StandingsTableProps) {
                       <div className="min-w-0">
                         <p className={cn(
                           'font-semibold text-sm md:text-base truncate',
-                          isRamadan ? 'text-yellow-200' : team.id === 'team1' ? 'text-primary' : 'text-secondary'
+                          isRamadan ? team.id === 'team1' ? 'text-cyan-400' : 'text-yellow-400' : team.id === 'team1' ? 'text-primary' : 'text-secondary'
                         )}>
                           {team.name}
                         </p>

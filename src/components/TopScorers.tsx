@@ -93,7 +93,7 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
                     </p>
                     <p className={cn(
                       'text-xs md:text-sm',
-                      isRamadan ? 'text-yellow-400/70' : player.teamId === 'team1' ? 'text-primary' : 'text-secondary'
+                     isRamadan ? player.teamId === 'team1' ? 'text-cyan-400' : 'text-yellow-400' : player.teamId === 'team1' ? 'text-primary' : 'text-secondary' 
                     )}>
                       {team?.name}
                     </p>
