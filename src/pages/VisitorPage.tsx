@@ -25,7 +25,7 @@ const VisitorPage = () => {
       setLoading(false);
     };
     loadData();
-  }, [fetchData, setTeams, setPlayers, setMatches]);
+  }, []);
 
   if (loading) {
     return (
@@ -38,8 +38,6 @@ const VisitorPage = () => {
   return (
     <AdminProvider isAdmin={false}>
       <div className="min-h-screen relative overflow-x-hidden">
-
-        {/* Top viewport video section */}
         <div className="relative w-full h-screen">
           <video
             autoPlay
@@ -48,15 +46,11 @@ const VisitorPage = () => {
             className="absolute top-0 left-0 w-full h-full object-cover"
             src="/videos/12722063-uhd_3840_2160_24fps.mp4"
           />
-
           <div className="absolute top-0 left-0 w-full h-full bg-black/40" />
-
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
             <LeagueHeader />
           </div>
         </div>
-
-        {/* Scrollable content */}
         <div className="relative z-10 container mx-auto px-3 md:px-4 py-12 max-w-full overflow-x-hidden">
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-4 md:space-y-6 min-w-0">
@@ -64,7 +58,6 @@ const VisitorPage = () => {
               <MatchHistory />
             </div>
             <div className="min-w-0">
-              {/* TopScorers displayed WITHOUT buttons */}
               <TopScorers hideButtons={true} />
             </div>
           </div>
