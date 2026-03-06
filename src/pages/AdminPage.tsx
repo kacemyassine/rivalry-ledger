@@ -33,7 +33,7 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const { matches, teams, players, resetLeague, setTeams, setPlayers, setMatches , setTargetMatches} = useLeagueStore();
+  const { matches, teams, players, targetMatches, resetLeague, setTeams, setPlayers, setMatches, setTargetMatches } = useLeagueStore();
   const { fetchData, updateData } = useGitHubData();
 
   useEffect(() => {
@@ -49,13 +49,13 @@ const AdminPage = () => {
       setLoading(false);
     };
     loadData();
-  }, [fetchData, setTeams, setPlayers, setMatches]);
+  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches]);
 
   const handleSaveToGitHub = useCallback(async () => {
     setSaving(true);
-    await updateData({ teams, players, matches });
+    await updateData({ teams, players, matches, targetMatches });
     setSaving(false);
-  }, [updateData, teams, players, matches]);
+  }, [updateData, teams, players, matches, targetMatches]);
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -117,9 +117,9 @@ const AdminPage = () => {
               <Button
                 onClick={() => setMatchFormOpen(true)}
                 className="gap-2 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold transition-all"
-                disabled={matches.length >= 50}
+                disabled={matches.length >= targetMatches}
               >
-                <Play className="w-4 h-4" /> Record Match ({matches.length}/50)
+                <Play className="w-4 h-4" /> Record Match ({matches.length}/{targetMatches})
               </Button>
 
               <Button
