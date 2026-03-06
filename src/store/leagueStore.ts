@@ -62,7 +62,11 @@ const loadState = () => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      return {
+        ...parsed,
+        targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
+      };
     }
   } catch (e) {
     console.error('Error loading state:', e);
