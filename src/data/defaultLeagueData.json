@@ -1,4 +1,5 @@
-{ "tagetMatches": 30,
+{ 
+  "tagetMatches": 30,
   "teams": [
     {
       "id": "team1",
