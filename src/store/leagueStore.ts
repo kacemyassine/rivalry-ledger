@@ -33,7 +33,7 @@ interface Match {
   awayTeamName: string;
   homeGoals: number;
   awayGoals: number;
-  scorers: { playerId: string; goals: number }[];
+  scorers: { playerId: string; goals: number; isOwnGoal?: boolean }[];
   date: string;
 }
 
@@ -50,7 +50,7 @@ interface LeagueState {
   setTargetMatches: (n: number) => void;
   setSelectedHomeTeam: (team: Team | null) => void;
   setSelectedAwayTeam: (team: Team | null) => void;
-  addMatch: (homeGoals: number, awayGoals: number, scorers?: { playerId: string; goals: number }[]) => void;
+  addMatch: (homeGoals: number, awayGoals: number, scorers?: { playerId: string; goals: number; isOwnGoal?: boolean }[]) => void;
   addPlayer: (player: Omit<Player, 'id'>) => void;
   editPlayer: (id: string, data: Partial<Player>) => void;
   deletePlayer: (id: string) => void;
@@ -145,7 +145,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
     });
 
     const updatedPlayers = state.players.map((p) => {
-      const goal = scorers.find((s) => s.playerId === p.id);
+      const goal = scorers.find((s) => s.playerId === p.id && !s.isOwnGoal);
       return goal ? { ...p, goals: p.goals + goal.goals } : p;
     });
 

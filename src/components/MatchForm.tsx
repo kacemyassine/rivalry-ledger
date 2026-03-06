@@ -25,6 +25,12 @@ interface MatchFormProps {
   onSave?: (updatedData: any) => void;
 }
 
+interface ScorerEntry {
+  playerId: string;
+  goals: number;
+  isOwnGoal: boolean;
+}
+
 export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
   const {
     teams,
@@ -39,7 +45,7 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
 
   const [homeGoals, setHomeGoals] = useState(0);
   const [awayGoals, setAwayGoals] = useState(0);
-  const [scorers, setScorers] = useState<{ playerId: string; goals: number }[]>([]);
+  const [scorers, setScorers] = useState<ScorerEntry[]>([]);
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
@@ -57,14 +63,14 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
       toast.error('Add players first before recording scorers');
       return;
     }
-    setScorers((s) => [...s, { playerId: players[0].id, goals: 1 }]);
+    setScorers((s) => [...s, { playerId: players[0].id, goals: 1, isOwnGoal: false }]);
   };
 
   const handleRemoveScorer = (index: number) => {
     setScorers((s) => s.filter((_, i) => i !== index));
   };
 
-  const handleScorerChange = (index: number, field: 'playerId' | 'goals', value: string | number) => {
+  const handleScorerChange = (index: number, field: keyof ScorerEntry, value: string | number | boolean) => {
     setScorers((s) => {
       const copy = [...s];
       copy[index] = { ...copy[index], [field]: value };
@@ -80,17 +86,30 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
       return;
     }
 
-    const totalScorerGoals = scorers.reduce((sum, s) => sum + (s.goals || 0), 0);
-    const totalMatchGoals = homeGoals + awayGoals;
+    if (scorers.length > 0) {
+      // Calculate effective goals per team accounting for own goals
+      const effectiveHomeGoals = scorers.reduce((sum, s) => {
+        const player = players.find((p: any) => p.id === s.playerId);
+        const isHomePlayer = player?.teamId === selectedHomeTeam.id;
+        // own goal from away player counts for home, regular goal from home player counts for home
+        if (s.isOwnGoal && !isHomePlayer) return sum + s.goals;
+        if (!s.isOwnGoal && isHomePlayer) return sum + s.goals;
+        return sum;
+      }, 0);
 
-    if (scorers.length > 0 && totalScorerGoals !== totalMatchGoals) {
-      toast.error(`Scorer goals (${totalScorerGoals}) must equal match goals (${totalMatchGoals})`);
-      return;
-    }
+      const effectiveAwayGoals = scorers.reduce((sum, s) => {
+        const player = players.find((p: any) => p.id === s.playerId);
+        const isAwayPlayer = player?.teamId === selectedAwayTeam.id;
+        // own goal from home player counts for away, regular goal from away player counts for away
+        if (s.isOwnGoal && !isAwayPlayer) return sum + s.goals;
+        if (!s.isOwnGoal && isAwayPlayer) return sum + s.goals;
+        return sum;
+      }, 0);
 
-    if (matchNumber > 50) {
-      toast.error('League is complete! All 50 matches have been played.');
-      return;
+      if (effectiveHomeGoals !== homeGoals || effectiveAwayGoals !== awayGoals) {
+        toast.error(`Goals don't add up. Home: ${effectiveHomeGoals}/${homeGoals}, Away: ${effectiveAwayGoals}/${awayGoals}`);
+        return;
+      }
     }
 
     const updatedState = addMatch(homeGoals, awayGoals, scorers);
@@ -151,7 +170,25 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
                   </SelectContent>
                 </Select>
 
-                <Input type="number" min={1} value={scorer.goals} onChange={(e) => handleScorerChange(index, 'goals', parseInt(e.target.value || '1') || 1)} className="w-14 md:w-16 bg-input border-border" />
+                <Input
+                  type="number"
+                  min={1}
+                  value={scorer.goals}
+                  onChange={(e) => handleScorerChange(index, 'goals', parseInt(e.target.value || '1') || 1)}
+                  className="w-14 md:w-16 bg-input border-border"
+                />
+
+                {/* Own Goal checkbox */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <input
+                    type="checkbox"
+                    id={`og-${index}`}
+                    checked={scorer.isOwnGoal}
+                    onChange={(e) => handleScorerChange(index, 'isOwnGoal', e.target.checked)}
+                    className="w-4 h-4 accent-red-500 cursor-pointer"
+                  />
+                  <label htmlFor={`og-${index}`} className="text-xs text-red-400 cursor-pointer whitespace-nowrap">OG</label>
+                </div>
 
                 <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveScorer(index)} className="h-10 w-10 text-destructive">
                   <Minus className="w-4 h-4" />

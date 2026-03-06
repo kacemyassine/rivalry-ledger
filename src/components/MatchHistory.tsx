@@ -17,6 +17,11 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
   const displayedMatches = showAll ? allMatches : allMatches.slice(0, 10);
   const titleText = showAll ? 'All Matches' : 'Recent Matches';
 
+  const teamColor = (teamId: string) => {
+    if (!isRamadan) return '';
+    return teamId === 'team1' ? 'text-cyan-400' : 'text-yellow-400';
+  };
+
   return (
     <>
       <div
@@ -78,12 +83,12 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                           {homeTeam?.logo ? (
                             <img src={homeTeam.logo} alt={homeTeam.name} className="w-full h-full object-cover" />
                           ) : (
-                            <Shield className={cn('w-3 h-3 md:w-4 md:h-4', isRamadan ? 'text-yellow-400/50' : 'text-primary/50')} />
+                            <Shield className={cn('w-3 h-3 md:w-4 md:h-4', isRamadan ? teamColor(match.homeTeamId) : 'text-primary/50')} />
                           )}
                         </div>
                         <span className={cn(
                           'font-medium text-xs md:text-sm truncate whitespace-nowrap',
-                          homeWin ? 'text-green-400' : isRamadan ? 'text-yellow-100' : 'text-foreground'
+                          homeWin ? 'text-green-400' : teamColor(match.homeTeamId) || 'text-foreground'
                         )}>
                           {homeTeam?.name}
                         </span>
@@ -100,7 +105,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                       <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span className={cn(
                           'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
-                          awayWin ? 'text-green-400' : isRamadan ? 'text-yellow-100' : 'text-foreground'
+                          awayWin ? 'text-green-400' : teamColor(match.awayTeamId) || 'text-foreground'
                         )}>
                           {awayTeam?.name}
                         </span>
@@ -111,7 +116,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                           {awayTeam?.logo ? (
                             <img src={awayTeam.logo} alt={awayTeam.name} className="w-full h-full object-cover" />
                           ) : (
-                            <Shield className={cn('w-3 h-3 md:w-4 md:h-4', isRamadan ? 'text-yellow-400/50' : 'text-secondary/50')} />
+                            <Shield className={cn('w-3 h-3 md:w-4 md:h-4', isRamadan ? teamColor(match.awayTeamId) : 'text-secondary/50')} />
                           )}
                         </div>
                       </div>
@@ -177,13 +182,17 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
               const awayWin = selectedMatch.awayGoals > selectedMatch.homeGoals;
               const isDraw = selectedMatch.homeGoals === selectedMatch.awayGoals;
 
+              // Regular scorers for home team + own goals by away players
               const homeScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
+                if (s.isOwnGoal) return player?.teamId === selectedMatch.awayTeamId;
                 return player?.teamId === selectedMatch.homeTeamId;
               }) || [];
 
+              // Regular scorers for away team + own goals by home players
               const awayScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
+                if (s.isOwnGoal) return player?.teamId === selectedMatch.homeTeamId;
                 return player?.teamId === selectedMatch.awayTeamId;
               }) || [];
 
@@ -204,10 +213,12 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                         {homeTeam?.logo ? (
                           <img src={homeTeam.logo} alt={homeTeam.name} className="w-full h-full object-cover" />
                         ) : (
-                          <Shield className={cn('w-6 h-6', isRamadan ? 'text-yellow-400/50' : 'text-primary/50')} />
+                          <Shield className={cn('w-6 h-6', isRamadan ? teamColor(selectedMatch.homeTeamId) : 'text-primary/50')} />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', homeWin ? 'text-green-400' : isRamadan ? 'text-yellow-100' : '')}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
+                        homeWin ? 'text-green-400' : teamColor(selectedMatch.homeTeamId) || ''
+                      )}>
                         {homeTeam?.name}
                       </span>
                     </div>
@@ -223,10 +234,12 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                         {awayTeam?.logo ? (
                           <img src={awayTeam.logo} alt={awayTeam.name} className="w-full h-full object-cover" />
                         ) : (
-                          <Shield className={cn('w-6 h-6', isRamadan ? 'text-yellow-400/50' : 'text-secondary/50')} />
+                          <Shield className={cn('w-6 h-6', isRamadan ? teamColor(selectedMatch.awayTeamId) : 'text-secondary/50')} />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', awayWin ? 'text-green-400' : isRamadan ? 'text-yellow-100' : '')}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
+                        awayWin ? 'text-green-400' : teamColor(selectedMatch.awayTeamId) || ''
+                      )}>
                         {awayTeam?.name}
                       </span>
                     </div>
@@ -250,9 +263,18 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                       {homeScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
-                          <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center', isRamadan ? 'bg-yellow-400/10' : 'bg-green-400/10')}>
-                            <span className={isRamadan ? 'text-yellow-100' : 'text-foreground'}>{player?.name || 'Unknown'}</span>
-                            <span className={cn('font-bold ml-1', isRamadan ? 'text-yellow-400' : 'text-gold')}>×{scorer.goals}</span>
+                          <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center',
+                            scorer.isOwnGoal ? 'bg-red-500/10' : isRamadan ? 'bg-cyan-400/10' : 'bg-green-400/10'
+                          )}>
+                            <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-cyan-200' : 'text-foreground'}>
+                              {player?.name || 'Unknown'}
+                            </span>
+                            {scorer.isOwnGoal && (
+                              <span className="ml-1 text-red-400 font-bold">OG</span>
+                            )}
+                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-cyan-400' : 'text-gold')}>
+                              ×{scorer.goals}
+                            </span>
                           </div>
                         );
                       })}
@@ -262,9 +284,18 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                       {awayScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
-                          <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center', isRamadan ? 'bg-yellow-400/10' : 'bg-green-400/10')}>
-                            <span className={isRamadan ? 'text-yellow-100' : 'text-foreground'}>{player?.name || 'Unknown'}</span>
-                            <span className={cn('font-bold ml-1', isRamadan ? 'text-yellow-400' : 'text-gold')}>×{scorer.goals}</span>
+                          <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center',
+                            scorer.isOwnGoal ? 'bg-red-500/10' : isRamadan ? 'bg-yellow-400/10' : 'bg-green-400/10'
+                          )}>
+                            <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-yellow-100' : 'text-foreground'}>
+                              {player?.name || 'Unknown'}
+                            </span>
+                            {scorer.isOwnGoal && (
+                              <span className="ml-1 text-red-400 font-bold">OG</span>
+                            )}
+                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-yellow-400' : 'text-gold')}>
+                              ×{scorer.goals}
+                            </span>
                           </div>
                         );
                       })}
