@@ -6,7 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -53,6 +52,7 @@ const Navbar = () => {
   };
 
   const handleAdminClick = () => {
+    setMobileMenuOpen(false);
     if (isAuthenticated) navigate("/admin");
     else setOpenDialog(true);
   };
@@ -68,6 +68,46 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Global Dialog — works on both mobile and desktop */}
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+          <DialogContent className="w-[90vw] max-w-[400px] bg-[#0d1133] border border-yellow-400/20 shadow-2xl z-[9999]">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-yellow-300 text-center">Admin Access</DialogTitle>
+            <DialogDescription className="text-yellow-200/40 text-sm text-center">
+              Enter your password to continue
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            <div className="text-center text-4xl">🗝️</div>
+            <Input
+              type="password"
+              placeholder="••••••"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+              onKeyPress={(e) => e.key === "Enter" && handleAdminAccess()}
+              autoFocus
+              className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20 focus:border-yellow-400/50 py-5 text-center text-lg tracking-widest"
+            />
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            <div className="flex gap-3 mt-2">
+              <Button
+                variant="outline"
+                onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
+                className="flex-1 border-yellow-400/20 text-yellow-200/50 hover:bg-yellow-400/10 hover:text-yellow-200"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAdminAccess}
+                className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
+              >
+                Enter
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Floating pill navbar */}
       <div className="fixed top-4 left-0 w-full z-[999] px-4 flex justify-center pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-4xl transition-all duration-500 ${
@@ -98,13 +138,13 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop nav links — centered */}
+            {/* Desktop nav links */}
             <div className="hidden md:flex items-center gap-1">
               {navItems.map(({ label, path, icon: Icon }) => (
                 <button
                   key={path}
                   onClick={() => navigate(path)}
-                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive(path)
                       ? 'text-yellow-300 bg-yellow-400/15'
                       : 'text-yellow-100/50 hover:text-yellow-200 hover:bg-yellow-400/10'
@@ -119,60 +159,17 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Admin button */}
+            {/* Desktop Admin button */}
             <div className="hidden md:flex items-center shrink-0">
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger asChild>
-                  <button
-                    onClick={handleAdminClick}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-yellow-400/25 text-yellow-300/70 hover:text-yellow-300 hover:border-yellow-400/50 hover:bg-yellow-400/10 text-sm font-medium transition-all duration-200"
-                  >
-                    {isAuthenticated
-                      ? <><Unlock className="w-3.5 h-3.5" /> Admin</>
-                      : <><Lock className="w-3.5 h-3.5" /> Admin</>
-                    }
-                  </button>
-                </DialogTrigger>
-
-                {!isAuthenticated && (
-                  <DialogContent className="sm:max-w-[400px] bg-[#0d1133] border border-yellow-400/20 shadow-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <DialogHeader>
-                      <DialogTitle className="text-xl text-yellow-300 text-center">Admin Access</DialogTitle>
-                      <DialogDescription className="text-yellow-200/40 text-sm text-center">
-                        Enter your password to continue
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex flex-col gap-4 py-4">
-                      <div className="text-center text-4xl">🗝️</div>
-                      <Input
-                        type="password"
-                        placeholder="••••••"
-                        value={password}
-                        onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                        onKeyPress={(e) => e.key === "Enter" && handleAdminAccess()}
-                        autoFocus
-                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20 focus:border-yellow-400/50 py-5 text-center text-lg tracking-widest"
-                      />
-                      {error && <p className="text-red-400 text-sm text-center">{error}</p>}
-                      <div className="flex gap-3 mt-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => { setOpenDialog(false); setPassword(""); setError(""); }}
-                          className="flex-1 border-yellow-400/20 text-yellow-200/50 hover:bg-yellow-400/10 hover:text-yellow-200"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={handleAdminAccess}
-                          className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
-                        >
-                          Enter
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                )}
-              </Dialog>
+              <button
+                onClick={handleAdminClick}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-yellow-400/25 text-yellow-300/70 hover:text-yellow-300 hover:border-yellow-400/50 hover:bg-yellow-400/10 text-sm font-medium transition-all duration-200"
+              >
+                {isAuthenticated
+                  ? <><Unlock className="w-3.5 h-3.5" /> Admin</>
+                  : <><Lock className="w-3.5 h-3.5" /> Admin</>
+                }
+              </button>
             </div>
 
             {/* Mobile hamburger */}
@@ -213,9 +210,6 @@ const Navbar = () => {
 
         </nav>
       </div>
-
-      {/* Spacer */}
-      <div className="h-20" />
     </>
   );
 };
