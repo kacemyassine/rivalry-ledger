@@ -56,7 +56,7 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
 
         {/* Subtitle */}
         <p className={`text-sm sm:text-lg font-body tracking-wide text-center px-2 ${isRamadan ? 'text-yellow-200/70' : 'text-muted-foreground'}`}>
-          {matches.length} Matches • {teams.length} Teams • {matches.length > 0 ? '1 Champion' : 'Coming Soon'}
+          {targetMatches} Matches • {teams.length} Teams • {matches.length > 0 ? '1 Champion' : 'Coming Soon'}
         </p>
 
         {/* Teams */}
