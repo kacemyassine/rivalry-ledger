@@ -131,7 +131,7 @@ const Navbar = () => {
                 <span className="relative text-xl">🌙</span>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-xs text-yellow-400/60 uppercase tracking-widest hidden sm:block">Ramadan</span>
+                <span className="text-xs text-yellow-400/60 uppercase tracking-widest ">Ramadan</span>
                 <span className="font-bold text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400 whitespace-nowrap">
                   League <span className="text-yellow-500/70">2026</span>
                 </span>
