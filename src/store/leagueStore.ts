@@ -42,12 +42,16 @@ interface LeagueState {
   players: Player[];
   matches: Match[];
   targetMatches: number;
+  leagueName: string;
+  leagueId: string;
   selectedHomeTeam: Team | null;
   selectedAwayTeam: Team | null;
   setTeams: (teams: Team[]) => void;
   setPlayers: (players: Player[]) => void;
   setMatches: (matches: Match[]) => void;
   setTargetMatches: (n: number) => void;
+  setLeagueName: (name: string) => void;
+  setLeagueId: (id: string) => void;
   setSelectedHomeTeam: (team: Team | null) => void;
   setSelectedAwayTeam: (team: Team | null) => void;
   addMatch: (homeGoals: number, awayGoals: number, scorers?: { playerId: string; goals: number; isOwnGoal?: boolean }[]) => void;
@@ -66,6 +70,8 @@ const loadState = () => {
       return {
         ...parsed,
         targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
+        leagueName: (defaultLeagueData as any).leagueConfig?.name ?? 'League',
+        leagueId: (defaultLeagueData as any).leagueConfig?.id ?? 'league',
       };
     }
   } catch (e) {
@@ -94,6 +100,8 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   players: initialState.players,
   matches: initialState.matches,
   targetMatches: initialState.targetMatches ?? 50,
+  leagueName: (initialState as any).leagueConfig?.name ?? (initialState as any).leagueName ?? 'League',
+  leagueId: (initialState as any).leagueConfig?.id ?? (initialState as any).leagueId ?? 'league',
   selectedHomeTeam: null,
   selectedAwayTeam: null,
 
@@ -101,6 +109,8 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   setPlayers: (players) => set({ players }),
   setMatches: (matches) => set({ matches }),
   setTargetMatches: (targetMatches) => set({ targetMatches }),
+  setLeagueName: (leagueName) => set({ leagueName }),
+  setLeagueId: (leagueId) => set({ leagueId }),
   setSelectedHomeTeam: (team) => set({ selectedHomeTeam: team }),
   setSelectedAwayTeam: (team) => set({ selectedAwayTeam: team }),
 
@@ -225,6 +235,8 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       players: defaultLeagueData.players,
       matches: defaultLeagueData.matches,
       targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
+      leagueName: (defaultLeagueData as any).leagueConfig?.name ?? 'League',
+      leagueId: (defaultLeagueData as any).leagueConfig?.id ?? 'league',
     });
   },
 }));

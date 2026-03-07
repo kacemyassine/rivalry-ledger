@@ -10,6 +10,10 @@ const GITHUB_CONFIG = {
 };
 
 export interface LeagueData {
+  leagueConfig?: {
+    name: string;
+    id: string;
+  };
   teams: any[];
   players: any[];
   matches: any[];
@@ -31,7 +35,6 @@ export function useGitHubData() {
       if (!apiRes.ok) throw new Error('Failed to fetch');
       const { content } = await apiRes.json();
 
-      // decode base64 safely
       return JSON.parse(base64ToUtf8(content)) as LeagueData;
     } catch (e) {
       console.error(e);
@@ -66,5 +69,42 @@ export function useGitHubData() {
     []
   );
 
-  return { fetchData, updateData, config: GITHUB_CONFIG };
+  const archiveLeague = useCallback(
+    async (archiveData: {
+      currentData: LeagueData;
+      newLeagueConfig: { name: string; id: string };
+      newTargetMatches: number;
+      keepPlayers: boolean;
+      imageName: string;
+      winner: string;
+    }): Promise<boolean> => {
+      try {
+        const { data: result, error } = await supabase.functions.invoke('archive-league', {
+          body: {
+            ...archiveData,
+            owner: GITHUB_CONFIG.owner,
+            repo: GITHUB_CONFIG.repo,
+            branch: GITHUB_CONFIG.branch,
+          },
+          headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+        });
+
+        if (error || result?.error) {
+          console.error(error || result.error);
+          toast.error('Failed to archive league');
+          return false;
+        }
+
+        toast.success('League archived and new league started!');
+        return true;
+      } catch (e) {
+        console.error(e);
+        toast.error('Failed to archive league');
+        return false;
+      }
+    },
+    []
+  );
+
+  return { fetchData, updateData, archiveLeague, config: GITHUB_CONFIG };
 }

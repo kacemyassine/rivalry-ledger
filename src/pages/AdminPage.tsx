@@ -9,9 +9,11 @@ import { PlayerForm } from '@/components/PlayerForm';
 import { MatchForm } from '@/components/MatchForm';
 import { TeamLogoUploader } from '@/components/TeamLogoUploader';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
-import { UserPlus, Play, RotateCcw, Save, Loader2, LogOut } from 'lucide-react';
+import { UserPlus, Play, Save, Loader2, LogOut, Archive } from 'lucide-react';
 import { AuthService } from '@/lib/authService';
 import {
   AlertDialog,
@@ -32,9 +34,22 @@ const AdminPage = () => {
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [archiving, setArchiving] = useState(false);
 
-  const { matches, teams, players, targetMatches, resetLeague, setTeams, setPlayers, setMatches, setTargetMatches } = useLeagueStore();
-  const { fetchData, updateData } = useGitHubData();
+  // New league form state
+  const [newLeagueName, setNewLeagueName] = useState('');
+  const [newTargetMatches, setNewTargetMatches] = useState(50);
+  const [newImageName, setNewImageName] = useState('');
+  const [keepPlayers, setKeepPlayers] = useState(true);
+
+  const {
+    matches, teams, players,
+    targetMatches, leagueName, leagueId,
+    setTeams, setPlayers, setMatches,
+    setTargetMatches, setLeagueName, setLeagueId,
+  } = useLeagueStore();
+
+  const { fetchData, updateData, archiveLeague } = useGitHubData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -45,17 +60,65 @@ const AdminPage = () => {
         setPlayers(data.players);
         setMatches(data.matches);
         setTargetMatches(data.targetMatches ?? 50);
+        setLeagueName(data.leagueConfig?.name ?? 'League');
+        setLeagueId(data.leagueConfig?.id ?? 'league');
       }
       setLoading(false);
     };
     loadData();
-  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches]);
+  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
 
   const handleSaveToGitHub = useCallback(async () => {
     setSaving(true);
-    await updateData({ teams, players, matches, targetMatches });
+    await updateData({
+      leagueConfig: { name: leagueName, id: leagueId },
+      teams,
+      players,
+      matches,
+      targetMatches,
+    });
     setSaving(false);
-  }, [updateData, teams, players, matches, targetMatches]);
+  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId]);
+
+  const handleArchiveLeague = useCallback(async () => {
+    if (!newLeagueName.trim()) return;
+
+    const newId = newLeagueName.toLowerCase().replace(/\s+/g, '');
+
+    setArchiving(true);
+    const success = await archiveLeague({
+      currentData: {
+        leagueConfig: { name: leagueName, id: leagueId },
+        teams,
+        players,
+        matches,
+        targetMatches,
+      },
+      newLeagueConfig: { name: newLeagueName, id: newId },
+      newTargetMatches,
+      keepPlayers,
+      imageName: newImageName || 'default.png',
+      winner: '',
+    });
+
+    if (success) {
+      // Reload fresh data
+      const data = await fetchData();
+      if (data) {
+        setTeams(data.teams);
+        setPlayers(data.players);
+        setMatches(data.matches);
+        setTargetMatches(data.targetMatches ?? 50);
+        setLeagueName(data.leagueConfig?.name ?? 'League');
+        setLeagueId(data.leagueConfig?.id ?? 'league');
+      }
+      setNewLeagueName('');
+      setNewTargetMatches(50);
+      setNewImageName('');
+      setKeepPlayers(true);
+    }
+    setArchiving(false);
+  }, [archiveLeague, leagueName, leagueId, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, newImageName, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -132,31 +195,80 @@ const AdminPage = () => {
                 Save to GitHub
               </Button>
 
+              {/* Start New League */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
-                    variant="destructive"
-                    className="gap-2 bg-red-900/50 hover:bg-red-800/70 text-red-300 border border-red-400/20 hover:border-red-400/40 transition-all"
+                    className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all"
                   >
-                    <RotateCcw className="w-4 h-4" /> Reset League
+                    <Archive className="w-4 h-4" /> Start New League
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100">
+                <AlertDialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-yellow-400">Reset League?</AlertDialogTitle>
+                    <AlertDialogTitle className="text-yellow-400 text-xl">Start New League</AlertDialogTitle>
                     <AlertDialogDescription className="text-yellow-200/60">
-                      This will delete all matches, players, and reset team stats.
+                      This will archive <span className="text-yellow-300 font-semibold">{leagueName}</span> and start a fresh league. This cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
+
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-1">
+                      <Label className="text-yellow-200/80 text-sm">New League Name</Label>
+                      <Input
+                        value={newLeagueName}
+                        onChange={(e) => setNewLeagueName(e.target.value)}
+                        placeholder="e.g. Summer League 2026"
+                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-yellow-200/80 text-sm">Target Matches</Label>
+                      <Input
+                        type="number"
+                        value={newTargetMatches}
+                        onChange={(e) => setNewTargetMatches(parseInt(e.target.value) || 50)}
+                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-yellow-200/80 text-sm">Archive Image Filename</Label>
+                      <Input
+                        value={newImageName}
+                        onChange={(e) => setNewImageName(e.target.value)}
+                        placeholder="e.g. ramadanleague2026.png"
+                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
+                      />
+                      <p className="text-yellow-200/30 text-xs">Upload the image to public/images/ first</p>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-1">
+                      <input
+                        type="checkbox"
+                        id="keepPlayers"
+                        checked={keepPlayers}
+                        onChange={(e) => setKeepPlayers(e.target.checked)}
+                        className="w-4 h-4 accent-yellow-400 cursor-pointer"
+                      />
+                      <label htmlFor="keepPlayers" className="text-yellow-200/80 text-sm cursor-pointer">
+                        Keep players (goals reset to 0)
+                      </label>
+                    </div>
+                  </div>
+
                   <AlertDialogFooter>
                     <AlertDialogCancel className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
                       Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={resetLeague}
-                      className="bg-red-600 hover:bg-red-700 text-white"
+                      onClick={handleArchiveLeague}
+                      disabled={!newLeagueName.trim() || archiving}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
                     >
-                      Reset
+                      {archiving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Archive className="w-4 h-4 mr-2" />}
+                      Archive & Start New
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

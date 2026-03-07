@@ -1,4 +1,8 @@
-{
+{ 
+  "leagueConfig": {
+    "name": "Ramadan League 2026",
+    "id": "ramadanleague2026"
+  },
   "teams": [
     {
       "id": "team1",

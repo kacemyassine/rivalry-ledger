@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 
 const VisitorPage = () => {
   const [loading, setLoading] = useState(true);
-  const { setTeams, setPlayers, setMatches, setTargetMatches } = useLeagueStore();
+  const { setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId } = useLeagueStore();
   const { fetchData } = useGitHubData();
 
   useEffect(() => {
@@ -22,6 +22,8 @@ const VisitorPage = () => {
         setPlayers(data.players);
         setMatches(data.matches);
         setTargetMatches(data.targetMatches ?? 50);
+        setLeagueName(data.leagueConfig?.name ?? 'League');
+        setLeagueId(data.leagueConfig?.id ?? 'league');
       }
       setLoading(false);
     };
