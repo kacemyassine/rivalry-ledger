@@ -20,7 +20,6 @@ export interface LeagueData {
   targetMatches?: number;
 }
 
-// helper to decode base64 → UTF-8 safely
 function base64ToUtf8(str: string) {
   return decodeURIComponent(escape(atob(str)));
 }
@@ -34,7 +33,6 @@ export function useGitHubData() {
       );
       if (!apiRes.ok) throw new Error('Failed to fetch');
       const { content } = await apiRes.json();
-
       return JSON.parse(base64ToUtf8(content)) as LeagueData;
     } catch (e) {
       console.error(e);
@@ -106,5 +104,42 @@ export function useGitHubData() {
     []
   );
 
-  return { fetchData, updateData, archiveLeague, config: GITHUB_CONFIG };
+  const uploadImage = useCallback(async (base64: string, filename: string): Promise<string | null> => {
+    try {
+      const path = `public/images/${filename}`;
+
+      const getRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}?ref=${GITHUB_CONFIG.branch}`,
+        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
+      );
+      const sha = getRes.ok ? (await getRes.json()).sha : undefined;
+
+      const putRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}`,
+        {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `Upload image: ${filename}`,
+            content: base64.split(',')[1],
+            branch: GITHUB_CONFIG.branch,
+            ...(sha && { sha }),
+          }),
+        }
+      );
+
+      if (!putRes.ok) {
+        toast.error('Failed to upload image');
+        return null;
+      }
+
+      return `/images/${filename}`;
+    } catch (e) {
+      console.error(e);
+      toast.error('Failed to upload image');
+      return null;
+    }
+  }, []);
+
+  return { fetchData, updateData, archiveLeague, uploadImage, config: GITHUB_CONFIG };
 }

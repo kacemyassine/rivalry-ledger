@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLeagueStore } from '@/store/leagueStore';
+import { useGitHubData } from '@/hooks/useGitHubData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, Upload, X } from 'lucide-react';
+import { User, Upload, X, Loader2 } from 'lucide-react';
 
 interface PlayerFormProps {
   open: boolean;
@@ -27,10 +28,13 @@ interface PlayerFormProps {
 
 export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: PlayerFormProps) {
   const { players, teams, addPlayer, editPlayer } = useLeagueStore();
+  const { uploadImage } = useGitHubData();
   const [name, setName] = useState('');
   const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || 'team1');
   const [image, setImage] = useState<string | null>(null);
   const [goals, setGoals] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const editingPlayer = editingPlayerId ? players?.find((p: any) => p.id === editingPlayerId) : null;
 
@@ -46,23 +50,45 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
       setImage(null);
       setGoals(0);
     }
+    setPendingFile(null);
   }, [editingPlayer, open, teams]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setPendingFile(file);
+    // Show preview using base64
     const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result as string);
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
+    let finalImage = image;
+
+    // If there's a pending file upload it to GitHub first
+    if (pendingFile) {
+      setUploading(true);
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(pendingFile);
+      });
+
+      const filename = `${Date.now()}-${pendingFile.name.replace(/\s+/g, '-')}`;
+      const path = await uploadImage(base64, filename);
+      setUploading(false);
+
+      if (!path) return; // upload failed
+      finalImage = path;
+    }
+
     const resultState = editingPlayerId && editingPlayer
-      ? editPlayer(editingPlayerId, { name, teamId, image, goals })
-      : addPlayer({ name, teamId, image, goals });
+      ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals })
+      : addPlayer({ name, teamId, image: finalImage, goals });
 
     const fullState = resultState ?? {
       players: useLeagueStore.getState().players,
@@ -92,7 +118,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
                   <img src={image} alt="Player" className="w-full h-full object-cover" />
                   <button
                     type="button"
-                    onClick={() => setImage(null)}
+                    onClick={() => { setImage(null); setPendingFile(null); }}
                     className="absolute inset-0 bg-background/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X className="w-6 h-6 text-destructive" />
@@ -106,7 +132,9 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             </div>
             <label className="cursor-pointer">
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-              <span className="flex items-center gap-2 text-sm text-primary hover:text-primary/80"><Upload className="w-4 h-4" /> Upload Photo</span>
+              <span className="flex items-center gap-2 text-sm text-primary hover:text-primary/80">
+                <Upload className="w-4 h-4" /> Upload Photo
+              </span>
             </label>
           </div>
 
@@ -132,7 +160,9 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             </div>
           )}
 
-          <Button type="submit" className="w-full">{editingPlayerId ? 'Update Player' : 'Add Player'}</Button>
+          <Button type="submit" className="w-full" disabled={uploading}>
+            {uploading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</> : editingPlayerId ? 'Update Player' : 'Add Player'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
