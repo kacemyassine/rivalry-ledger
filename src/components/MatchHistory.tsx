@@ -88,7 +88,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                         </div>
                         <span className={cn(
                           'font-medium text-xs md:text-sm truncate whitespace-nowrap',
-                          homeWin ? 'text-green-400' : teamColor(match.homeTeamId) || 'text-foreground'
+                          homeWin ? 'text-green-400' : 'text-white'
                         )}>
                           {homeTeam?.name}
                         </span>
@@ -105,7 +105,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                       <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span className={cn(
                           'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
-                          awayWin ? 'text-green-400' : teamColor(match.awayTeamId) || 'text-foreground'
+                          awayWin ? 'text-green-400' : 'text-white'
                         )}>
                           {awayTeam?.name}
                         </span>
@@ -217,7 +217,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                         )}
                       </div>
                       <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
-                        homeWin ? 'text-green-400' : teamColor(selectedMatch.homeTeamId) || ''
+                        homeWin ? 'text-green-400' : 'text-white'
                       )}>
                         {homeTeam?.name}
                       </span>
@@ -238,7 +238,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                         )}
                       </div>
                       <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
-                        awayWin ? 'text-green-400' : teamColor(selectedMatch.awayTeamId) || ''
+                        awayWin ? 'text-green-400' : 'text-white'
                       )}>
                         {awayTeam?.name}
                       </span>
