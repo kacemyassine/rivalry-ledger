@@ -46,7 +46,7 @@ export function useGitHubData() {
       try {
         const { data: result, error } = await supabase.functions.invoke('update-json', {
           body: { data, owner: GITHUB_CONFIG.owner, repo: GITHUB_CONFIG.repo, path: GITHUB_CONFIG.path, branch: GITHUB_CONFIG.branch },
-          headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          
         });
 
         if (error || result?.error) {
