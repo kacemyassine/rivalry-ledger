@@ -107,7 +107,13 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
           <div className={`flex justify-between text-xs mt-2 ${isRamadan ? 'text-yellow-200/50' : 'text-[hsl(180_20%_65%)]'}`}>
             <span>🎯 {matches.length} / {targetMatches} matches</span>
             <span>👥 {teams.length} / 2 teams</span>
-            <span>🏆 {matches.length > 0 ? 'In Progress' : 'Pending'}</span>
+            <span>
+              {matches.length === 0 
+                ? '⏳ Beginning Soon' 
+                : matches.length >= targetMatches 
+                ? '🏆 Finished' 
+                : '⚽ In Progress'}
+            </span>
           </div>
         </div>
 
