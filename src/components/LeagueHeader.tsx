@@ -6,7 +6,7 @@ interface LeagueHeaderProps {
 }
 
 export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
-  const { teams, matches , targetMatches} = useLeagueStore();
+  const { teams, matches , targetMatches, leagueName} = useLeagueStore();
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
 
@@ -49,7 +49,8 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
               ? 'text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600'
               : 'text-gradient-gold'
           }`}>
-            {isRamadan ? 'RAMADAN LEAGUE 2026' : 'COSMUS LEAGUE'}
+            
+            {leagueName.toUpperCase()}
           </h1>
           <Trophy className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? 'text-yellow-400' : 'text-gold'}`} />
         </div>
