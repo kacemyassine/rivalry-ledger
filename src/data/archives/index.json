@@ -9,6 +9,16 @@
       "matches": 50,
       "description": "The inaugural season of the Cosmus League. An epic battle between Ocean Dragon and Harbor United across 50 intense matches.",
       "image": "/images/cosmusleague.png"
+    },
+    {
+      "id": "ramadanleague2026",
+      "name": "Ramadan League 2026",
+      "startDate": "Mar 3, 2026",
+      "endDate": "Mar 8, 2026",
+      "winner": "Harbor United",
+      "matches": 11,
+      "description": "Season of Ramadan League 2026. A battle between Ocean Dragon and Harbor United across 11 matches.",
+      "image": "/images/test.png"
     }
   ]
 }
