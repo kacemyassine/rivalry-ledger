@@ -1,9 +1,31 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import archiveIndex from '@/data/archives/index.json';
+import { useGitHubData } from '@/hooks/useGitHubData';
+import { Loader2 } from 'lucide-react';
 
 const ArchivedLeagues = () => {
   const navigate = useNavigate();
-  const leagues = archiveIndex.leagues;
+  const { fetchArchiveIndex } = useGitHubData();
+  const [leagues, setLeagues] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const data = await fetchArchiveIndex();
+      if (data) setLeagues(data.leagues);
+      setLoading(false);
+    };
+    load();
+  }, [fetchArchiveIndex]);
+
+  if (loading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-[#08060f]">
+        <Loader2 className="w-12 h-12 text-yellow-400 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#08060f] relative overflow-hidden">
