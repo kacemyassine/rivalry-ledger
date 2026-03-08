@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
-import { UserPlus, Play, Save, Loader2, LogOut, Archive } from 'lucide-react';
+import { UserPlus, Play, Save, Loader2, LogOut, Archive, Upload } from 'lucide-react';
 import { AuthService } from '@/lib/authService';
 import {
   AlertDialog,
@@ -39,7 +39,8 @@ const AdminPage = () => {
   // New league form state
   const [newLeagueName, setNewLeagueName] = useState('');
   const [newTargetMatches, setNewTargetMatches] = useState(50);
-  const [newImageName, setNewImageName] = useState('');
+  const [archiveImageFile, setArchiveImageFile] = useState<File | null>(null);
+  const [archiveImagePreview, setArchiveImagePreview] = useState<string | null>(null);
   const [keepPlayers, setKeepPlayers] = useState(true);
 
   const {
@@ -49,7 +50,7 @@ const AdminPage = () => {
     setTargetMatches, setLeagueName, setLeagueId,
   } = useLeagueStore();
 
-  const { fetchData, updateData, archiveLeague } = useGitHubData();
+  const { fetchData, updateData, archiveLeague, uploadImage } = useGitHubData();
 
   useEffect(() => {
     const loadData = async () => {
@@ -86,6 +87,20 @@ const AdminPage = () => {
     const newId = newLeagueName.toLowerCase().replace(/\s+/g, '');
 
     setArchiving(true);
+
+    // Upload archive image first if selected
+    let imageName = 'default.png';
+    if (archiveImageFile) {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(archiveImageFile);
+      });
+      const filename = `${newId}.${archiveImageFile.name.split('.').pop()}`;
+      const path = await uploadImage(base64, filename);
+      if (path) imageName = filename;
+    }
+
     const success = await archiveLeague({
       currentData: {
         leagueConfig: { name: leagueName, id: leagueId },
@@ -97,12 +112,11 @@ const AdminPage = () => {
       newLeagueConfig: { name: newLeagueName, id: newId },
       newTargetMatches,
       keepPlayers,
-      imageName: newImageName || 'default.png',
+      imageName,
       winner: '',
     });
 
     if (success) {
-      // Reload fresh data
       const data = await fetchData();
       if (data) {
         setTeams(data.teams);
@@ -114,11 +128,12 @@ const AdminPage = () => {
       }
       setNewLeagueName('');
       setNewTargetMatches(50);
-      setNewImageName('');
+      setArchiveImageFile(null);
+      setArchiveImagePreview(null);
       setKeepPlayers(true);
     }
     setArchiving(false);
-  }, [archiveLeague, leagueName, leagueId, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, newImageName, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
+  }, [archiveLeague, uploadImage, leagueName, leagueId, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, archiveImageFile, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -198,9 +213,7 @@ const AdminPage = () => {
               {/* Start New League */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button
-                    className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all"
-                  >
+                  <Button className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all">
                     <Archive className="w-4 h-4" /> Start New League
                   </Button>
                 </AlertDialogTrigger>
@@ -234,14 +247,35 @@ const AdminPage = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-yellow-200/80 text-sm">Archive Image Filename</Label>
-                      <Input
-                        value={newImageName}
-                        onChange={(e) => setNewImageName(e.target.value)}
-                        placeholder="e.g. ramadanleague2026.png"
-                        className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
-                      />
-                      <p className="text-yellow-200/30 text-xs">Upload the image to public/images/ first</p>
+                      <Label className="text-yellow-200/80 text-sm">Archive Image</Label>
+                      <div className="flex flex-col items-center gap-3">
+                        {archiveImagePreview && (
+                          <img
+                            src={archiveImagePreview}
+                            alt="Preview"
+                            className="w-24 h-24 object-cover rounded-xl border border-yellow-400/20"
+                          />
+                        )}
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setArchiveImageFile(file);
+                              const reader = new FileReader();
+                              reader.onloadend = () => setArchiveImagePreview(reader.result as string);
+                              reader.readAsDataURL(file);
+                            }}
+                          />
+                          <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200 border border-yellow-400/20 hover:border-yellow-400/40 bg-yellow-400/10 px-4 py-2 rounded-lg transition-all">
+                            <Upload className="w-4 h-4" />
+                            {archiveImageFile ? archiveImageFile.name : 'Select Image'}
+                          </span>
+                        </label>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-3 pt-1">
