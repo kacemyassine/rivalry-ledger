@@ -41,6 +41,22 @@ export function useGitHubData() {
     }
   }, []);
 
+  const fetchArchiveIndex = useCallback(async () => {
+    try {
+      const apiRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/archives/index.json?ref=${GITHUB_CONFIG.branch}`,
+        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
+      );
+      if (!apiRes.ok) throw new Error('Failed to fetch archive index');
+      const { content } = await apiRes.json();
+      return JSON.parse(base64ToUtf8(content));
+    } catch (e) {
+      console.error(e);
+      toast.error('Failed to fetch archive index');
+      return null;
+    }
+  }, []);
+
   const updateData = useCallback(
     async (data: LeagueData, autoRefresh?: () => void): Promise<boolean> => {
       try {
@@ -139,5 +155,5 @@ export function useGitHubData() {
     }
   }, []);
 
-  return { fetchData, updateData, archiveLeague, uploadImage, config: GITHUB_CONFIG };
+  return { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, config: GITHUB_CONFIG };
 }
