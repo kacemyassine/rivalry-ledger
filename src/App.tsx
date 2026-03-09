@@ -7,7 +7,7 @@ import VisitorPage from "./pages/VisitorPage";
 import AdminPage from "./pages/AdminPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import ArchivedLeagues from "./pages/ArchivedLeagues";
-import CosmusLeague from "./pages/archives/CosmusLeague.tsx";
+import ArchivedLeagueDetail from "./pages/archives/ArchivedLeagueDetail";
 import Cups from "./pages/Cups";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
@@ -26,7 +26,7 @@ const App = () => (
           <Route path="/" element={<VisitorPage />} />
           <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/archived-leagues" element={<ArchivedLeagues />} />
-          <Route path="/archived-leagues/cosmus-league" element={<CosmusLeague />} />
+          <Route path="/archived-leagues/:leagueId" element={<ArchivedLeagueDetail />} />
           <Route path="/cups" element={<Cups />} />
           <Route 
             path="/admin" 
