@@ -334,7 +334,9 @@ const AdminPage = () => {
               <TeamLogoUploader />
               <MatchHistory theme="ramadan" />
             </div>
-            <TopScorers theme="ramadan" onEditPlayer={handleEditPlayer} />
+            <div className="space-y-6 min-w-0">
+              <TopScorers theme="ramadan" onEditPlayer={handleEditPlayer} />
+            </div>
           </div>
         </div>
 
