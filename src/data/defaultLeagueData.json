@@ -9,26 +9,26 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/Mito_HollyHock_(logo).svg.png",
-      "played": 19,
-      "won": 2,
-      "drawn": 2,
-      "lost": 15,
-      "goalsFor": 55,
-      "goalsAgainst": 113,
-      "points": 8
+      "played": 15,
+      "won": 1,
+      "drawn": 1,
+      "lost": 13,
+      "goalsFor": 45,
+      "goalsAgainst": 96,
+      "points": 4
     },
     {
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/e_005768.png",
-      "played": 19,
-      "won": 15,
-      "drawn": 2,
-      "lost": 2,
-      "goalsFor": 113,
-      "goalsAgainst": 55,
-      "points": 47
+      "played": 15,
+      "won": 13,
+      "drawn": 1,
+      "lost": 1,
+      "goalsFor": 96,
+      "goalsAgainst": 45,
+      "points": 40
     }
   ],
   "players": [
@@ -966,154 +966,5 @@
       ],
       "date": "2026-03-09T05:27:53.061Z"
     },
-    {
-      "id": "match-1773036090763",
-      "homeTeamId": "team1",
-      "awayTeamId": "team2",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 4,
-      "awayGoals": 3,
-      "scorers": [
-        {
-          "playerId": "player-9",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-24",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-13",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-27",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-09T06:01:30.763Z"
-    },
-    {
-      "id": "match-1773110773058",
-      "homeTeamId": "team1",
-      "awayTeamId": "team2",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 3,
-      "awayGoals": 3,
-      "scorers": [
-        {
-          "playerId": "player-26",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-24",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-8",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-19",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-10T02:46:13.058Z"
-    },
-    {
-      "id": "match-1773112627741",
-      "homeTeamId": "team1",
-      "awayTeamId": "team2",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 3,
-      "awayGoals": 7,
-      "scorers": [
-        {
-          "playerId": "player-19",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-24",
-          "goals": 3,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-26",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-27",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-7",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-43",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-10T03:17:07.741Z"
-    },
-    {
-      "id": "match-1773124287892",
-      "homeTeamId": "team1",
-      "awayTeamId": "team2",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 0,
-      "awayGoals": 4,
-      "scorers": [
-        {
-          "playerId": "player-26",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-24",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-22",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-10T06:31:27.892Z"
-    }
-  ],
   "targetMatches": 30
 }
