@@ -93,7 +93,7 @@ const ArchivedLeagueDetail = () => {
 
   return (
     <AdminProvider isAdmin={false}>
-      <div className="min-h-screen relative overflow-x-hidden" style={{ background: leagueTheme === 'ramadan' ? '#0a0e2a' : '#000' }}>
+      <div className="min-h-screen relative overflow-x-hidden" style={{ background: leagueTheme === 'ramadan' ? '#0a0e2a' : '#0a1628' }}>
         <div className="relative w-full h-screen">
           <video
             autoPlay loop muted
