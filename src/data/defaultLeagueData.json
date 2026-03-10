@@ -78,28 +78,28 @@
       "id": "player-7",
       "name": "David Beckham",
       "teamId": "team1",
-      "goals": 5,
+      "goals": 4,
       "image": "/images/3139-1746174990.webp"
     },
     {
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team1",
-      "goals": 3,
+      "goals": 2,
       "image": "/images/turin-italy-december-11-2024-600nw-2568080867.webp"
     },
     {
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team1",
-      "goals": 16,
+      "goals": 14,
       "image": "/images/01j9170tsr9fz9f9hdv7.webp"
     },
     {
       "id": "player-10",
       "name": "Kylian Mbappé",
       "teamId": "team1",
-      "goals": 8,
+      "goals": 5,
       "image": "/images/edcd0e17b08209d7de3d4721470e6db3.jpg"
     },
     {
@@ -120,7 +120,7 @@
       "id": "player-13",
       "name": "Hristo Stoichkov",
       "teamId": "team1",
-      "goals": 2,
+      "goals": 1,
       "image": "/images/6112.jpg"
     },
     {
@@ -162,7 +162,7 @@
       "id": "player-19",
       "name": "johan cruyff",
       "teamId": "team1",
-      "goals": 9,
+      "goals": 7,
       "image": "/images/1772922988965-Johan_Cruijff.jpg"
     },
     {
@@ -183,7 +183,7 @@
       "id": "player-22",
       "name": "Marcus Rashford",
       "teamId": "team2",
-      "goals": 17,
+      "goals": 16,
       "image": "/images/1772922929664-MarcusRashford.webp"
     },
     {
@@ -197,7 +197,7 @@
       "id": "player-24",
       "name": "Lionel Messi",
       "teamId": "team2",
-      "goals": 34,
+      "goals": 26,
       "image": "/images/MESSI.jpg"
     },
     {
@@ -211,14 +211,14 @@
       "id": "player-26",
       "name": "Wesley Sneijder",
       "teamId": "team2",
-      "goals": 10,
+      "goals": 5,
       "image": "/images/170221.jpg"
     },
     {
       "id": "player-27",
       "name": "Ruud Gullit",
       "teamId": "team2",
-      "goals": 20,
+      "goals": 18,
       "image": "/images/Gullit.jpg"
     },
     {
@@ -316,7 +316,7 @@
       "id": "player-43",
       "name": "Eden Hazard",
       "teamId": "team2",
-      "goals": 4,
+      "goals": 3,
       "image": "/images/1772922725116-50202-1665067742.webp"
     },
     {
