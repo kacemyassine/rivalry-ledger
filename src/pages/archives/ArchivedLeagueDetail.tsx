@@ -23,6 +23,8 @@ const ArchivedLeagueDetail = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [leagueTheme, setLeagueTheme] = useState<'default' | 'ramadan'>('default');
+  const [leagueVideo, setLeagueVideo] = useState('/videos/ramadanleaguevideo.mp4');
   const { setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId } = useLeagueStore();
 
   useEffect(() => {
@@ -49,6 +51,8 @@ const ArchivedLeagueDetail = () => {
         setTargetMatches(data.targetMatches ?? 50);
         setLeagueName(data.leagueConfig?.name ?? leagueId ?? 'Archived League');
         setLeagueId(data.leagueConfig?.id ?? leagueId ?? '');
+        setLeagueTheme(data.leagueConfig?.theme ?? 'default');
+        setLeagueVideo(data.leagueConfig?.video ?? '/videos/ramadanleaguevideo.mp4');
       } catch (e) {
         console.error(e);
         setNotFound(true);
@@ -89,26 +93,26 @@ const ArchivedLeagueDetail = () => {
 
   return (
     <AdminProvider isAdmin={false}>
-      <div className="min-h-screen relative overflow-x-hidden bg-[#0a0e2a]">
+      <div className="min-h-screen relative overflow-x-hidden" style={{ background: leagueTheme === 'ramadan' ? '#0a0e2a' : '#000' }}>
         <div className="relative w-full h-screen">
           <video
             autoPlay loop muted
             className="absolute top-0 left-0 w-full h-full object-cover"
-            src="/videos/ramadanleaguevideo.mp4"
+            src={leagueVideo}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]" />
+          <div className={`absolute inset-0 ${leagueTheme === 'ramadan' ? 'bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]' : 'bg-black/40'}`} />
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <LeagueHeader theme="ramadan" />
+            <LeagueHeader theme={leagueTheme} />
           </div>
         </div>
         <div className="relative z-10 container mx-auto px-3 md:px-4 py-12 max-w-full overflow-x-hidden">
           <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
             <div className="space-y-4 md:space-y-6 min-w-0">
-              <StandingsTable theme="ramadan" />
-              <MatchHistory theme="ramadan" />
+              <StandingsTable theme={leagueTheme} />
+              <MatchHistory theme={leagueTheme} />
             </div>
             <div className="min-w-0">
-              <TopScorers theme="ramadan" hideButtons={true} />
+              <TopScorers theme={leagueTheme} hideButtons={true} />
             </div>
           </div>
         </div>

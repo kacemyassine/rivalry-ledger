@@ -1,7 +1,9 @@
 {
   "leagueConfig": {
     "name": "Ramadan League 2026",
-    "id": "ramadanleague2026"
+    "id": "ramadanleague2026",
+    "theme": "ramadan",
+    "video": "/videos/ramadanleaguevideo.mp4"
   },
   "teams": [
     {
