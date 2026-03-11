@@ -7,7 +7,6 @@ import { TopScorers } from '@/components/TopScorers';
 import { MatchHistory } from '@/components/MatchHistory';
 import { PlayerForm } from '@/components/PlayerForm';
 import { MatchForm } from '@/components/MatchForm';
-import { TeamLogoUploader } from '@/components/TeamLogoUploader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -331,7 +330,6 @@ const AdminPage = () => {
           <div className="grid lg:grid-cols-2 gap-6 mt-6">
             <div className="space-y-6 min-w-0">
               <StandingsTable theme="ramadan" />
-              <TeamLogoUploader />
               <MatchHistory theme="ramadan" />
             </div>
             <div className="space-y-6 min-w-0">
