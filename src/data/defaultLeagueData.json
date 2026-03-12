@@ -21,7 +21,7 @@
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
-      "logo": "/images/harbor-united-logo.jpeg",
+      "logo": "/images/harbor-united-logo.png",
       "played": 15,
       "won": 13,
       "drawn": 1,
@@ -205,7 +205,7 @@
       "name": "David Beckham",
       "teamId": "team2",
       "goals": 4,
-      "image": "/images/david-beckham.webp"
+      "image": "/images/david-beckham.avif"
     },
     {
       "id": "player-26",
