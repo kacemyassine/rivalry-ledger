@@ -79,7 +79,7 @@
       "name": "David Beckham",
       "teamId": "team1",
       "goals": 4,
-      "image": "/images/david-beckham.webp"
+      "image": "/images/david-beckham.avif"
     },
     {
       "id": "player-8",
@@ -331,7 +331,7 @@
       "name": "Joshua Kimmich",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/joshua-kimmich.avif"
+      "image": "/images/joshua-kimmich.jpg"
     },
     {
       "id": "player-46",
