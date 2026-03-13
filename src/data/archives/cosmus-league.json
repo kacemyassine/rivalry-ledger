@@ -83,7 +83,7 @@
       "name": "David Beckham",
       "teamId": "team1",
       "goals": 11,
-      "image": "/images/david-beckham.webp"
+      "image": "/images/david-beckham.avif"
     },
     {
       "id": "player-8",
@@ -209,7 +209,7 @@
       "name": "David Beckham",
       "teamId": "team2",
       "goals": 3,
-      "image": "/images/david-beckham.webp"
+      "image": "/images/david-beckham.avif"
     },
     {
       "id": "player-26",
