@@ -6,11 +6,11 @@ import { useGitHubData } from '@/hooks/useGitHubData';
 
 interface LeagueHeaderProps {
   theme?: 'default' | 'ramadan';
+  allowLogoUpload?: boolean;
 }
 
-export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
+export function LeagueHeader({ theme = 'default', allowLogoUpload = false }: LeagueHeaderProps) {
   const { teams, matches, targetMatches, leagueName, updateTeamLogo } = useLeagueStore();
-  const { isAdmin } = useAdmin();
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const { uploadImage } = useGitHubData();
 
@@ -23,7 +23,7 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
   const isRamadan = theme === 'ramadan';
 
   const handleLogoClick = (teamId: string) => {
-    if (!isAdmin) return;
+    if (!allowLogoUpload) return;
     fileInputRefs.current[teamId]?.click();
   };
 
@@ -96,7 +96,7 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
           {/* Team 1 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${isAdmin ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/50' : 'border-primary/50'}`}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/50' : 'border-primary/50'}`}
               onClick={() => handleLogoClick('team1')}
             >
               {team1?.logo ? (
@@ -104,13 +104,13 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
               ) : (
                 <Shield className={`w-8 h-8 ${isRamadan ? 'text-yellow-400/50' : 'text-primary/50'}`} />
               )}
-              {isAdmin && (
+              {allowLogoUpload && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Camera className="w-5 h-5 text-white" />
                 </div>
               )}
             </div>
-            {isAdmin && (
+            {allowLogoUpload && (
               <input
                 type="file"
                 accept="image/*"
@@ -128,7 +128,7 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
           {/* Team 2 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${isAdmin ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/30' : 'border-secondary/50'}`}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/30' : 'border-secondary/50'}`}
               onClick={() => handleLogoClick('team2')}
             >
               {team2?.logo ? (
@@ -136,13 +136,13 @@ export function LeagueHeader({ theme = 'default' }: LeagueHeaderProps) {
               ) : (
                 <Shield className={`w-8 h-8 ${isRamadan ? 'text-yellow-400/30' : 'text-secondary/50'}`} />
               )}
-              {isAdmin && (
+              {allowLogoUpload && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Camera className="w-5 h-5 text-white" />
                 </div>
               )}
             </div>
-            {isAdmin && (
+            {allowLogoUpload && (
               <input
                 type="file"
                 accept="image/*"

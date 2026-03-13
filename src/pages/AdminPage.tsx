@@ -178,7 +178,7 @@ const AdminPage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]" />
 
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <LeagueHeader theme="ramadan" />
+            <LeagueHeader theme="ramadan" allowLogoUpload={true} />
 
             {/* Admin action buttons */}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
