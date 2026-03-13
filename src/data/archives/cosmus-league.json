@@ -34,7 +34,7 @@
       "points": 78
     }
   ],
-  {
+  
   "players": [
     { "id": "player-1", "name": "Peter Schmeichel", "teamId": "team1", "goals": 0, "image": "/images/peter-schmeichel.jpg" },
     { "id": "player-2", "name": "Alessandro Costacurta", "teamId": "team1", "goals": 1, "image": "/images/alessandro-costacurta.jpg" },
@@ -42,10 +42,10 @@
     { "id": "player-4", "name": "Tony Adams", "teamId": "team1", "goals": 0, "image": "/images/tony-adams.webp" },
     { "id": "player-5", "name": "Juliano Belletti", "teamId": "team1", "goals": 2, "image": "/images/juliano-belletti.webp" },
     { "id": "player-6", "name": "Patrick Vieira", "teamId": "team1", "goals": 1, "image": "/images/patrick-vieira.jpg" },
-    { "id": "player-7", "name": "David Beckham", "teamId": "team1", "goals": 11, "image": "/images/david-beckham.webp" },
+    { "id": "player-7", "name": "David Beckham", "teamId": "team1", "goals": 11, "image": "/images/david-beckham.avif" },
     { "id": "player-8", "name": "Kevin De Bruyne", "teamId": "team1", "goals": 6, "image": "/images/kevin-de-bruyne.webp" },
     { "id": "player-9", "name": "Antoine Griezmann", "teamId": "team1", "goals": 36, "image": "/images/antoine-griezmann.webp" },
-    { "id": "player-10", "name": "Kylian Mbappé", "teamId": "team1", "goals": 52, "image": "/images/kylian-mbappé.jpg" },
+    { "id": "player-10", "name": "Kylian Mbappé", "teamId": "team1", "goals": 52, "image": "/images/kylian-mbappe.jpg" },
     { "id": "player-11", "name": "Lionel Messi", "teamId": "team1", "goals": 14, "image": "/images/lionel-messi.jpg" },
     { "id": "player-12", "name": "Erling Haaland", "teamId": "team1", "goals": 21, "image": "/images/erling-haaland.webp" },
     { "id": "player-13", "name": "Hristo Stoichkov", "teamId": "team1", "goals": 6, "image": "/images/hristo-stoichkov.jpg" },
@@ -57,10 +57,10 @@
     { "id": "player-19", "name": "Achraf Hakimi", "teamId": "team1", "goals": 0, "image": "/images/achraf-hakimi.webp" },
     { "id": "player-20", "name": "Ben White", "teamId": "team1", "goals": 0, "image": "/images/ben-white.avif" },
     { "id": "player-21", "name": "Roberto Carlos", "teamId": "team1", "goals": 0, "image": "/images/roberto-carlos.jpg" },
-    { "id": "player-22", "name": "Emiliano Martínez", "teamId": "team1", "goals": 0, "image": "/images/emiliano-martínez.webp" },
+    { "id": "player-22", "name": "Emiliano Martínez", "teamId": "team1", "goals": 0, "image": "/images/emiliano-martinez.webp" },
     { "id": "player-23", "name": "Steven Gerrard", "teamId": "team1", "goals": 0, "image": "/images/steven-gerrard.jpg" }
   ]
-},
+,
   "matches": [
     {
       "id": "match-1764846325803",
