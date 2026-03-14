@@ -155,7 +155,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border max-w-md mx-4">
+      <DialogContent className="bg-card border-border max-w-md w-[calc(100%-2rem)] mx-auto">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">
             {editingMatch ? 'Edit Match' : `Record Match ${matchNumber}/50`}
