@@ -101,7 +101,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border max-w-md mx-4">
+      <DialogContent className="bg-card border-border max-w-md w-[calc(100%-2rem)] mx-auto">
         <DialogHeader>
           <DialogTitle>{editingPlayerId ? 'Edit Player' : 'Add New Player'}</DialogTitle>
         </DialogHeader>
@@ -177,10 +177,12 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
           </Button>
 
           {/* Info message */}
-          <p className="flex items-start gap-2 text-xs text-muted-foreground border border-border rounded-lg p-3">
-            <Info className="w-3 h-3 shrink-0 mt-0.5" />
-            Player goals are updated automatically when you record a match. To correct a wrong goal, edit the match result or delete the match from the match history.
-          </p>
+          {editingPlayerId && (
+            <p className="flex items-start gap-2 text-xs text-muted-foreground border border-border rounded-lg p-3">
+              <Info className="w-3 h-3 shrink-0 mt-0.5" />
+              Player goals are updated automatically when you record a match. To correct a wrong goal, edit the match result or delete the match from the match history.
+            </p>
+          )}
         </form>
       </DialogContent>
     </Dialog>
