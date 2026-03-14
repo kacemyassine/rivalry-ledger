@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLeagueStore } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
-import { Shield, ChevronDown, X, Edit2, Trash2 } from 'lucide-react';
+import { Shield, ChevronDown, X, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface MatchHistoryProps {
@@ -117,7 +117,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                         <span className={cn('text-lg md:text-xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{match.awayGoals}</span>
                       </div>
 
-                      {/* Away team */}
+                     {/* Away team */}
                       <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span className={cn(
                           'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
@@ -137,6 +137,19 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                         </div>
                       </div>
                     </div>
+
+                    {/* Three dots menu — admin only */}
+                    {(onEditMatch || onDeleteMatch) && (
+                      <button
+                        className="shrink-0 p-1 rounded hover:bg-muted/30 transition-colors text-muted-foreground hover:text-foreground"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setContextMenu({ x: e.clientX, y: e.clientY, match });
+                        }}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 );
               })}
