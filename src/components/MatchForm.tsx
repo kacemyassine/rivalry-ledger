@@ -164,7 +164,8 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
 
-          {/* Date field */}
+          {/* Date field - edit mode only */}
+          {editingMatch && (
           <div className="space-y-2">
             <Label htmlFor="date">Match Date</Label>
             <Input
@@ -175,6 +176,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
               className="bg-input border-border"
             />
           </div>
+          )}
 
           {/* Score */}
           <div className="flex items-center justify-center gap-2 md:gap-4">
