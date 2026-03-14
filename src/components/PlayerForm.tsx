@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, Upload, X, Loader2 } from 'lucide-react';
+import { User, Upload, X, Loader2, Info } from 'lucide-react';
 
 interface PlayerFormProps {
   open: boolean;
@@ -32,23 +32,21 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
   const [name, setName] = useState('');
   const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || 'team1');
   const [image, setImage] = useState<string | null>(null);
-  const [goals, setGoals] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const editingPlayer = editingPlayerId ? players?.find((p: any) => p.id === editingPlayerId) : null;
+  const hasGoals = (editingPlayer?.goals || 0) > 0;
 
   useEffect(() => {
     if (editingPlayer) {
       setName(editingPlayer.name);
       setTeamId(editingPlayer.teamId);
       setImage(editingPlayer.image || null);
-      setGoals(editingPlayer.goals || 0);
     } else {
       setName('');
       setTeamId(teams?.[0]?.id || 'team1');
       setImage(null);
-      setGoals(0);
     }
     setPendingFile(null);
   }, [editingPlayer, open, teams]);
@@ -57,7 +55,6 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
     const file = e.target.files?.[0];
     if (!file) return;
     setPendingFile(file);
-    // Show preview using base64
     const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result as string);
     reader.readAsDataURL(file);
@@ -69,7 +66,6 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
     let finalImage = image;
 
-    // If there's a pending file upload it to GitHub first
     if (pendingFile) {
       setUploading(true);
       const reader = new FileReader();
@@ -78,17 +74,17 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
         reader.readAsDataURL(pendingFile);
       });
 
-      const filename = `${Date.now()}-${pendingFile.name.replace(/\s+/g, '-')}`;
+      const filename = `${name.trim().replace(/\s+/g, '-').toLowerCase()}.${pendingFile.name.split('.').pop()}`;
       const path = await uploadImage(base64, filename);
       setUploading(false);
 
-      if (!path) return; // upload failed
+      if (!path) return;
       finalImage = path;
     }
 
     const resultState = editingPlayerId && editingPlayer
-      ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals })
-      : addPlayer({ name, teamId, image: finalImage, goals });
+      ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals: editingPlayer.goals })
+      : addPlayer({ name, teamId, image: finalImage, goals: 0 });
 
     const fullState = resultState ?? {
       players: useLeagueStore.getState().players,
@@ -111,6 +107,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+          {/* Image */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-border bg-muted group">
               {image ? (
@@ -138,31 +135,52 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             </label>
           </div>
 
+          {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name">Player Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter player name" className="bg-input border-border" />
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter player name"
+              className="bg-input border-border"
+            />
           </div>
 
+          {/* Team */}
           <div className="space-y-2">
             <Label>Team</Label>
-            <Select value={teamId} onValueChange={setTeamId}>
-              <SelectTrigger className="bg-input border-border"><SelectValue /></SelectTrigger>
+            <Select value={teamId} onValueChange={setTeamId} disabled={hasGoals}>
+              <SelectTrigger className={`bg-input border-border ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent className="bg-popover border-border">
-                {teams?.map((team: any) => <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>)}
+                {teams?.map((team: any) => (
+                  <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {hasGoals && (
+              <p className="flex items-center gap-2 text-xs text-yellow-500/80">
+                <Info className="w-3 h-3 shrink-0" />
+                Team cannot be changed because this player has already scored goals.
+              </p>
+            )}
           </div>
 
-          {editingPlayerId && (
-            <div className="space-y-2">
-              <Label htmlFor="goals">Goals</Label>
-              <Input id="goals" type="number" min={0} value={goals} onChange={(e) => setGoals(parseInt(e.target.value || '0') || 0)} className="bg-input border-border" />
-            </div>
-          )}
-
+          {/* Submit */}
           <Button type="submit" className="w-full" disabled={uploading}>
-            {uploading ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</> : editingPlayerId ? 'Update Player' : 'Add Player'}
+            {uploading
+              ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</>
+              : editingPlayerId ? 'Update Player' : 'Add Player'
+            }
           </Button>
+
+          {/* Info message */}
+          <p className="flex items-start gap-2 text-xs text-muted-foreground border border-border rounded-lg p-3">
+            <Info className="w-3 h-3 shrink-0 mt-0.5" />
+            Player goals are updated automatically when you record a match. To correct a wrong goal, edit the match result or delete the match from the match history.
+          </p>
         </form>
       </DialogContent>
     </Dialog>
