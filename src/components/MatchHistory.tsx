@@ -335,7 +335,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         >
           <div
             className="absolute bg-card border border-border rounded-lg shadow-xl overflow-hidden"
-            style={{ top: contextMenu.y, left: contextMenu.x }}
+            style={{ top: contextMenu.y, left: Math.min(contextMenu.x, window.innerWidth - 160) }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
