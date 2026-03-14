@@ -1,17 +1,32 @@
 import { useState } from 'react';
 import { useLeagueStore } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
-import { Shield, ChevronDown, X } from 'lucide-react';
+import { Shield, ChevronDown, X, Edit2, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface MatchHistoryProps {
   theme?: 'default' | 'ramadan';
+  onEditMatch?: (match: any) => void;
+  onDeleteMatch?: (matchId: string) => void;
 }
 
-export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
+export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: MatchHistoryProps) {
   const { matches, teams, players } = useLeagueStore();
   const [showAll, setShowAll] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; match: any } | null>(null);
+  const [matchToDelete, setMatchToDelete] = useState<any>(null);
   const isRamadan = theme === 'ramadan';
+
+  const handleContextMenu = (e: React.MouseEvent, match: any) => {
+    if (!onEditMatch && !onDeleteMatch) return;
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, match });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
 
   const allMatches = [...matches].reverse();
   const displayedMatches = showAll ? allMatches : allMatches.slice(0, 10);
@@ -65,6 +80,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                   <div
                     key={match.id}
                     onClick={() => setSelectedMatch(match)}
+                    onContextMenu={(e) => handleContextMenu(e, match)}
                     className={cn(
                       'flex items-center gap-2 md:gap-4 p-2 md:p-3 rounded-lg transition-colors mb-2 cursor-pointer',
                       isRamadan ? 'bg-yellow-400/5 hover:bg-yellow-400/10' : 'bg-muted/20 hover:bg-muted/30'
@@ -182,14 +198,12 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
               const awayWin = selectedMatch.awayGoals > selectedMatch.homeGoals;
               const isDraw = selectedMatch.homeGoals === selectedMatch.awayGoals;
 
-              // Regular scorers for home team + own goals by away players
               const homeScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
                 if (s.isOwnGoal) return player?.teamId === selectedMatch.awayTeamId;
                 return player?.teamId === selectedMatch.homeTeamId;
               }) || [];
 
-              // Regular scorers for away team + own goals by home players
               const awayScorers = selectedMatch.scorers?.filter((s: any) => {
                 const player = players.find((p: any) => p.id === s.playerId);
                 if (s.isOwnGoal) return player?.teamId === selectedMatch.homeTeamId;
@@ -216,9 +230,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                           <Shield className={cn('w-6 h-6', isRamadan ? teamColor(selectedMatch.homeTeamId) : 'text-primary/50')} />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
-                        homeWin ? 'text-green-400' : 'text-white'
-                      )}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', homeWin ? 'text-green-400' : 'text-white')}>
                         {homeTeam?.name}
                       </span>
                     </div>
@@ -237,9 +249,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                           <Shield className={cn('w-6 h-6', isRamadan ? teamColor(selectedMatch.awayTeamId) : 'text-secondary/50')} />
                         )}
                       </div>
-                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1',
-                        awayWin ? 'text-green-400' : 'text-white'
-                      )}>
+                      <span className={cn('font-medium text-sm text-center whitespace-nowrap mt-1', awayWin ? 'text-green-400' : 'text-white')}>
                         {awayTeam?.name}
                       </span>
                     </div>
@@ -269,9 +279,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                             <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-cyan-200' : 'text-foreground'}>
                               {player?.name || 'Unknown'}
                             </span>
-                            {scorer.isOwnGoal && (
-                              <span className="ml-1 text-red-400 font-bold">OG</span>
-                            )}
+                            {scorer.isOwnGoal && <span className="ml-1 text-red-400 font-bold">OG</span>}
                             <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-cyan-400' : 'text-gold')}>
                               ×{scorer.goals}
                             </span>
@@ -290,9 +298,7 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                             <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-yellow-100' : 'text-foreground'}>
                               {player?.name || 'Unknown'}
                             </span>
-                            {scorer.isOwnGoal && (
-                              <span className="ml-1 text-red-400 font-bold">OG</span>
-                            )}
+                            {scorer.isOwnGoal && <span className="ml-1 text-red-400 font-bold">OG</span>}
                             <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-yellow-400' : 'text-gold')}>
                               ×{scorer.goals}
                             </span>
@@ -304,6 +310,83 @@ export function MatchHistory({ theme = 'default' }: MatchHistoryProps) {
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed inset-0 z-50"
+          onClick={handleCloseContextMenu}
+        >
+          <div
+            className="absolute bg-card border border-border rounded-lg shadow-xl overflow-hidden"
+            style={{ top: contextMenu.y, left: contextMenu.x }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-muted/30 transition-colors"
+              onClick={() => {
+                onEditMatch?.(contextMenu.match);
+                handleCloseContextMenu();
+              }}
+            >
+              <Edit2 className="w-4 h-4 text-blue-400" />
+              <span>Edit Match</span>
+            </button>
+            <button
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left hover:bg-red-500/10 transition-colors"
+              onClick={() => {
+                setMatchToDelete(contextMenu.match);
+                handleCloseContextMenu();
+              }}
+            >
+              <Trash2 className="w-4 h-4 text-red-400" />
+              <span className="text-red-400">Delete Match</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {matchToDelete && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setMatchToDelete(null)}
+        >
+          <div
+            className={cn(
+              'p-6 max-w-sm w-full rounded-2xl border',
+              isRamadan
+                ? 'bg-gradient-to-br from-[#0d1133] to-[#0a0e2a] border-yellow-400/20'
+                : 'atlantis-card'
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-2">Delete Match</h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              Are you sure you want to delete this match? All stats and goals will be reversed. This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setMatchToDelete(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex-1"
+                onClick={() => {
+                  onDeleteMatch?.(matchToDelete.id);
+                  setMatchToDelete(null);
+                }}
+              >
+                Delete
+              </Button>
+            </div>
           </div>
         </div>
       )}

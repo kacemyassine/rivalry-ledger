@@ -59,6 +59,8 @@ interface LeagueState {
   editPlayer: (id: string, data: Partial<Player>) => void;
   deletePlayer: (id: string) => void;
   updateTeamLogo: (teamId: string, logo: string) => void;
+  deleteMatch: (matchId: string) => void;
+  editMatch: (matchId: string, newHomeGoals: number, newAwayGoals: number, newScorers: { playerId: string; goals: number; isOwnGoal?: boolean }[], newDate: string) => void;
   resetLeague: () => void;
 }
 
@@ -228,6 +230,114 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
     set({ teams: updatedTeams });
   },
 
+  deleteMatch: (matchId) => {
+  const state = get();
+  const match = state.matches.find((m) => m.id === matchId);
+  if (!match) return;
+
+  const homeWin = match.homeGoals > match.awayGoals;
+  const draw = match.homeGoals === match.awayGoals;
+
+  // Reverse team stats
+  const updatedTeams = state.teams.map((t) => {
+    if (t.id === match.homeTeamId) {
+      return {
+        ...t,
+        played: t.played - 1,
+        won: t.won - (homeWin ? 1 : 0),
+        drawn: t.drawn - (draw ? 1 : 0),
+        lost: t.lost - (!homeWin && !draw ? 1 : 0),
+        goalsFor: t.goalsFor - match.homeGoals,
+        goalsAgainst: t.goalsAgainst - match.awayGoals,
+        points: t.points - (homeWin ? 3 : draw ? 1 : 0),
+      };
+    }
+    if (t.id === match.awayTeamId) {
+      return {
+        ...t,
+        played: t.played - 1,
+        won: t.won - (!homeWin && !draw ? 1 : 0),
+        drawn: t.drawn - (draw ? 1 : 0),
+        lost: t.lost - (homeWin ? 1 : 0),
+        goalsFor: t.goalsFor - match.awayGoals,
+        goalsAgainst: t.goalsAgainst - match.homeGoals,
+        points: t.points - (!homeWin && !draw ? 3 : draw ? 1 : 0),
+      };
+    }
+    return t;
+  });
+
+  // Reverse player goals
+  const updatedPlayers = state.players.map((p) => {
+    const scorer = match.scorers?.find((s) => s.playerId === p.id && !s.isOwnGoal);
+    return scorer ? { ...p, goals: p.goals - scorer.goals } : p;
+  });
+
+  const updatedMatches = state.matches.filter((m) => m.id !== matchId);
+
+  const newState = { teams: updatedTeams, players: updatedPlayers, matches: updatedMatches };
+  saveState(newState);
+  set(newState);
+},
+
+editMatch: (matchId, newHomeGoals, newAwayGoals, newScorers, newDate) => {
+  const state = get();
+  const oldMatch = state.matches.find((m) => m.id === matchId);
+  if (!oldMatch) return;
+
+  const oldHomeWin = oldMatch.homeGoals > oldMatch.awayGoals;
+  const oldDraw = oldMatch.homeGoals === oldMatch.awayGoals;
+  const newHomeWin = newHomeGoals > newAwayGoals;
+  const newDraw = newHomeGoals === newAwayGoals;
+
+  // Reverse old stats + apply new stats for teams
+  const updatedTeams = state.teams.map((t) => {
+    if (t.id === oldMatch.homeTeamId) {
+      return {
+        ...t,
+        won: t.won - (oldHomeWin ? 1 : 0) + (newHomeWin ? 1 : 0),
+        drawn: t.drawn - (oldDraw ? 1 : 0) + (newDraw ? 1 : 0),
+        lost: t.lost - (!oldHomeWin && !oldDraw ? 1 : 0) + (!newHomeWin && !newDraw ? 1 : 0),
+        goalsFor: t.goalsFor - oldMatch.homeGoals + newHomeGoals,
+        goalsAgainst: t.goalsAgainst - oldMatch.awayGoals + newAwayGoals,
+        points: t.points - (oldHomeWin ? 3 : oldDraw ? 1 : 0) + (newHomeWin ? 3 : newDraw ? 1 : 0),
+      };
+    }
+    if (t.id === oldMatch.awayTeamId) {
+      return {
+        ...t,
+        won: t.won - (!oldHomeWin && !oldDraw ? 1 : 0) + (!newHomeWin && !newDraw ? 1 : 0),
+        drawn: t.drawn - (oldDraw ? 1 : 0) + (newDraw ? 1 : 0),
+        lost: t.lost - (oldHomeWin ? 1 : 0) + (newHomeWin ? 1 : 0),
+        goalsFor: t.goalsFor - oldMatch.awayGoals + newAwayGoals,
+        goalsAgainst: t.goalsAgainst - oldMatch.homeGoals + newHomeGoals,
+        points: t.points - (!oldHomeWin && !oldDraw ? 3 : oldDraw ? 1 : 0) + (!newHomeWin && !newDraw ? 3 : newDraw ? 1 : 0),
+      };
+    }
+    return t;
+  });
+
+  // Reverse old player goals + apply new player goals
+  const updatedPlayers = state.players.map((p) => {
+    const oldScorer = oldMatch.scorers?.find((s) => s.playerId === p.id && !s.isOwnGoal);
+    const newScorer = newScorers.find((s) => s.playerId === p.id && !s.isOwnGoal);
+    const oldGoals = oldScorer ? oldScorer.goals : 0;
+    const newGoals = newScorer ? newScorer.goals : 0;
+    return { ...p, goals: p.goals - oldGoals + newGoals };
+  });
+
+  // Update match in place — same ID, same position
+  const updatedMatches = state.matches.map((m) =>
+    m.id === matchId
+      ? { ...m, homeGoals: newHomeGoals, awayGoals: newAwayGoals, scorers: newScorers, date: newDate }
+      : m
+  );
+
+  const newState = { teams: updatedTeams, players: updatedPlayers, matches: updatedMatches };
+  saveState(newState);
+  set(newState);
+},
+  
   resetLeague: () => {
     localStorage.removeItem(STORAGE_KEY);
     set({

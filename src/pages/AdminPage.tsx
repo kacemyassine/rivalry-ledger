@@ -34,6 +34,16 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [archiving, setArchiving] = useState(false);
+  const [editingMatch, setEditingMatch] = useState<any>(null);
+
+  const handleEditMatch = (match: any) => {
+    setEditingMatch(match);
+    setMatchFormOpen(true);
+  };
+
+  const handleDeleteMatch = (matchId: string) => {
+    useLeagueStore.getState().deleteMatch(matchId);
+  };
 
   // New league form state
   const [newLeagueName, setNewLeagueName] = useState('');
@@ -330,7 +340,11 @@ const AdminPage = () => {
           <div className="grid lg:grid-cols-2 gap-6 mt-6">
             <div className="space-y-6 min-w-0">
               <StandingsTable theme="ramadan" />
-              <MatchHistory theme="ramadan" />
+              <MatchHistory 
+                theme="ramadan" 
+                onEditMatch={handleEditMatch} 
+                onDeleteMatch={handleDeleteMatch} 
+              />
             </div>
             <div className="space-y-6 min-w-0">
               <TopScorers theme="ramadan" onEditPlayer={handleEditPlayer} />
@@ -339,7 +353,14 @@ const AdminPage = () => {
         </div>
 
         <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} />
-        <MatchForm open={matchFormOpen} onOpenChange={setMatchFormOpen} />
+        <MatchForm 
+          open={matchFormOpen}
+          onOpenChange={(open) => {
+            setMatchFormOpen(open);
+            if (!open) setEditingMatch(null);
+          }}
+          editingMatch={editingMatch}
+        />
       </div>
     </AdminProvider>
   );

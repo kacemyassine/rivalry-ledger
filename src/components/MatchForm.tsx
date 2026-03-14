@@ -23,6 +23,7 @@ interface MatchFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave?: (updatedData: any) => void;
+  editingMatch?: any;
 }
 
 interface ScorerEntry {
@@ -31,7 +32,7 @@ interface ScorerEntry {
   isOwnGoal: boolean;
 }
 
-export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
+export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFormProps) {
   const {
     teams,
     players,
@@ -47,6 +48,7 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
   const [awayGoals, setAwayGoals] = useState(0);
   const [scorers, setScorers] = useState<ScorerEntry[]>([]);
   const [initialized, setInitialized] = useState(false);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     if (!initialized && teams?.length >= 2) {
@@ -55,6 +57,23 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
       setInitialized(true);
     }
   }, [teams, initialized, setSelectedHomeTeam, setSelectedAwayTeam]);
+
+  useEffect(() => {
+    if (editingMatch) {
+      setHomeGoals(editingMatch.homeGoals);
+      setAwayGoals(editingMatch.awayGoals);
+      setScorers(editingMatch.scorers || []);
+      setDate(editingMatch.date
+        ? new Date(editingMatch.date).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0]
+      );
+    } else {
+      setHomeGoals(0);
+      setAwayGoals(0);
+      setScorers([]);
+      setDate(new Date().toISOString().split('T')[0]);
+    }
+  }, [editingMatch, open]);
 
   const matchNumber = (matches?.length || 0) + 1;
 
@@ -87,11 +106,9 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
     }
 
     if (scorers.length > 0) {
-      // Calculate effective goals per team accounting for own goals
       const effectiveHomeGoals = scorers.reduce((sum, s) => {
         const player = players.find((p: any) => p.id === s.playerId);
         const isHomePlayer = player?.teamId === selectedHomeTeam.id;
-        // own goal from away player counts for home, regular goal from home player counts for home
         if (s.isOwnGoal && !isHomePlayer) return sum + s.goals;
         if (!s.isOwnGoal && isHomePlayer) return sum + s.goals;
         return sum;
@@ -100,7 +117,6 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
       const effectiveAwayGoals = scorers.reduce((sum, s) => {
         const player = players.find((p: any) => p.id === s.playerId);
         const isAwayPlayer = player?.teamId === selectedAwayTeam.id;
-        // own goal from home player counts for away, regular goal from away player counts for away
         if (s.isOwnGoal && !isAwayPlayer) return sum + s.goals;
         if (!s.isOwnGoal && isAwayPlayer) return sum + s.goals;
         return sum;
@@ -112,22 +128,28 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
       }
     }
 
-    const updatedState = addMatch(homeGoals, awayGoals, scorers);
-    const fullState = updatedState ?? {
-      players: useLeagueStore.getState().players,
-      teams: useLeagueStore.getState().teams,
-      matches: useLeagueStore.getState().matches,
-    };
+    const newDate = new Date(date).toISOString();
 
-    if (typeof onSave === 'function') {
-      onSave(fullState);
+    if (editingMatch) {
+      useLeagueStore.getState().editMatch(editingMatch.id, homeGoals, awayGoals, scorers, newDate);
+      toast.success('Match updated successfully!');
+    } else {
+      const updatedState = addMatch(homeGoals, awayGoals, scorers);
+      const fullState = updatedState ?? {
+        players: useLeagueStore.getState().players,
+        teams: useLeagueStore.getState().teams,
+        matches: useLeagueStore.getState().matches,
+      };
+      if (typeof onSave === 'function') {
+        onSave(fullState);
+      }
+      toast.success(`Match ${matchNumber} recorded!`);
     }
-
-    toast.success(`Match ${matchNumber} recorded!`);
 
     setHomeGoals(0);
     setAwayGoals(0);
     setScorers([]);
+    setDate(new Date().toISOString().split('T')[0]);
     onOpenChange(false);
   };
 
@@ -135,22 +157,51 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-card border-border max-w-md mx-4">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">Record Match {matchNumber}/50</DialogTitle>
+          <DialogTitle className="font-display text-xl">
+            {editingMatch ? 'Edit Match' : `Record Match ${matchNumber}/50`}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+
+          {/* Date field */}
+          <div className="space-y-2">
+            <Label htmlFor="date">Match Date</Label>
+            <Input
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="bg-input border-border"
+            />
+          </div>
+
+          {/* Score */}
           <div className="flex items-center justify-center gap-2 md:gap-4">
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedHomeTeam?.name || 'Home Team'}</p>
-              <Input type="number" min={0} value={homeGoals} onChange={(e) => setHomeGoals(parseInt(e.target.value || '0') || 0)} className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border" />
+              <Input
+                type="number"
+                min={0}
+                value={homeGoals}
+                onChange={(e) => setHomeGoals(parseInt(e.target.value || '0') || 0)}
+                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
+              />
             </div>
             <span className="text-xl md:text-2xl text-muted-foreground font-display">VS</span>
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedAwayTeam?.name || 'Away Team'}</p>
-              <Input type="number" min={0} value={awayGoals} onChange={(e) => setAwayGoals(parseInt(e.target.value || '0') || 0)} className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border" />
+              <Input
+                type="number"
+                min={0}
+                value={awayGoals}
+                onChange={(e) => setAwayGoals(parseInt(e.target.value || '0') || 0)}
+                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
+              />
             </div>
           </div>
 
+          {/* Scorers */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm">Goal Scorers (Optional)</Label>
@@ -165,7 +216,9 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
                   <SelectTrigger className="flex-1 bg-input border-border text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     {players?.map((p: any) => (
-                      <SelectItem key={p.id} value={p.id}>{p.name} ({teams?.find((t: any) => t.id === p.teamId)?.name})</SelectItem>
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name} ({teams?.find((t: any) => t.id === p.teamId)?.name})
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -178,7 +231,6 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
                   className="w-14 md:w-16 bg-input border-border"
                 />
 
-                {/* Own Goal checkbox */}
                 <div className="flex items-center gap-1 shrink-0">
                   <input
                     type="checkbox"
@@ -190,14 +242,22 @@ export function MatchForm({ open, onOpenChange, onSave }: MatchFormProps) {
                   <label htmlFor={`og-${index}`} className="text-xs text-red-400 cursor-pointer whitespace-nowrap">OG</label>
                 </div>
 
-                <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveScorer(index)} className="h-10 w-10 text-destructive">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveScorer(index)}
+                  className="h-10 w-10 text-destructive"
+                >
                   <Minus className="w-4 h-4" />
                 </Button>
               </div>
             ))}
           </div>
 
-          <Button type="submit" className="w-full">Record Match</Button>
+          <Button type="submit" className="w-full">
+            {editingMatch ? 'Update Match' : 'Record Match'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
