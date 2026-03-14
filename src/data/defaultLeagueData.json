@@ -9,25 +9,25 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/ocean-dragon-logo.png",
-      "played": 19,
-      "won": 2,
+      "played": 20,
+      "won": 3,
       "drawn": 1,
       "lost": 16,
-      "goalsFor": 54,
-      "goalsAgainst": 115,
-      "points": 7
+      "goalsFor": 59,
+      "goalsAgainst": 116,
+      "points": 10
     },
     {
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/harbor-united-logo.png",
-      "played": 19,
+      "played": 20,
       "won": 16,
       "drawn": 1,
-      "lost": 2,
-      "goalsFor": 115,
-      "goalsAgainst": 54,
+      "lost": 3,
+      "goalsFor": 116,
+      "goalsAgainst": 59,
       "points": 49
     }
   ],
@@ -92,7 +92,7 @@
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team1",
-      "goals": 15,
+      "goals": 17,
       "image": "/images/antoine-griezmann.webp"
     },
     {
@@ -113,7 +113,7 @@
       "id": "player-12",
       "name": "Erling Haaland",
       "teamId": "team1",
-      "goals": 5,
+      "goals": 6,
       "image": "/images/erling-haaland.webp"
     },
     {
@@ -162,7 +162,7 @@
       "id": "player-19",
       "name": "johan cruyff",
       "teamId": "team1",
-      "goals": 9,
+      "goals": 11,
       "image": "/images/johan-cruyff.jpg"
     },
     {
@@ -183,7 +183,7 @@
       "id": "player-22",
       "name": "Marcus Rashford",
       "teamId": "team2",
-      "goals": 19,
+      "goals": 20,
       "image": "/images/marcus-rashford.webp"
     },
     {
@@ -1103,6 +1103,38 @@
         }
       ],
       "date": "2026-03-13T01:51:22.047Z"
+    },
+    {
+      "id": "match-1773453699763",
+      "homeTeamId": "team1",
+      "awayTeamId": "team2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 1,
+      "scorers": [
+        {
+          "playerId": "player-19",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-14T02:01:39.763Z"
     }
   ],
   "targetMatches": 30
