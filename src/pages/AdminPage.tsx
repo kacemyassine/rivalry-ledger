@@ -35,14 +35,17 @@ const AdminPage = () => {
   const [saving, setSaving] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [editingMatch, setEditingMatch] = useState<any>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const handleEditMatch = (match: any) => {
     setEditingMatch(match);
     setMatchFormOpen(true);
+
   };
 
   const handleDeleteMatch = (matchId: string) => {
     useLeagueStore.getState().deleteMatch(matchId);
+    setHasChanges(true);
   };
 
   // New league form state
@@ -79,15 +82,16 @@ const AdminPage = () => {
   }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
 
   const handleSaveToGitHub = useCallback(async () => {
-    setSaving(true);
-    await updateData({
-      leagueConfig: { name: leagueName, id: leagueId },
-      teams,
-      players,
-      matches,
-      targetMatches,
-    });
-    setSaving(false);
+  setSaving(true);
+  const success = await updateData({
+    leagueConfig: { name: leagueName, id: leagueId },
+    teams,
+    players,
+    matches,
+    targetMatches,
+  });
+  if (success) setHasChanges(false);
+  setSaving(false);
   }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId]);
 
   const handleArchiveLeague = useCallback(async () => {
@@ -188,7 +192,7 @@ const AdminPage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]" />
 
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <LeagueHeader theme="ramadan" allowLogoUpload={true} />
+            <LeagueHeader theme="ramadan" allowLogoUpload={true} onLogoChange={() => setHasChanges(true)} />
 
             {/* Admin action buttons */}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
@@ -213,7 +217,7 @@ const AdminPage = () => {
                 onClick={handleSaveToGitHub}
                 className="gap-2 bg-blue-900/50 hover:bg-blue-800/70 text-blue-200 border border-blue-400/20 hover:border-blue-400/40 transition-all"
                 variant="secondary"
-                disabled={saving}
+                disabled={saving || !hasChanges}
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Save to GitHub
@@ -352,7 +356,7 @@ const AdminPage = () => {
           </div>
         </div>
 
-        <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} />
+        <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} onSave={() => setHasChanges(true)} />
         <MatchForm 
           open={matchFormOpen}
           onOpenChange={(open) => {
