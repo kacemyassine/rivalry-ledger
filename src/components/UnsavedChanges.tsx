@@ -68,7 +68,7 @@ export function UnsavedChanges({ changeLog, onSave, saving, hasChanges }: Unsave
           {expanded && (
             <div className="max-h-48 overflow-y-auto px-4 py-2 space-y-1 border-b border-yellow-400/20">
               {changeLog.map((entry, i) => (
-                <p key={i} className="text-xs text-yellow-200/60 py-1 border-b border-yellow-400/10 last:border-0">
+                <p key={i} className="text-xs text-[#0a0e2a] font-semibold py-1 border-b border-[#0a0e2a]/20 last:border-0">
                   • {entry}
                 </p>
               ))}
@@ -94,7 +94,7 @@ export function UnsavedChanges({ changeLog, onSave, saving, hasChanges }: Unsave
               onClick={onSave}
               disabled={saving}
               size="sm"
-              className="bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold h-8 px-4 text-xs shrink-0"
+              className="bg-[#0a0e2a] hover:bg-[#0d1133] text-yellow-400 font-bold h-8 px-4 text-xs shrink-0"
             >
               {saving
                 ? <Loader2 className="w-3 h-3 animate-spin" />
