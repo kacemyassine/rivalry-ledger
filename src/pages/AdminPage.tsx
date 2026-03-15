@@ -36,13 +36,6 @@ const AdminPage = () => {
   const [saving, setSaving] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [editingMatch, setEditingMatch] = useState<any>(null);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [changeLog, setChangeLog] = useState<string[]>([]);
-
-  const addToChangeLog = (entry: string) => {
-    setChangeLog((prev) => [...prev, entry]);
-    setHasChanges(true);
-  };
 
   const handleEditMatch = (match: any) => {
     setEditingMatch(match);
@@ -71,6 +64,7 @@ const AdminPage = () => {
     targetMatches, leagueName, leagueId,
     setTeams, setPlayers, setMatches,
     setTargetMatches, setLeagueName, setLeagueId,
+    hasChanges, changeLog, addToChangeLog, clearChangeLog,
   } = useLeagueStore();
 
   const { fetchData, updateData, archiveLeague, uploadImage } = useGitHubData();
@@ -101,12 +95,9 @@ const AdminPage = () => {
     matches,
     targetMatches,
   });
-  if (success) {
-    setHasChanges(false);
-    setChangeLog([]);
-  }
+  if (success) clearChangeLog();
   setSaving(false);
-  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId]);
+  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId, clearChangeLog]); 
 
   const handleArchiveLeague = useCallback(async () => {
     if (!newLeagueName.trim()) return;
