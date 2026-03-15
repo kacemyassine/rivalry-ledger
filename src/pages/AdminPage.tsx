@@ -356,7 +356,7 @@ const AdminPage = () => {
           </div>
         </div>
 
-        <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} onSave={() => setHasChanges(true)} />
+        <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} onSave={() => {console.log('onSave called') ; setHasChanges(true); }} /> 
         <MatchForm 
           open={matchFormOpen}
           onOpenChange={(open) => {
@@ -364,7 +364,7 @@ const AdminPage = () => {
             if (!open) setEditingMatch(null);
           }}
           editingMatch={editingMatch}
-        />
+          onSave={() => setHasChanges(true)}        />
       </div>
     </AdminProvider>
   );
