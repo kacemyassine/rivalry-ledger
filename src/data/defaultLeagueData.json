@@ -9,25 +9,25 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/ocean-dragon-logo.png",
-      "played": 23,
-      "won": 3,
+      "played": 24,
+      "won": 4,
       "drawn": 1,
       "lost": 19,
-      "goalsFor": 72,
-      "goalsAgainst": 139,
-      "points": 10
+      "goalsFor": 79,
+      "goalsAgainst": 145,
+      "points": 13
     },
     {
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/harbor-united-logo.png",
-      "played": 23,
+      "played": 24,
       "won": 19,
       "drawn": 1,
-      "lost": 3,
-      "goalsFor": 139,
-      "goalsAgainst": 72,
+      "lost": 4,
+      "goalsFor": 145,
+      "goalsAgainst": 79,
       "points": 58
     }
   ],
@@ -78,14 +78,14 @@
       "id": "player-7",
       "name": "David Beckham",
       "teamId": "team1",
-      "goals": 5,
+      "goals": 6,
       "image": "/images/david-beckham.avif"
     },
     {
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team1",
-      "goals": 4,
+      "goals": 5,
       "image": "/images/kevin-de-bruyne.webp"
     },
     {
@@ -99,7 +99,7 @@
       "id": "player-10",
       "name": "Kylian Mbappé",
       "teamId": "team1",
-      "goals": 10,
+      "goals": 11,
       "image": "/images/kylian-mbappe.jpg"
     },
     {
@@ -162,7 +162,7 @@
       "id": "player-19",
       "name": "johan cruyff",
       "teamId": "team1",
-      "goals": 13,
+      "goals": 16,
       "image": "/images/johan-cruyff.jpg"
     },
     {
@@ -176,7 +176,7 @@
       "id": "player-21",
       "name": "Giovanni van Bronckhorst",
       "teamId": "team2",
-      "goals": 7,
+      "goals": 9,
       "image": "/images/giovanni-van-bronckhorst.jpg"
     },
     {
@@ -197,7 +197,7 @@
       "id": "player-24",
       "name": "Lionel Messi",
       "teamId": "team2",
-      "goals": 46,
+      "goals": 48,
       "image": "/images/lionel-messi.jpg"
     },
     {
@@ -218,7 +218,7 @@
       "id": "player-27",
       "name": "Ruud Gullit",
       "teamId": "team2",
-      "goals": 21,
+      "goals": 22,
       "image": "/images/ruud-gullit.jpg"
     },
     {
@@ -288,7 +288,7 @@
       "id": "player-37",
       "name": "Didier Drogba",
       "teamId": "team2",
-      "goals": 9,
+      "goals": 10,
       "image": "/images/didier-drogba.jpg"
     },
     {
@@ -1301,6 +1301,63 @@
         }
       ],
       "date": "2026-03-15T04:36:05.451Z"
+    },
+    {
+      "id": "match-1773551272774",
+      "homeTeamId": "team1",
+      "awayTeamId": "team2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 7,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-21",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": true
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-15T05:07:52.774Z"
     }
   ],
   "targetMatches": 30
