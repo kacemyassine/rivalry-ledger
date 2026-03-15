@@ -14,6 +14,7 @@ import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { UserPlus, Play, Save, Loader2, LogOut, Archive, Upload } from 'lucide-react';
 import { AuthService } from '@/lib/authService';
+import { UnsavedChanges } from '@/components/UnsavedChanges';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +37,12 @@ const AdminPage = () => {
   const [archiving, setArchiving] = useState(false);
   const [editingMatch, setEditingMatch] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [changeLog, setChangeLog] = useState<string[]>([]);
+
+  const addToChangeLog = (entry: string) => {
+    setChangeLog((prev) => [...prev, entry]);
+    setHasChanges(true);
+  };
 
   const handleEditMatch = (match: any) => {
     setEditingMatch(match);
@@ -44,8 +51,12 @@ const AdminPage = () => {
   };
 
   const handleDeleteMatch = (matchId: string) => {
+    useLeagueStore.getState().matches.find((m: any) => m.id === matchId);
+    const match = useLeagueStore.getState().matches.find((m: any) => m.id === matchId);
+    const homeTeam = teams.find((t: any) => t.id === match.homeTeamId);
+    const awayTeam = teams.find((t: any) => t.id === match.awayTeamId);
     useLeagueStore.getState().deleteMatch(matchId);
-    setHasChanges(true);
+    addToChangeLog(`Match deleted (${homeTeam?.name} ${match?.homeGoals} - ${match?.awayGoals} ${awayTeam?.name})`); 
   };
 
   // New league form state
@@ -90,7 +101,10 @@ const AdminPage = () => {
     matches,
     targetMatches,
   });
-  if (success) setHasChanges(false);
+  if (success) {
+    setHasChanges(false);
+    setChangeLog([]);
+  }
   setSaving(false);
   }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId]);
 
@@ -192,7 +206,14 @@ const AdminPage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e2a]/70 via-[#0a0e2a]/40 to-[#0a0e2a]" />
 
           <div className="relative z-10 flex flex-col justify-center items-center h-full">
-            <LeagueHeader theme="ramadan" allowLogoUpload={true} onLogoChange={() => setHasChanges(true)} />
+            <LeagueHeader 
+              theme="ramadan" 
+              allowLogoUpload={true} 
+              onLogoChange={(teamId: string) => {
+                const team = teams.find((t: any) => t.id === teamId);
+                addToChangeLog(`Team logo updated (${team?.name})`);
+                
+                }} />
 
             {/* Admin action buttons */}
             <div className="flex flex-wrap justify-center gap-3 mt-8">
@@ -356,7 +377,21 @@ const AdminPage = () => {
           </div>
         </div>
 
-        <PlayerForm open={playerFormOpen} onOpenChange={handlePlayerFormClose} editingPlayerId={editingPlayerId} onSave={() => {console.log('onSave called') ; setHasChanges(true); }} /> 
+        <PlayerForm 
+          open={playerFormOpen} 
+          onOpenChange={handlePlayerFormClose} 
+          editingPlayerId={editingPlayerId} 
+          onSave={(data: any) => {
+              const player = editingPlayerId
+                ? players.find((p: any) => p.id === editingPlayerId)
+                : data?.players?.[data.players.length - 1]; // Get the last added player for new entries
+              const team = teams.find((t: any) => t.id === player.teamId);
+              if (editingPlayerId) {
+                addToChangeLog(`Player updated (${player.name} (${team?.name}) edited)`);
+              } else {
+                addToChangeLog(`Player added (${player.name} (${team?.name}) added)`);
+              }
+          }} /> 
         <MatchForm 
           open={matchFormOpen}
           onOpenChange={(open) => {
@@ -364,7 +399,22 @@ const AdminPage = () => {
             if (!open) setEditingMatch(null);
           }}
           editingMatch={editingMatch}
-          onSave={() => setHasChanges(true)}        />
+          onSave={() => {
+            if (editingMatch) {
+              const homeTeam = teams.find((t: any) => t.id === editingMatch.homeTeamId);
+              const awayTeam = teams.find((t: any) => t.id === editingMatch.awayTeamId);
+              addToChangeLog(`Match updated (${homeTeam?.name} vs ${awayTeam?.name})`);
+            } else {
+              addToChangeLog(`Match #${matches.length + 1} recorded`);
+            }
+          }}  
+          />
+          <UnsavedChanges
+            changeLog={changeLog}
+            onSave={handleSaveToGitHub}
+            saving={saving}
+            hasChanges={hasChanges}
+          />
       </div>
     </AdminProvider>
   );

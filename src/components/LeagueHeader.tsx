@@ -7,7 +7,7 @@ import { useGitHubData } from '@/hooks/useGitHubData';
 interface LeagueHeaderProps {
   theme?: 'default' | 'ramadan';
   allowLogoUpload?: boolean;
-  onLogoChange?: () => void;
+  onLogoChange?: (teamId: string) => void;
 }
 
 export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLogoChange }: LeagueHeaderProps) {
@@ -45,7 +45,8 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
   const path = await uploadImage(base64, filename);
 
   if (path) updateTeamLogo(teamId, path);
-    onLogoChange?.();
+    updateTeamLogo(teamId, path);
+    onLogoChange?.(teamId);
 };
 
   return (
