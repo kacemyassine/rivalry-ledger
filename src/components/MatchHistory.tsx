@@ -287,13 +287,13 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
                           <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center',
-                            scorer.isOwnGoal ? 'bg-red-500/10' : isRamadan ? 'bg-cyan-400/10' : 'bg-green-400/10'
+                            scorer.isOwnGoal ? 'bg-red-500/10' : 'bg-green-400/10'
                           )}>
-                            <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-cyan-200' : 'text-foreground'}>
+                            <span className={scorer.isOwnGoal ? 'text-red-300' : 'text-green-300'}>
                               {player?.name || 'Unknown'}
                             </span>
                             {scorer.isOwnGoal && <span className="ml-1 text-red-400 font-bold">OG</span>}
-                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-cyan-400' : 'text-gold')}>
+                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-cyan-400' : 'text-green-400')}>
                               ×{scorer.goals}
                             </span>
                           </div>
@@ -306,13 +306,13 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
                           <div key={i} className={cn('text-xs py-1 px-2 rounded mb-1 text-center',
-                            scorer.isOwnGoal ? 'bg-red-500/10' : isRamadan ? 'bg-yellow-400/10' : 'bg-green-400/10'
+                            scorer.isOwnGoal ? 'bg-red-500/10' : 'bg-green-400/10'
                           )}>
-                            <span className={scorer.isOwnGoal ? 'text-red-300' : isRamadan ? 'text-yellow-100' : 'text-foreground'}>
+                            <span className={scorer.isOwnGoal ? 'text-red-300' : 'text-green-300'}>
                               {player?.name || 'Unknown'}
                             </span>
                             {scorer.isOwnGoal && <span className="ml-1 text-red-400 font-bold">OG</span>}
-                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-yellow-400' : 'text-gold')}>
+                            <span className={cn('font-bold ml-1', scorer.isOwnGoal ? 'text-red-400' : isRamadan ? 'text-yellow-400' : 'text-green-400')}>
                               ×{scorer.goals}
                             </span>
                           </div>
