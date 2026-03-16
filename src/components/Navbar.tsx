@@ -109,7 +109,7 @@ const Navbar = () => {
       </Dialog>
 
       {/* Floating pill navbar */}
-      <div className="fixed top-4 left-0 w-full z-[999] px-4 flex justify-center pointer-events-none">
+      <div data-navbar className="fixed top-4 left-0 w-full z-[999] px-4 flex justify-center pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-4xl transition-all duration-500 ${
           scrolled
             ? 'bg-[#0a0e2a]/80 backdrop-blur-xl shadow-2xl shadow-yellow-400/10'

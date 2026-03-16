@@ -9,12 +9,17 @@ interface ImageLightboxProps {
 
 export function ImageLightbox({ src, alt, onClose }: ImageLightboxProps) {
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  const navbar = document.querySelector('[data-navbar]') as HTMLElement;
+  if (navbar) navbar.style.display = 'none';
+  const handleKey = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') onClose();
+  };
+  window.addEventListener('keydown', handleKey);
+  return () => {
+    if (navbar) navbar.style.display = '';
+    window.removeEventListener('keydown', handleKey);
+  };
+}, [onClose]);
 
   return (
     <div
