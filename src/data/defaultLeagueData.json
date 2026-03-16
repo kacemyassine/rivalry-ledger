@@ -246,7 +246,7 @@
       "teamId": "team2",
       "goals": 22,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.png"
     },
     {
       "id": "player-28",
@@ -254,7 +254,7 @@
       "teamId": "team2",
       "goals": 8,
       "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.png"
     },
     {
       "id": "player-29",
@@ -270,7 +270,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/achraf-hakimi.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/achraf-hakimi.png"
     },
     {
       "id": "player-31",
@@ -278,7 +278,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/alessandro-costacurta.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-costacurta.png"
     },
     {
       "id": "player-32",
@@ -326,7 +326,7 @@
       "teamId": "team2",
       "goals": 10,
       "image": "/images/HarborUnitedPlayers/images/didier-drogba.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/didier-drogba.png"
     },
     {
       "id": "player-38",
