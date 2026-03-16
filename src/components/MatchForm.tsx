@@ -179,7 +179,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
           )}
 
           {/* Score */}
-          <div className="flex items-center justify-center gap-2 md:gap-4">
+          <div className="flex items-end justify-center gap-2 md:gap-4">
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedHomeTeam?.name || 'Home Team'}</p>
               <Input
@@ -190,9 +190,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                 className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
               />
             </div>
-            <div className="flex items-end pb-[10px] flex-shrink-0">
-              <span className="text-xl md:text-2xl text-muted-foreground font-display">VS</span>
-            </div>
+            <span className="text-xl md:text-2xl text-muted-foreground font-display pb-3 md:pb-4">VS</span>
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedAwayTeam?.name || 'Away Team'}</p>
               <Input
