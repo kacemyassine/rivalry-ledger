@@ -1,8 +1,11 @@
 import { Trophy, Shield, Camera } from 'lucide-react';
 import { useLeagueStore } from '@/store/leagueStore';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useGitHubData } from '@/hooks/useGitHubData';
+import { ImageLightbox } from '@/components/ImageLightbox';
+
+
 
 interface LeagueHeaderProps {
   theme?: 'default' | 'ramadan';
@@ -14,6 +17,7 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
   const { teams, matches, targetMatches, leagueName, updateTeamLogo } = useLeagueStore();
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const { uploadImage } = useGitHubData();
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
@@ -23,9 +27,12 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
 
   const isRamadan = theme === 'ramadan';
 
-  const handleLogoClick = (teamId: string) => {
-    if (!allowLogoUpload) return;
-    fileInputRefs.current[teamId]?.click();
+  const handleLogoClick = (teamId: string, logo: string, name: string) => {
+    if (allowLogoUpload) {
+      fileInputRefs.current[teamId]?.click();
+    } else {
+      if (logo) setLightboxImage({ src: logo, alt: name });
+    }
   };
 
   const handleLogoUpload = async (teamId: string, file: File) => {
@@ -99,8 +106,8 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
           {/* Team 1 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/50' : 'border-primary/50'}`}
-              onClick={() => handleLogoClick('team1')}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : team1?.logo ? 'cursor-pointer' : ''} ${isRamadan ? 'border-yellow-400/50' : 'border-primary/50'}`}
+              onClick={() => handleLogoClick('team1', team1?.logo || '', team1?.name || '')}
             >
               {team1?.logo ? (
                 <img src={team1.logo} alt={team1?.name} className="w-full h-full object-cover" />
@@ -131,8 +138,8 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
           {/* Team 2 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : ''} ${isRamadan ? 'border-yellow-400/30' : 'border-secondary/50'}`}
-              onClick={() => handleLogoClick('team2')}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : team2?.logo ? 'cursor-pointer' : ''} ${isRamadan ? 'border-yellow-400/30' : 'border-secondary/50'}`}
+              onClick={() => handleLogoClick('team2', team2?.logo || '', team2?.name || '')}
             >
               {team2?.logo ? (
                 <img src={team2.logo} alt={team2?.name} className="w-full h-full object-cover" />
@@ -190,6 +197,13 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
         </div>
 
       </div>
+      {lightboxImage && (
+        <ImageLightbox
+          src={lightboxImage.src}
+          alt={lightboxImage.alt}
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
     </header>
   );
 }
