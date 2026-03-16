@@ -101,9 +101,9 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border max-w-md w-[calc(100%-2rem)] mx-auto max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md w-[calc(100%-2rem)] mx-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>{editingPlayerId ? 'Edit Player' : 'Add New Player'}</DialogTitle>
+          <DialogTitle className="text-yellow-400">{editingPlayerId ? 'Edit Player' : 'Add New Player'}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
@@ -129,7 +129,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             </div>
             <label className="cursor-pointer">
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-              <span className="flex items-center gap-2 text-sm text-primary hover:text-primary/80">
+              <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200">
                 <Upload className="w-4 h-4" /> Upload Photo
               </span>
             </label>
@@ -137,24 +137,24 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name">Player Name</Label>
+            <Label htmlFor="name" className="text-yellow-200/80">Player Name</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter player name"
-              className="bg-input border-border"
+              className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
             />
           </div>
 
           {/* Team */}
           <div className="space-y-2">
-            <Label>Team</Label>
+            <Label className="text-yellow-200/80">Team</Label>
             <Select value={teamId} onValueChange={setTeamId} disabled={hasGoals}>
-              <SelectTrigger className={`bg-input border-border ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <SelectTrigger className={`bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
+              <SelectContent className="bg-[#0d1133] border-yellow-400/20">
                 {teams?.map((team: any) => (
                   <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                 ))}
@@ -169,7 +169,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
           </div>
 
           {/* Submit */}
-          <Button type="submit" className="w-full" disabled={uploading}>
+          <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold" disabled={uploading}>
             {uploading
               ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</>
               : editingPlayerId ? 'Update Player' : 'Add Player'

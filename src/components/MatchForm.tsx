@@ -155,9 +155,9 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border max-w-md w-[calc(100%-2rem)] mx-auto max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md w-[calc(100%-2rem)] mx-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle className="font-display text-xl">
+          <DialogTitle className="font-display text-xl text-yellow-400">
             {editingMatch ? 'Edit Match' : `Record Match ${matchNumber}/50`}
           </DialogTitle>
         </DialogHeader>
@@ -173,7 +173,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="bg-input border-border"
+              className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
             />
           </div>
           )}
@@ -187,7 +187,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                 min={0}
                 value={homeGoals}
                 onChange={(e) => setHomeGoals(parseInt(e.target.value || '0') || 0)}
-                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
+                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
               />
             </div>
             <span className="text-xl md:text-2xl text-muted-foreground font-display pb-3 md:pb-4">VS</span>
@@ -198,7 +198,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                 min={0}
                 value={awayGoals}
                 onChange={(e) => setAwayGoals(parseInt(e.target.value || '0') || 0)}
-                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
+                className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
               />
             </div>
           </div>
@@ -206,8 +206,8 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
           {/* Scorers */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm">Goal Scorers (Optional)</Label>
-              <Button type="button" variant="outline" size="sm" onClick={handleAddScorer} className="h-8">
+              <Label className="text-sm text-yellow-200/80">Goal Scorers (Optional)</Label>
+              <Button type="button" variant="outline" size="sm" onClick={handleAddScorer} className="h-8 border-yellow-400/30 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200 bg-transparent">
                 <Plus className="w-4 h-4 mr-1" /> Add
               </Button>
             </div>
@@ -215,8 +215,8 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
             {scorers.map((scorer, index) => (
               <div key={index} className="flex items-center gap-2">
                 <Select value={scorer.playerId} onValueChange={(v) => handleScorerChange(index, 'playerId', v)}>
-                  <SelectTrigger className="flex-1 bg-input border-border text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-popover border-border">
+                  <SelectTrigger className="flex-1 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent className="bg-[#0d1133] border-yellow-400/20">
                     {players?.map((p: any) => (
                       <SelectItem key={p.id} value={p.id}>
                         {p.name} ({teams?.find((t: any) => t.id === p.teamId)?.name})
@@ -230,7 +230,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                   min={1}
                   value={scorer.goals}
                   onChange={(e) => handleScorerChange(index, 'goals', parseInt(e.target.value || '1') || 1)}
-                  className="w-14 md:w-16 bg-input border-border"
+                  className="w-14 md:w-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                 />
 
                 <div className="flex items-center gap-1 shrink-0">
@@ -257,7 +257,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
             ))}
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold">
             {editingMatch ? 'Update Match' : 'Record Match'}
           </Button>
         </form>
