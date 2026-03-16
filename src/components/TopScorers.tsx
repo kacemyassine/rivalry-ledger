@@ -158,7 +158,7 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
                 className={cn(
                   'w-full mt-3 py-2 text-sm flex items-center justify-center gap-2 rounded-lg transition-all',
                   isRamadan
-                    ? 'text-yellow-200/50 hover:text-yellow-400 hover:bg-yellow-400/5'
+                    ? 'text-purple-100/50 hover:text-yellow-400 hover:bg-yellow-400/5'
                     : 'text-muted-foreground hover:text-primary hover:bg-muted/20'
                 )}
               >
