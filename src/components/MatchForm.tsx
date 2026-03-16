@@ -190,7 +190,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                 className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-input border-border"
               />
             </div>
-            <div className="text-center flex-shrink-0 flex flex-col justify-end mb-2">
+            <div className="flex items-end pb-[10px] flex-shrink-0">
               <span className="text-xl md:text-2xl text-muted-foreground font-display">VS</span>
             </div>
             <div className="text-center flex-1">
