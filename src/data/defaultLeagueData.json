@@ -8,7 +8,7 @@
       "id": "team1",
       "name": "Ocean Dragon",
       "coach": "Wassim",
-      "logo": "/images/ocean-dragon-logo.png",
+      "logo": "/images/TeamsLogos/ocean-dragon-logo.png",
       "played": 24,
       "won": 4,
       "drawn": 1,
@@ -21,7 +21,7 @@
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
-      "logo": "/images/harbor-united-logo.png",
+      "logo": "/images/TeamsLogos/harbor-united-logo.png",
       "played": 24,
       "won": 19,
       "drawn": 1,
@@ -37,308 +37,352 @@
       "name": "Peter Schmeichel",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/peter-schmeichel.jpg"
+      "image": "/images/OceanDragonPlayers/images/peter-schmeichel.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-2",
       "name": "Alessandro Costacurta",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/alessandro-costacurta.jpg"
+      "image": "/images/OceanDragonPlayers/images/alessandro-costacurta.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-3",
       "name": "Franz Beckenbauer",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/franz-beckenbauer.jpg"
+      "image": "/images/OceanDragonPlayers/images/franz-beckenbauer.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-4",
       "name": "Tony Adams",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/tony-adams.webp"
+      "image": "/images/OceanDragonPlayers/images/tony-adams.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-5",
       "name": "Juliano Belletti",
       "teamId": "team1",
       "goals": 1,
-      "image": "/images/juliano-belletti.webp"
+      "image": "/images/OceanDragonPlayers/images/juliano-belletti.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-6",
       "name": "Patrick Vieira",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/patrick-vieira.jpg"
+      "image": "/images/OceanDragonPlayers/images/patrick-vieira.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-7",
       "name": "David Beckham",
       "teamId": "team1",
       "goals": 6,
-      "image": "/images/david-beckham.avif"
+      "image": "/images/OceanDragonPlayers/images/david-beckham.avif",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team1",
       "goals": 5,
-      "image": "/images/kevin-de-bruyne.webp"
+      "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team1",
       "goals": 20,
-      "image": "/images/antoine-griezmann.webp"
+      "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-10",
       "name": "Kylian Mbappé",
       "teamId": "team1",
       "goals": 11,
-      "image": "/images/kylian-mbappe.jpg"
+      "image": "/images/OceanDragonPlayers/images/kylian-mbappe.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-11",
       "name": "Lionel Messi",
       "teamId": "team1",
       "goals": 5,
-      "image": "/images/lionel-messi.jpg"
+      "image": "/images/OceanDragonPlayers/images/lionel-messi.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-12",
       "name": "Erling Haaland",
       "teamId": "team1",
       "goals": 8,
-      "image": "/images/erling-haaland.webp"
+      "image": "/images/OceanDragonPlayers/images/erling-haaland.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-13",
       "name": "Hristo Stoichkov",
       "teamId": "team1",
       "goals": 2,
-      "image": "/images/hristo-stoichkov.jpg"
+      "image": "/images/OceanDragonPlayers/images/hristo-stoichkov.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-14",
       "name": "Mohamed Salah",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/mohamed-salah.webp"
+      "image": "/images/OceanDragonPlayers/images/mohamed-salah.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-15",
       "name": "Fernando Torres",
       "teamId": "team1",
       "goals": 2,
-      "image": "/images/fernando-torres.webp"
+      "image": "/images/OceanDragonPlayers/images/fernando-torres.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-16",
       "name": "Paul Scholes",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/paul-scholes.jpg"
+      "image": "/images/OceanDragonPlayers/images/paul-scholes.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-17",
       "name": "Frank Lampard",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/frank-lampard.jpg"
+      "image": "/images/OceanDragonPlayers/images/frank-lampard.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-18",
       "name": "Alessandro Bastoni",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/alessandro-bastoni.jpg"
+      "image": "/images/OceanDragonPlayers/images/alessandro-bastoni.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-19",
       "name": "johan cruyff",
       "teamId": "team1",
       "goals": 16,
-      "image": "/images/johan-cruyff.jpg"
+      "image": "/images/OceanDragonPlayers/images/johan-cruyff.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-20",
       "name": "Ben White",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/ben-white.avif"
+      "image": "/images/OceanDragonPlayers/images/ben-white.avif",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-21",
       "name": "Giovanni van Bronckhorst",
       "teamId": "team2",
       "goals": 9,
-      "image": "/images/giovanni-van-bronckhorst.jpg"
+      "image": "/images/HarborUnitedPlayers/images/giovanni-van-bronckhorst.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-22",
       "name": "Marcus Rashford",
       "teamId": "team2",
       "goals": 24,
-      "image": "/images/marcus-rashford.webp"
+      "image": "/images/HarborUnitedPlayers/images/marcus-rashford.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-23",
       "name": "Steven Gerrard",
       "teamId": "team1",
       "goals": 0,
-      "image": "/images/steven-gerrard.jpg"
+      "image": "/images/OceanDragonPlayers/images/steven-gerrard.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/"
     },
     {
       "id": "player-24",
       "name": "Lionel Messi",
       "teamId": "team2",
       "goals": 48,
-      "image": "/images/lionel-messi.jpg"
+      "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-25",
       "name": "David Beckham",
       "teamId": "team2",
       "goals": 6,
-      "image": "/images/david-beckham.avif"
+      "image": "/images/HarborUnitedPlayers/images/david-beckham.avif",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-26",
       "name": "Wesley Sneijder",
       "teamId": "team2",
       "goals": 9,
-      "image": "/images/wesley-sneijder.jpg"
+      "image": "/images/HarborUnitedPlayers/images/wesley-sneijder.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-27",
       "name": "Ruud Gullit",
       "teamId": "team2",
       "goals": 22,
-      "image": "/images/ruud-gullit.jpg"
+      "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-28",
       "name": "Kevin De Bruyne",
       "teamId": "team2",
       "goals": 8,
-      "image": "/images/kevin-de-bruyne.webp"
+      "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-29",
       "name": "Guti",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/guti.jpg"
+      "image": "/images/HarborUnitedPlayers/images/guti.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-30",
       "name": "Achraf Hakimi",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/achraf-hakimi.webp"
+      "image": "/images/HarborUnitedPlayers/images/achraf-hakimi.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-31",
       "name": "Alessandro Costacurta",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/alessandro-costacurta.jpg"
+      "image": "/images/HarborUnitedPlayers/images/alessandro-costacurta.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-32",
       "name": "Marquinhos",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/marquinhos.jpg"
+      "image": "/images/HarborUnitedPlayers/images/marquinhos.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-33",
       "name": "Cafu",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/cafu.jpg"
+      "image": "/images/HarborUnitedPlayers/images/cafu.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-34",
       "name": "Christian Abbiati",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/christian-abbiati.png"
+      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-35",
       "name": "Iker Casillas",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/iker-casillas.webp"
+      "image": "/images/HarborUnitedPlayers/images/iker-casillas.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-36",
       "name": "Rúben Neves",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/ruben-neves.png"
+      "image": "/images/HarborUnitedPlayers/images/ruben-neves.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-37",
       "name": "Didier Drogba",
       "teamId": "team2",
       "goals": 10,
-      "image": "/images/didier-drogba.jpg"
+      "image": "/images/HarborUnitedPlayers/images/didier-drogba.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-38",
       "name": "Martin Ødegaard",
       "teamId": "team2",
       "goals": 1,
-      "image": "/images/martin-degaard.png"
+      "image": "/images/HarborUnitedPlayers/images/martin-degaard.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-39",
       "name": "Erling Haaland",
       "teamId": "team2",
       "goals": 1,
-      "image": "/images/erling-haaland.webp"
+      "image": "/images/HarborUnitedPlayers/images/erling-haaland.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-42",
       "name": "Warren Zaire-Emery",
       "teamId": "team2",
       "goals": 1,
-      "image": "/images/warren-zaire-emery.jpg"
+      "image": "/images/HarborUnitedPlayers/images/warren-zaire-emery.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-43",
       "name": "Eden Hazard",
       "teamId": "team2",
       "goals": 5,
-      "image": "/images/eden-hazard.webp"
+      "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-44",
       "name": "Ben White",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/ben-white.avif"
+      "image": "/images/HarborUnitedPlayers/images/ben-white.avif",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-45",
       "name": "Joshua Kimmich",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/joshua-kimmich.jpg"
+      "image": "/images/HarborUnitedPlayers/images/joshua-kimmich.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     },
     {
       "id": "player-46",
       "name": "Alessandro Bastoni",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/alessandro-bastoni.jpg"
+      "image": "/images/HarborUnitedPlayers/images/alessandro-bastoni.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/"
     }
   ],
   "matches": [
