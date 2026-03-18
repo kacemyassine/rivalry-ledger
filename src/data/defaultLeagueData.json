@@ -8,7 +8,7 @@
       "id": "team1",
       "name": "Ocean Dragon",
       "coach": "Wassim",
-      "logo": "/images/TeamsLogos/ocean-dragon-logo.png",
+      "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
       "played": 30,
       "won": 6,
       "drawn": 1,
@@ -21,7 +21,7 @@
       "id": "team2",
       "name": "Harbor United",
       "coach": "Yassine",
-      "logo": "/images/TeamsLogos/harbor-united-logo.png",
+      "logo": "/images/TeamsLogos/harbor-united-logo.webp",
       "played": 30,
       "won": 23,
       "drawn": 1,
@@ -38,7 +38,7 @@
       "teamId": "team1",
       "goals": 2,
       "image": "/images/OceanDragonPlayers/images/peter-schmeichel.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/peter-schmeichel.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/peter-schmeichel.webp"
     },
     {
       "id": "player-2",
@@ -46,7 +46,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/alessandro-costacurta.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-costacurta.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-costacurta.webp"
     },
     {
       "id": "player-3",
@@ -54,7 +54,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/franz-beckenbauer.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/franz-beckenbauer.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/franz-beckenbauer.webp"
     },
     {
       "id": "player-4",
@@ -62,7 +62,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/tony-adams.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/tony-adams.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/tony-adams.webp"
     },
     {
       "id": "player-5",
@@ -70,7 +70,7 @@
       "teamId": "team1",
       "goals": 1,
       "image": "/images/OceanDragonPlayers/images/juliano-belletti.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/juliano-belletti.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/juliano-belletti.webp"
     },
     {
       "id": "player-6",
@@ -78,7 +78,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/patrick-vieira.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/patrick-vieira.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/patrick-vieira.webp"
     },
     {
       "id": "player-7",
@@ -86,7 +86,7 @@
       "teamId": "team1",
       "goals": 7,
       "image": "/images/OceanDragonPlayers/images/david-beckham.avif",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/david-beckham.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/david-beckham.webp"
     },
     {
       "id": "player-8",
@@ -94,7 +94,7 @@
       "teamId": "team1",
       "goals": 6,
       "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
     },
     {
       "id": "player-9",
@@ -102,7 +102,7 @@
       "teamId": "team1",
       "goals": 22,
       "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.webp"
     },
     {
       "id": "player-10",
@@ -110,7 +110,7 @@
       "teamId": "team1",
       "goals": 17,
       "image": "/images/OceanDragonPlayers/images/kylian-mbappe.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/kylian-mbappe.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/kylian-mbappe.webp"
     },
     {
       "id": "player-11",
@@ -118,7 +118,7 @@
       "teamId": "team1",
       "goals": 8,
       "image": "/images/OceanDragonPlayers/images/lionel-messi.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/lionel-messi.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/lionel-messi.webp"
     },
     {
       "id": "player-12",
@@ -126,7 +126,7 @@
       "teamId": "team1",
       "goals": 8,
       "image": "/images/OceanDragonPlayers/images/erling-haaland.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/erling-haaland.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/erling-haaland.webp"
     },
     {
       "id": "player-13",
@@ -134,7 +134,7 @@
       "teamId": "team1",
       "goals": 2,
       "image": "/images/OceanDragonPlayers/images/hristo-stoichkov.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/hristo-stoichkov.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/hristo-stoichkov.webp"
     },
     {
       "id": "player-14",
@@ -142,7 +142,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/mohamed-salah.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/mohamed-salah.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/mohamed-salah.webp"
     },
     {
       "id": "player-15",
@@ -150,7 +150,7 @@
       "teamId": "team1",
       "goals": 2,
       "image": "/images/OceanDragonPlayers/images/fernando-torres.webp",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/fernando-torres.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/fernando-torres.webp"
     },
     {
       "id": "player-16",
@@ -158,7 +158,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/paul-scholes.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/paul-scholes.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/paul-scholes.webp"
     },
     {
       "id": "player-17",
@@ -166,7 +166,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/frank-lampard.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/frank-lampard.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/frank-lampard.webp"
     },
     {
       "id": "player-18",
@@ -174,7 +174,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/alessandro-bastoni.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-bastoni.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-bastoni.webp"
     },
     {
       "id": "player-19",
@@ -182,7 +182,7 @@
       "teamId": "team1",
       "goals": 18,
       "image": "/images/OceanDragonPlayers/images/johan-cruyff.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/johan-cruyff.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/johan-cruyff.webp"
     },
     {
       "id": "player-20",
@@ -190,7 +190,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/ben-white.avif",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/ben-white.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/ben-white.webp"
     },
     {
       "id": "player-21",
@@ -198,7 +198,7 @@
       "teamId": "team2",
       "goals": 11,
       "image": "/images/HarborUnitedPlayers/images/giovanni-van-bronckhorst.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/giovanni-van-bronckhorst.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/giovanni-van-bronckhorst.webp"
     },
     {
       "id": "player-22",
@@ -206,7 +206,7 @@
       "teamId": "team2",
       "goals": 26,
       "image": "/images/HarborUnitedPlayers/images/marcus-rashford.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/marcus-rashford.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/marcus-rashford.webp"
     },
     {
       "id": "player-23",
@@ -214,7 +214,7 @@
       "teamId": "team1",
       "goals": 0,
       "image": "/images/OceanDragonPlayers/images/steven-gerrard.jpg",
-      "fullImage": "/images/OceanDragonPlayers/fullImages/steven-gerrard.png"
+      "fullImage": "/images/OceanDragonPlayers/fullImages/steven-gerrard.webp"
     },
     {
       "id": "player-24",
@@ -222,7 +222,7 @@
       "teamId": "team2",
       "goals": 58,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
     {
       "id": "player-25",
@@ -230,7 +230,7 @@
       "teamId": "team2",
       "goals": 6,
       "image": "/images/HarborUnitedPlayers/images/david-beckham.avif",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/david-beckham.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/david-beckham.webp"
     },
     {
       "id": "player-26",
@@ -238,7 +238,7 @@
       "teamId": "team2",
       "goals": 13,
       "image": "/images/HarborUnitedPlayers/images/wesley-sneijder.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/wesley-sneijder.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/wesley-sneijder.webp"
     },
     {
       "id": "player-27",
@@ -246,7 +246,7 @@
       "teamId": "team2",
       "goals": 26,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
     {
       "id": "player-28",
@@ -254,7 +254,7 @@
       "teamId": "team2",
       "goals": 9,
       "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.webp"
     },
     {
       "id": "player-29",
@@ -262,7 +262,7 @@
       "teamId": "team2",
       "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/guti.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/guti.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/guti.webp"
     },
     {
       "id": "player-30",
@@ -270,7 +270,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/achraf-hakimi.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/achraf-hakimi.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/achraf-hakimi.webp"
     },
     {
       "id": "player-31",
@@ -278,7 +278,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/alessandro-costacurta.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-costacurta.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-costacurta.webp"
     },
     {
       "id": "player-32",
@@ -286,7 +286,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/marquinhos.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/marquinhos.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/marquinhos.webp"
     },
     {
       "id": "player-33",
@@ -294,15 +294,15 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/cafu.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/cafu.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/cafu.webp"
     },
     {
       "id": "player-34",
       "name": "Christian Abbiati",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.png",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/christian-abbiati.png"
+      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/christian-abbiati.webp"
     },
     {
       "id": "player-35",
@@ -310,15 +310,15 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/iker-casillas.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/iker-casillas.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/iker-casillas.webp"
     },
     {
       "id": "player-36",
       "name": "Rúben Neves",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/HarborUnitedPlayers/images/ruben-neves.png",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruben-neves.png"
+      "image": "/images/HarborUnitedPlayers/images/ruben-neves.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruben-neves.webp"
     },
     {
       "id": "player-37",
@@ -326,15 +326,15 @@
       "teamId": "team2",
       "goals": 12,
       "image": "/images/HarborUnitedPlayers/images/didier-drogba.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/didier-drogba.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/didier-drogba.webp"
     },
     {
       "id": "player-38",
       "name": "Martin Ødegaard",
       "teamId": "team2",
       "goals": 1,
-      "image": "/images/HarborUnitedPlayers/images/martin-degaard.png",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/martin-degaard.png"
+      "image": "/images/HarborUnitedPlayers/images/martin-degaard.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/martin-degaard.webp"
     },
     {
       "id": "player-39",
@@ -342,7 +342,7 @@
       "teamId": "team2",
       "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/erling-haaland.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/erling-haaland.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/erling-haaland.webp"
     },
     {
       "id": "player-42",
@@ -350,7 +350,7 @@
       "teamId": "team2",
       "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/warren-zaire-emery.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/warren-zaire-emery.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/warren-zaire-emery.webp"
     },
     {
       "id": "player-43",
@@ -358,7 +358,7 @@
       "teamId": "team2",
       "goals": 5,
       "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp"
     },
     {
       "id": "player-44",
@@ -366,7 +366,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/ben-white.avif",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/ben-white.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ben-white.webp"
     },
     {
       "id": "player-45",
@@ -374,7 +374,7 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/joshua-kimmich.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/joshua-kimmich.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/joshua-kimmich.webp"
     },
     {
       "id": "player-46",
@@ -382,19 +382,21 @@
       "teamId": "team2",
       "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/alessandro-bastoni.jpg",
-      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-bastoni.png"
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-bastoni.webp"
     },
     {
       "name": "Désiré Doué",
       "teamId": "team2",
-      "image": "/images/désiré-doué.jpg",
+      "image": "/images/HarborUnitedPlayers/images/desire-doue.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/desire-doue.webp",
       "goals": 0,
       "id": "player-1773810346810"
     },
     {
       "name": "Petr Čech",
       "teamId": "team2",
-      "image": "/images/petr-čech.webp",
+      "image": "/images/HarborUnitedPlayers/images/petr-cech.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/petr-cech.webp",
       "goals": 0,
       "id": "player-1773872256153"
     }
