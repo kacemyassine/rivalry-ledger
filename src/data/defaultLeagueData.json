@@ -390,6 +390,13 @@
       "image": "/images/désiré-doué.jpg",
       "goals": 0,
       "id": "player-1773810346810"
+    },
+    {
+      "name": "Petr Čech",
+      "teamId": "team2",
+      "image": "/images/petr-čech.webp",
+      "goals": 0,
+      "id": "player-1773872256153"
     }
   ],
   "matches": [
