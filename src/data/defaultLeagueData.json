@@ -301,7 +301,7 @@
       "name": "Christian Abbiati",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.webp",
+      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.png",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/christian-abbiati.webp"
     },
     {
@@ -317,7 +317,7 @@
       "name": "Rúben Neves",
       "teamId": "team2",
       "goals": 0,
-      "image": "/images/HarborUnitedPlayers/images/ruben-neves.webp",
+      "image": "/images/HarborUnitedPlayers/images/ruben-neves.png",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruben-neves.webp"
     },
     {
@@ -333,7 +333,7 @@
       "name": "Martin Ødegaard",
       "teamId": "team2",
       "goals": 1,
-      "image": "/images/HarborUnitedPlayers/images/martin-degaard.webp",
+      "image": "/images/HarborUnitedPlayers/images/martin-degaard.png",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/martin-degaard.webp"
     },
     {
