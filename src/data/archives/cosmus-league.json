@@ -80,7 +80,7 @@
     { "id": "player-44", "name": "Ben White", "teamId": "team2", "goals": 0, "image": "/images/HarborUnitedPlayers/images/ben-white.avif", "fullImage": "/images/HarborUnitedPlayers/fullImages/ben-white.webp" },
     { "id": "player-45", "name": "Joshua Kimmich", "teamId": "team2", "goals": 1, "image": "/images/HarborUnitedPlayers/images/joshua-kimmich.jpg", "fullImage": "/images/HarborUnitedPlayers/fullImages/joshua-kimmich.webp" },
     { "id": "player-46", "name": "Alessandro Bastoni", "teamId": "team2", "goals": 0, "image": "/images/HarborUnitedPlayers/images/alessandro-bastoni.jpg", "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-bastoni.webp" },
-    { "id": "player-1765006456537", "name": "Eden Hazard", "teamId": "team1", "goals": 0, "image": "/images/OceanDragonPlayers/images/eden-hazard.webp", "fullImage": "/images/OceanDragonPlayers/fullImages/eden-hazard.webp" },
+    { "id": "player-1765006456537", "name": "Eden Hazard", "teamId": "team1", "goals": 0, "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp", "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp" },
     { "id": "player-1767508428477", "name": "Marcus Rashford", "teamId": "team2", "goals": 19, "image": "/images/HarborUnitedPlayers/images/marcus-rashford.webp", "fullImage": "/images/HarborUnitedPlayers/fullImages/marcus-rashford.webp" },
     { "id": "player-1768592229221", "name": "Johan Cruyff", "teamId": "team1", "goals": 19, "image": "/images/OceanDragonPlayers/images/johan-cruyff.jpg", "fullImage": "/images/OceanDragonPlayers/fullImages/johan-cruyff.webp" }
   ],
