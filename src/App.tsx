@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import CupDetail from "./pages/CupDetail";
+import { AdminProvider } from "./contexts/AdminContext";
 
 const queryClient = new QueryClient();
 
@@ -28,8 +29,8 @@ const App = () => (
           <Route path="/statistics" element={<StatisticsPage />} />
           <Route path="/archived-leagues" element={<ArchivedLeagues />} />
           <Route path="/archived-leagues/:leagueId" element={<ArchivedLeagueDetail />} />
-          <Route path="/cups" element={<Cups />} />
-          <Route path="/cups/:cupId" element={<CupDetail />} />
+          <Route path="/cups" element={<AdminProvider isAdmin={false}><Cups /></AdminProvider>} />
+          <Route path="/cups/:cupId" element={<AdminProvider isAdmin={false}><CupDetail /></AdminProvider>} />
           <Route 
             path="/admin" 
             element={
