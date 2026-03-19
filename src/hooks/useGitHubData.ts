@@ -155,5 +155,48 @@ export function useGitHubData() {
     }
   }, []);
 
-  return { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, config: GITHUB_CONFIG };
+  const fetchCups = useCallback(async () => {
+  try {
+    const apiRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/cups.json?ref=${GITHUB_CONFIG.branch}`,
+      { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
+    );
+    if (!apiRes.ok) throw new Error('Failed to fetch cups');
+    const { content } = await apiRes.json();
+    return JSON.parse(base64ToUtf8(content));
+  } catch (e) {
+    console.error(e);
+    toast.error('Failed to fetch cups');
+    return null;
+  }
+}, []);
+
+const updateCups = useCallback(async (data: any): Promise<boolean> => {
+  try {
+    const { data: result, error } = await supabase.functions.invoke('update-json', {
+      body: {
+        data,
+        owner: GITHUB_CONFIG.owner,
+        repo: GITHUB_CONFIG.repo,
+        path: 'src/data/cups.json',
+        branch: GITHUB_CONFIG.branch,
+      },
+    });
+
+    if (error || result?.error) {
+      console.error(error || result.error);
+      toast.error('Failed to update cups');
+      return false;
+    }
+
+    toast.success('Cup saved successfully!');
+    return true;
+  } catch (e) {
+    console.error(e);
+    toast.error('Failed to update cups');
+    return false;
+  }
+}, []);
+
+  return { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, fetchCups, updateCups, config: GITHUB_CONFIG };
 }

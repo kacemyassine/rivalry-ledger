@@ -12,6 +12,7 @@ import Cups from "./pages/Cups";
 import NotFound from "./pages/NotFound";
 import Navbar from "./components/Navbar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import CupDetail from "./pages/CupDetail";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/archived-leagues" element={<ArchivedLeagues />} />
           <Route path="/archived-leagues/:leagueId" element={<ArchivedLeagueDetail />} />
           <Route path="/cups" element={<Cups />} />
+          <Route path="/cups/:cupId" element={<CupDetail />} />
           <Route 
             path="/admin" 
             element={
