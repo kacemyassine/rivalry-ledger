@@ -305,7 +305,7 @@ const CupDetail = () => {
               <p className="text-amber-500/50 text-sm mb-1">
                 The first match will take place at
               </p>
-              <p className="text-amber-400 font-bold text-base">🏟️ {leg1Stadium}</p>
+              <p className="text-amber-400 font-bold text-base">🏟️ {cup.stadiums?.leg1 || '—'}</p>
             </div>
           </div>
         )}
