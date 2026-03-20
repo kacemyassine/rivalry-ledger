@@ -58,6 +58,7 @@ const Cups = () => {
       winner: cupWinner.trim(),
       date: cupDate,
       image: imagePath,
+      matches: [],
     };
 
     const updatedCups = [...cups, newCup];
