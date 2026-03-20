@@ -233,9 +233,6 @@ const CupDetail = () => {
   }
 
   const nextLegForDisplay = computeNextLeg(cup.matches || []);
-  const leg1Stadium = cup.stadiums?.leg1 || '—';
-  const leg2Stadium = cup.stadiums?.leg2 || '—';
-  const leg3Stadium = cup.stadiums?.leg3 || null;
 
   return (
     <div className="min-h-screen bg-[#0f0800] relative overflow-hidden">
@@ -296,23 +293,6 @@ const CupDetail = () => {
             </div>
           )}
           {cup.date && <p className="text-amber-500/40 text-sm mt-2">📅 {cup.date}</p>}
-        </div>
-
-        {/* Stadium Schedule */}
-        <div className="mb-10 bg-gradient-to-br from-[#1a0f00] to-[#0f0800] border border-amber-500/15 rounded-2xl p-6">
-          <h3 className="text-amber-400/80 text-xs uppercase tracking-widest mb-4">Stadium Schedule</h3>
-          <div className="space-y-3">
-            {[
-              { leg: 'Leg 1', stadium: leg1Stadium },
-              { leg: 'Leg 2', stadium: leg2Stadium },
-              { leg: 'Leg 3 — Decider', stadium: leg3Stadium || 'TBD after Leg 2' },
-            ].map((item) => (
-              <div key={item.leg} className="flex items-center justify-between py-2 border-b border-amber-500/10 last:border-0">
-                <span className="text-amber-500/60 text-sm">{item.leg}</span>
-                <span className="text-amber-300/80 text-sm font-medium">🏟️ {item.stadium}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* No matches yet */}
