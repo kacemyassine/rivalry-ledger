@@ -13,7 +13,7 @@
       "won": 6,
       "drawn": 1,
       "lost": 23,
-      "goalsFor": 96,
+      "goalsFor": 95,
       "goalsAgainst": 171,
       "points": 19
     },
@@ -27,7 +27,7 @@
       "drawn": 1,
       "lost": 6,
       "goalsFor": 171,
-      "goalsAgainst": 96,
+      "goalsAgainst": 95,
       "points": 70
     }
   ],
@@ -84,7 +84,7 @@
       "id": "player-7",
       "name": "David Beckham",
       "teamId": "team1",
-      "goals": 7,
+      "goals": 6,
       "image": "/images/OceanDragonPlayers/images/david-beckham.avif",
       "fullImage": "/images/OceanDragonPlayers/fullImages/david-beckham.webp"
     },
@@ -108,7 +108,7 @@
       "id": "player-10",
       "name": "Kylian Mbappé",
       "teamId": "team1",
-      "goals": 17,
+      "goals": 15,
       "image": "/images/OceanDragonPlayers/images/kylian-mbappe.jpg",
       "fullImage": "/images/OceanDragonPlayers/fullImages/kylian-mbappe.webp"
     },
@@ -204,7 +204,7 @@
       "id": "player-22",
       "name": "Marcus Rashford",
       "teamId": "team2",
-      "goals": 26,
+      "goals": 27,
       "image": "/images/HarborUnitedPlayers/images/marcus-rashford.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/marcus-rashford.webp"
     },
@@ -220,7 +220,7 @@
       "id": "player-24",
       "name": "Lionel Messi",
       "teamId": "team2",
-      "goals": 58,
+      "goals": 56,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -252,7 +252,7 @@
       "id": "player-28",
       "name": "Kevin De Bruyne",
       "teamId": "team2",
-      "goals": 9,
+      "goals": 10,
       "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -399,6 +399,27 @@
       "fullImage": "/images/HarborUnitedPlayers/fullImages/petr-cech.webp",
       "goals": 0,
       "id": "player-1773872256153"
+    },
+    {
+      "name": "Filippo Inzaghi",
+      "teamId": "team1",
+      "image": "/images/filippo-inzaghi.jpg",
+      "goals": 2,
+      "id": "player-1773979191775"
+    },
+    {
+      "name": "Zico",
+      "teamId": "team1",
+      "image": "/images/zico.webp",
+      "goals": 0,
+      "id": "player-1773979262808"
+    },
+    {
+      "name": "Aurélien Tchouaméni",
+      "teamId": "team1",
+      "image": "/images/aurélien-tchouaméni.webp",
+      "goals": 0,
+      "id": "player-1773979316452"
     }
   ],
   "matches": [
@@ -1610,17 +1631,27 @@
       "date": "2026-03-17T04:44:44.289Z"
     },
     {
-      "id": "match-1773811768564",
+      "id": "match-1773979105202",
       "homeTeamId": "team1",
       "awayTeamId": "team2",
       "homeTeamName": "Ocean Dragon",
       "awayTeamName": "Harbor United",
-      "homeGoals": 3,
+      "homeGoals": 2,
       "awayGoals": 5,
       "scorers": [
         {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
           "playerId": "player-24",
-          "goals": 3,
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
           "isOwnGoal": false
         },
         {
@@ -1629,22 +1660,17 @@
           "isOwnGoal": false
         },
         {
-          "playerId": "player-10",
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-1773979191775",
           "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-7",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-26",
-          "goals": 1,
           "isOwnGoal": false
         }
       ],
-      "date": "2026-03-18T05:29:28.564Z"
+      "date": "2026-03-20T00:00:00.000Z"
     }
   ],
   "targetMatches": 30
