@@ -18,8 +18,7 @@ const Cups = () => {
 
   // Form state
   const [cupName, setCupName] = useState('');
-  const [cupWinner, setCupWinner] = useState('');
-  const [cupDate, setCupDate] = useState('');
+  const [cupDate, setCupDate] = useState(new Date().toISOString().split('T')[0]);
   const [cupImage, setCupImage] = useState<string | null>(null);
   const [cupImageFile, setCupImageFile] = useState<File | null>(null);
 
@@ -55,7 +54,7 @@ const Cups = () => {
     const newCup = {
       id: `cup-${Date.now()}`,
       name: cupName.trim(),
-      winner: cupWinner.trim(),
+      winner: '',
       date: cupDate,
       image: imagePath,
       matches: [],
@@ -66,8 +65,7 @@ const Cups = () => {
     if (success) {
       setCups(updatedCups);
       setCupName('');
-      setCupWinner('');
-      setCupDate('');
+      setCupDate(new Date().toISOString().split('T')[0]);
       setCupImage(null);
       setCupImageFile(null);
       setShowForm(false);
@@ -185,16 +183,6 @@ const Cups = () => {
                     value={cupName}
                     onChange={(e) => setCupName(e.target.value)}
                     placeholder="e.g. Ramadan Cup 2026"
-                    className="bg-[#0f0800] border-amber-400/20 text-amber-100 placeholder:text-amber-200/20"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-amber-200/80 text-sm">Winner</Label>
-                  <Input
-                    value={cupWinner}
-                    onChange={(e) => setCupWinner(e.target.value)}
-                    placeholder="e.g. Harbor United"
                     className="bg-[#0f0800] border-amber-400/20 text-amber-100 placeholder:text-amber-200/20"
                   />
                 </div>
