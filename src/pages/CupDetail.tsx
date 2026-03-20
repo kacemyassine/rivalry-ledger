@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { useLeagueStore } from '@/store/leagueStore';
 import { useAdmin } from '@/contexts/AdminContext';
-import { Loader2, Plus, Minus } from 'lucide-react';
+import { Loader2, Plus, Minus, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,7 +22,24 @@ interface ScorerEntry {
   isOwnGoal: boolean;
 }
 
-function getStadium(leg: number, matches: any[]): string {
+function computeNextLeg(matches: any[]): number {
+  const legs = matches.map((m) => m.leg);
+  if (!legs.includes(1)) return 1;
+  if (!legs.includes(2)) return 2;
+
+  const leg1 = matches.find((m) => m.leg === 1);
+  const leg2 = matches.find((m) => m.leg === 2);
+  if (!leg1 || !leg2) return 3;
+
+  const leg1Winner = leg1.homeGoals > leg1.awayGoals ? leg1.homeTeamId : leg1.awayGoals > leg1.homeGoals ? leg1.awayTeamId : null;
+  const leg2Winner = leg2.homeGoals > leg2.awayGoals ? leg2.homeTeamId : leg2.awayGoals > leg2.homeGoals ? leg2.awayTeamId : null;
+
+  if (leg1Winner && leg2Winner && leg1Winner === leg2Winner) return -1;
+  if (!legs.includes(3)) return 3;
+  return -1;
+}
+
+function computeStadium(leg: number, matches: any[]): string {
   if (leg === 1) {
     return Math.random() < 0.5 ? STADIUMS.team1 : STADIUMS.team2;
   }
@@ -36,12 +53,8 @@ function getStadium(leg: number, matches: any[]): string {
     const leg2 = matches.find((m) => m.leg === 2);
     if (!leg1 || !leg2) return Math.random() < 0.5 ? STADIUMS.team1 : STADIUMS.team2;
 
-    const team1Goals = [leg1, leg2].reduce((sum, m) => {
-      return sum + (m.homeTeamId === 'team1' ? m.homeGoals : m.awayGoals);
-    }, 0);
-    const team2Goals = [leg1, leg2].reduce((sum, m) => {
-      return sum + (m.homeTeamId === 'team2' ? m.homeGoals : m.awayGoals);
-    }, 0);
+    const team1Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team1' ? m.homeGoals : m.awayGoals), 0);
+    const team2Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team2' ? m.homeGoals : m.awayGoals), 0);
 
     if (team1Goals > team2Goals) return STADIUMS.team1;
     if (team2Goals > team1Goals) return STADIUMS.team2;
@@ -50,26 +63,30 @@ function getStadium(leg: number, matches: any[]): string {
   return STADIUMS.team1;
 }
 
-function getNextLeg(matches: any[]): number {
-  const legs = matches.map((m) => m.leg);
-  if (!legs.includes(1)) return 1;
-  if (!legs.includes(2)) return 2;
+const getLegLabel = (leg: number) => {
+  if (leg === 1) return 'Leg 1';
+  if (leg === 2) return 'Leg 2';
+  if (leg === 3) return 'Leg 3 — Decider';
+  return `Leg ${leg}`;
+};
 
-  const leg1 = matches.find((m) => m.leg === 1);
-  const leg2 = matches.find((m) => m.leg === 2);
-  if (!leg1 || !leg2) return 3;
+const getMatchWinner = (match: any) => {
+  if (match.homeGoals > match.awayGoals) return match.homeTeamName;
+  if (match.awayGoals > match.homeGoals) return match.awayTeamName;
+  return 'Draw';
+};
 
-  const team1Wins = (leg1.homeTeamId === 'team1' ? leg1.homeGoals > leg1.awayGoals : leg1.awayGoals > leg1.homeGoals) ? 1 : 0
-    + (leg2.homeTeamId === 'team1' ? leg2.homeGoals > leg2.awayGoals : leg2.awayGoals > leg2.homeGoals) ? 1 : 0;
-  const team2Wins = 2 - team1Wins - (leg1.homeGoals === leg1.awayGoals ? 1 : 0) - (leg2.homeGoals === leg2.awayGoals ? 1 : 0);
-
-  const leg1Winner = leg1.homeGoals > leg1.awayGoals ? leg1.homeTeamId : leg1.awayGoals > leg1.homeGoals ? leg1.awayTeamId : null;
-  const leg2Winner = leg2.homeGoals > leg2.awayGoals ? leg2.homeTeamId : leg2.awayGoals > leg2.homeGoals ? leg2.awayTeamId : null;
-
-  if (leg1Winner && leg2Winner && leg1Winner === leg2Winner) return -1; // cup decided
-  if (!legs.includes(3)) return 3;
-  return -1; // all done
-}
+const TeamLogo = ({ team, size = 'md' }: { team: any; size?: 'sm' | 'md' | 'lg' }) => {
+  const sizes = { sm: 'w-8 h-8', md: 'w-12 h-12', lg: 'w-16 h-16' };
+  return (
+    <div className={`${sizes[size]} rounded-xl overflow-hidden border border-amber-500/20 bg-amber-900/20 flex items-center justify-center shrink-0`}>
+      {team?.logo
+        ? <img src={team.logo} alt={team.name} className="w-full h-full object-cover" />
+        : <Shield className="w-5 h-5 text-amber-500/40" />
+      }
+    </div>
+  );
+};
 
 const CupDetail = () => {
   const { cupId } = useParams();
@@ -83,14 +100,18 @@ const CupDetail = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Add match form
+  // Stadium is computed once when form opens, stored in ref
+  const stadiumRef = useRef<string>('');
+  const nextLegRef = useRef<number>(1);
+
   const [matchFormOpen, setMatchFormOpen] = useState(false);
   const [homeGoals, setHomeGoals] = useState(0);
   const [awayGoals, setAwayGoals] = useState(0);
   const [scorers, setScorers] = useState<ScorerEntry[]>([]);
   const [matchDate, setMatchDate] = useState(new Date().toISOString().split('T')[0]);
+  const [currentStadium, setCurrentStadium] = useState('');
+  const [currentNextLeg, setCurrentNextLeg] = useState(1);
 
-  // Match detail popup
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
 
   useEffect(() => {
@@ -107,10 +128,23 @@ const CupDetail = () => {
     load();
   }, [cupId, fetchCups]);
 
-  const nextLeg = cup ? getNextLeg(cup.matches || []) : 1;
-  const nextStadium = cup && nextLeg > 0 ? getStadium(nextLeg, cup.matches || []) : '';
-  const homeTeam = nextStadium === STADIUMS.team1 ? teams.find((t: any) => t.id === 'team1') : teams.find((t: any) => t.id === 'team2');
-  const awayTeam = nextStadium === STADIUMS.team1 ? teams.find((t: any) => t.id === 'team2') : teams.find((t: any) => t.id === 'team1');
+  const handleOpenMatchForm = () => {
+    if (!cup) return;
+    const nextLeg = computeNextLeg(cup.matches || []);
+    const stadium = computeStadium(nextLeg, cup.matches || []);
+    nextLegRef.current = nextLeg;
+    stadiumRef.current = stadium;
+    setCurrentNextLeg(nextLeg);
+    setCurrentStadium(stadium);
+    setMatchFormOpen(true);
+  };
+
+  const homeTeam = currentStadium === STADIUMS.team1
+    ? teams.find((t: any) => t.id === 'team1')
+    : teams.find((t: any) => t.id === 'team2');
+  const awayTeam = currentStadium === STADIUMS.team1
+    ? teams.find((t: any) => t.id === 'team2')
+    : teams.find((t: any) => t.id === 'team1');
 
   const handleAddScorer = () => {
     if (!players || players.length === 0) return;
@@ -156,8 +190,8 @@ const CupDetail = () => {
 
     const newMatch = {
       id: `cup-match-${Date.now()}`,
-      leg: nextLeg,
-      stadium: nextStadium,
+      leg: currentNextLeg,
+      stadium: currentStadium,
       homeTeamId: homeTeam.id,
       homeTeamName: homeTeam.name,
       awayTeamId: awayTeam.id,
@@ -181,22 +215,9 @@ const CupDetail = () => {
       setAwayGoals(0);
       setScorers([]);
       setMatchDate(new Date().toISOString().split('T')[0]);
-      toast.success(`Leg ${nextLeg} recorded!`);
+      toast.success(`${getLegLabel(currentNextLeg)} recorded!`);
     }
     setSaving(false);
-  };
-
-  const getLegLabel = (leg: number) => {
-    if (leg === 1) return 'Leg 1';
-    if (leg === 2) return 'Leg 2';
-    if (leg === 3) return 'Leg 3 — Decider';
-    return `Leg ${leg}`;
-  };
-
-  const getMatchWinner = (match: any) => {
-    if (match.homeGoals > match.awayGoals) return match.homeTeamName;
-    if (match.awayGoals > match.homeGoals) return match.awayTeamName;
-    return 'Draw';
   };
 
   if (loading) {
@@ -215,6 +236,10 @@ const CupDetail = () => {
       </div>
     );
   }
+
+  const nextLegForDisplay = computeNextLeg(cup.matches || []);
+  const team1 = teams.find((t: any) => t.id === 'team1');
+  const team2 = teams.find((t: any) => t.id === 'team2');
 
   return (
     <div className="min-h-screen bg-[#0f0800] relative overflow-hidden">
@@ -240,7 +265,6 @@ const CupDetail = () => {
 
       <div className="relative z-10 container mx-auto px-4 py-24 max-w-3xl">
 
-        {/* Back */}
         <button onClick={() => navigate('/cups')} className="text-amber-400/60 hover:text-amber-400 text-sm mb-8 flex items-center gap-2 transition-colors">
           ← Back to Cups
         </button>
@@ -251,83 +275,102 @@ const CupDetail = () => {
             <img src={cup.image} alt={cup.name} className="w-32 h-32 object-cover rounded-2xl mx-auto mb-6 border border-amber-500/20" />
           )}
           <p className="text-amber-600/70 uppercase tracking-[0.4em] text-xs font-semibold mb-3">Cup Competition</p>
-          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 mb-6">
             {cup.name}
           </h1>
 
-          {/* Teams */}
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <span className="text-orange-300 font-bold text-lg">Ocean Dragon</span>
-            <span className="text-amber-600/60 font-bold text-sm px-3 py-1 border border-amber-600/30 rounded-full">VS</span>
-            <span className="text-orange-300 font-bold text-lg">Harbor United</span>
+          {/* Teams with logos */}
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="flex flex-col items-center gap-2">
+              <TeamLogo team={team1} size="lg" />
+              <span className="text-orange-300 font-bold text-sm">{team1?.name}</span>
+            </div>
+            <span className="text-amber-600/60 font-bold text-lg px-4 py-2 border border-amber-600/30 rounded-full">VS</span>
+            <div className="flex flex-col items-center gap-2">
+              <TeamLogo team={team2} size="lg" />
+              <span className="text-orange-300 font-bold text-sm">{team2?.name}</span>
+            </div>
           </div>
 
           {cup.winner && (
-            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full">
+            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full mb-3">
               <span className="text-amber-400 font-bold">🏆 {cup.winner}</span>
             </div>
           )}
-
-          {cup.date && <p className="text-amber-400/40 text-sm mt-3">📅 {cup.date}</p>}
+          {cup.date && <p className="text-amber-400/40 text-sm">📅 {cup.date}</p>}
         </div>
 
-        {/* Matches */}
-        <div className="space-y-4 mb-8">
+        {/* Match Results */}
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-amber-400">Match Results</h2>
-            {isAdmin && nextLeg > 0 && (
+            {isAdmin && nextLegForDisplay > 0 && (
               <button
-                onClick={() => setMatchFormOpen(true)}
+                onClick={handleOpenMatchForm}
                 className="flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:border-amber-500/60 font-semibold py-2 px-4 rounded-xl transition-all text-sm"
               >
-                <Plus className="w-4 h-4" /> Add {getLegLabel(nextLeg)}
+                <Plus className="w-4 h-4" /> Add {getLegLabel(nextLegForDisplay)}
               </button>
             )}
           </div>
 
           {(!cup.matches || cup.matches.length === 0) ? (
-            <div className="text-center py-12 text-amber-400/40">No matches played yet.</div>
+            <div className="text-center py-12 text-amber-400/40 border border-amber-500/10 rounded-2xl">
+              No matches played yet.
+            </div>
           ) : (
-            cup.matches.map((match: any) => (
-              <div
-                key={match.id}
-                onClick={() => setSelectedMatch(match)}
-                className="group cursor-pointer relative"
-              >
-                <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 rounded-2xl opacity-10 group-hover:opacity-30 blur-md transition-all duration-500" />
-                <div className="relative bg-gradient-to-br from-[#1f1508] via-[#150f04] to-[#0f0800] rounded-2xl border border-amber-500/20 group-hover:border-amber-500/40 p-5 transition-all">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
-                      {getLegLabel(match.leg)}
-                    </span>
-                    <span className="text-xs text-amber-500/40">🏟️ {match.stadium}</span>
-                  </div>
+            <div className="space-y-4">
+              {cup.matches.map((match: any) => {
+                const matchHomeTeam = teams.find((t: any) => t.id === match.homeTeamId);
+                const matchAwayTeam = teams.find((t: any) => t.id === match.awayTeamId);
+                return (
+                  <div
+                    key={match.id}
+                    onClick={() => setSelectedMatch(match)}
+                    className="group cursor-pointer relative"
+                  >
+                    <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 rounded-2xl opacity-10 group-hover:opacity-30 blur-md transition-all duration-500" />
+                    <div className="relative bg-gradient-to-br from-[#1f1508] via-[#150f04] to-[#0f0800] rounded-2xl border border-amber-500/20 group-hover:border-amber-500/40 p-5 transition-all">
 
-                  <div className="flex items-center justify-between">
-                    <div className="text-center flex-1">
-                      <p className="text-amber-200 font-semibold text-sm md:text-base">{match.homeTeamName}</p>
-                      <p className="text-4xl font-bold text-amber-400 mt-1">{match.homeGoals}</p>
-                    </div>
-                    <div className="text-center px-4">
-                      <p className="text-amber-600/60 font-bold text-lg">—</p>
-                    </div>
-                    <div className="text-center flex-1">
-                      <p className="text-amber-200 font-semibold text-sm md:text-base">{match.awayTeamName}</p>
-                      <p className="text-4xl font-bold text-amber-400 mt-1">{match.awayGoals}</p>
-                    </div>
-                  </div>
+                      {/* Leg + Stadium */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-xs uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                          {getLegLabel(match.leg)}
+                        </span>
+                        <span className="text-xs text-amber-500/40">🏟️ {match.stadium}</span>
+                      </div>
 
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-500/10">
-                    <span className="text-xs text-amber-500/50">
-                      {match.date ? new Date(match.date).toLocaleDateString() : '—'}
-                    </span>
-                    <span className="text-xs font-semibold text-amber-300">
-                      {getMatchWinner(match) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(match)}`}
-                    </span>
+                      {/* Score with logos */}
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex flex-col items-center gap-2 flex-1">
+                          <TeamLogo team={matchHomeTeam} size="md" />
+                          <p className="text-amber-200 font-semibold text-sm text-center">{match.homeTeamName}</p>
+                          <p className="text-4xl font-bold text-amber-400">{match.homeGoals}</p>
+                        </div>
+                        <div className="text-center shrink-0">
+                          <p className="text-amber-600/40 font-bold text-2xl">—</p>
+                        </div>
+                        <div className="flex flex-col items-center gap-2 flex-1">
+                          <TeamLogo team={matchAwayTeam} size="md" />
+                          <p className="text-amber-200 font-semibold text-sm text-center">{match.awayTeamName}</p>
+                          <p className="text-4xl font-bold text-amber-400">{match.awayGoals}</p>
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-500/10">
+                        <span className="text-xs text-amber-500/50">
+                          {match.date ? new Date(match.date).toLocaleDateString() : '—'}
+                        </span>
+                        <span className="text-xs font-semibold text-amber-300">
+                          {getMatchWinner(match) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(match)}`}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -336,13 +379,14 @@ const CupDetail = () => {
       <Dialog open={matchFormOpen} onOpenChange={setMatchFormOpen}>
         <DialogContent className="bg-[#0d1133] border border-amber-400/20 text-amber-100 max-w-md w-[calc(100%-2rem)] mx-auto max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle className="text-amber-400 text-xl">{getLegLabel(nextLeg)}</DialogTitle>
+            <DialogTitle className="text-amber-400 text-xl">{getLegLabel(currentNextLeg)}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6 pt-4">
+
             {/* Stadium info */}
             <div className="text-center text-xs text-amber-400/60 bg-amber-500/5 border border-amber-500/10 rounded-lg py-2">
-              🏟️ {nextStadium}
+              🏟️ {currentStadium}
             </div>
 
             {/* Date */}
@@ -356,10 +400,13 @@ const CupDetail = () => {
               />
             </div>
 
-            {/* Score */}
+            {/* Score with logos */}
             <div className="flex items-end justify-center gap-2 md:gap-4">
-              <div className="text-center flex-1">
-                <p className="text-xs text-amber-400/60 mb-2">{homeTeam?.name}</p>
+              <div className="text-center flex-1 space-y-2">
+                <div className="flex justify-center">
+                  <TeamLogo team={homeTeam} size="sm" />
+                </div>
+                <p className="text-xs text-amber-400/60">{homeTeam?.name}</p>
                 <Input
                   type="number" min={0} value={homeGoals}
                   onChange={(e) => setHomeGoals(parseInt(e.target.value || '0') || 0)}
@@ -367,8 +414,11 @@ const CupDetail = () => {
                 />
               </div>
               <span className="text-xl text-amber-600/60 font-bold pb-3">VS</span>
-              <div className="text-center flex-1">
-                <p className="text-xs text-amber-400/60 mb-2">{awayTeam?.name}</p>
+              <div className="text-center flex-1 space-y-2">
+                <div className="flex justify-center">
+                  <TeamLogo team={awayTeam} size="sm" />
+                </div>
+                <p className="text-xs text-amber-400/60">{awayTeam?.name}</p>
                 <Input
                   type="number" min={0} value={awayGoals}
                   onChange={(e) => setAwayGoals(parseInt(e.target.value || '0') || 0)}
@@ -422,7 +472,7 @@ const CupDetail = () => {
 
             <Button onClick={handleSaveMatch} disabled={saving} className="w-full bg-amber-500 hover:bg-amber-400 text-[#0f0800] font-bold">
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Save {getLegLabel(nextLeg)}
+              Save {getLegLabel(currentNextLeg)}
             </Button>
           </div>
         </DialogContent>
@@ -431,71 +481,80 @@ const CupDetail = () => {
       {/* Match Detail Popup */}
       <Dialog open={!!selectedMatch} onOpenChange={() => setSelectedMatch(null)}>
         <DialogContent className="bg-[#0d1133] border border-amber-400/20 text-amber-100 max-w-md w-[calc(100%-2rem)] mx-auto max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
-          {selectedMatch && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-amber-400 text-xl">{getLegLabel(selectedMatch.leg)}</DialogTitle>
-              </DialogHeader>
+          {selectedMatch && (() => {
+            const matchHomeTeam = teams.find((t: any) => t.id === selectedMatch.homeTeamId);
+            const matchAwayTeam = teams.find((t: any) => t.id === selectedMatch.awayTeamId);
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-amber-400 text-xl">{getLegLabel(selectedMatch.leg)}</DialogTitle>
+                </DialogHeader>
 
-              <div className="space-y-6 pt-4">
-                <div className="text-center text-xs text-amber-400/60 bg-amber-500/5 border border-amber-500/10 rounded-lg py-2">
-                  🏟️ {selectedMatch.stadium}
-                </div>
-
-                {/* Score */}
-                <div className="flex items-center justify-between">
-                  <div className="text-center flex-1">
-                    <p className="text-amber-200 font-semibold text-sm">{selectedMatch.homeTeamName}</p>
-                    <p className="text-5xl font-bold text-amber-400 mt-2">{selectedMatch.homeGoals}</p>
+                <div className="space-y-6 pt-4">
+                  <div className="text-center text-xs text-amber-400/60 bg-amber-500/5 border border-amber-500/10 rounded-lg py-2">
+                    🏟️ {selectedMatch.stadium}
                   </div>
-                  <div className="text-center px-4">
-                    <p className="text-amber-600/40 font-bold text-2xl">—</p>
-                  </div>
-                  <div className="text-center flex-1">
-                    <p className="text-amber-200 font-semibold text-sm">{selectedMatch.awayTeamName}</p>
-                    <p className="text-5xl font-bold text-amber-400 mt-2">{selectedMatch.awayGoals}</p>
-                  </div>
-                </div>
 
-                <div className="text-center">
-                  <span className="text-sm font-semibold text-amber-300">
-                    {getMatchWinner(selectedMatch) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(selectedMatch)} wins`}
-                  </span>
-                  {selectedMatch.date && (
-                    <p className="text-xs text-amber-500/40 mt-1">📅 {new Date(selectedMatch.date).toLocaleDateString()}</p>
-                  )}
-                </div>
+                  {/* Score with logos */}
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col items-center gap-2 flex-1">
+                      <TeamLogo team={matchHomeTeam} size="lg" />
+                      <p className="text-amber-200 font-semibold text-sm text-center">{selectedMatch.homeTeamName}</p>
+                      <p className="text-5xl font-bold text-amber-400">{selectedMatch.homeGoals}</p>
+                    </div>
+                    <div className="text-center shrink-0">
+                      <p className="text-amber-600/40 font-bold text-2xl">—</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 flex-1">
+                      <TeamLogo team={matchAwayTeam} size="lg" />
+                      <p className="text-amber-200 font-semibold text-sm text-center">{selectedMatch.awayTeamName}</p>
+                      <p className="text-5xl font-bold text-amber-400">{selectedMatch.awayGoals}</p>
+                    </div>
+                  </div>
 
-                {/* Scorers */}
-                {selectedMatch.scorers && selectedMatch.scorers.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs uppercase tracking-widest text-amber-400/60 mb-3">Goal Scorers</p>
-                    {selectedMatch.scorers.map((scorer: any, i: number) => {
-                      const player = players.find((p: any) => p.id === scorer.playerId);
-                      const team = teams.find((t: any) => t.id === player?.teamId);
-                      return (
-                        <div key={i} className="flex items-center justify-between bg-amber-500/5 border border-amber-500/10 rounded-lg px-4 py-2">
-                          <div className="flex items-center gap-3">
-                            {player?.image && (
-                              <img src={player.image} alt={player.name} className="w-8 h-8 rounded-full object-cover border border-amber-500/20" />
-                            )}
-                            <div>
-                              <p className="text-amber-200 text-sm font-semibold">{player?.name || 'Unknown'}</p>
-                              <p className="text-amber-500/50 text-xs">{team?.name}</p>
+                  <div className="text-center">
+                    <span className="text-sm font-semibold text-amber-300">
+                      {getMatchWinner(selectedMatch) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(selectedMatch)} wins`}
+                    </span>
+                    {selectedMatch.date && (
+                      <p className="text-xs text-amber-500/40 mt-1">📅 {new Date(selectedMatch.date).toLocaleDateString()}</p>
+                    )}
+                  </div>
+
+                  {/* Scorers */}
+                  {selectedMatch.scorers && selectedMatch.scorers.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-widest text-amber-400/60 mb-3">Goal Scorers</p>
+                      {selectedMatch.scorers.map((scorer: any, i: number) => {
+                        const player = players.find((p: any) => p.id === scorer.playerId);
+                        const team = teams.find((t: any) => t.id === player?.teamId);
+                        return (
+                          <div key={i} className="flex items-center justify-between bg-amber-500/5 border border-amber-500/10 rounded-lg px-4 py-2">
+                            <div className="flex items-center gap-3">
+                              {player?.image
+                                ? <img src={player.image} alt={player.name} className="w-9 h-9 rounded-full object-cover border border-amber-500/20 shrink-0" />
+                                : <div className="w-9 h-9 rounded-full bg-amber-900/30 border border-amber-500/20 flex items-center justify-center shrink-0">
+                                    <span className="text-amber-500/50 text-xs font-bold">{player?.name?.[0]}</span>
+                                  </div>
+                              }
+                              <div>
+                                <p className="text-amber-200 text-sm font-semibold">{player?.name || 'Unknown'}</p>
+                                <p className="text-amber-500/50 text-xs">{team?.name}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-amber-400 font-bold">{scorer.goals} ⚽</p>
+                              {scorer.isOwnGoal && <p className="text-red-400 text-xs">OG</p>}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-amber-400 font-bold">{scorer.goals} ⚽</p>
-                            {scorer.isOwnGoal && <p className="text-red-400 text-xs">OG</p>}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
