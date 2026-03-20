@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { useLeagueStore } from '@/store/leagueStore';
@@ -11,16 +11,36 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 
-const STADIUMS = {
-  team1: 'Ocean Hell Arena',
-  team2: 'Harbor United Battlefield',
-};
-
 interface ScorerEntry {
   playerId: string;
   goals: number;
   isOwnGoal: boolean;
 }
+
+const getLegLabel = (leg: number) => {
+  if (leg === 1) return 'Leg 1';
+  if (leg === 2) return 'Leg 2';
+  if (leg === 3) return 'Leg 3 — Decider';
+  return `Leg ${leg}`;
+};
+
+const getMatchWinner = (match: any) => {
+  if (match.homeGoals > match.awayGoals) return match.homeTeamName;
+  if (match.awayGoals > match.homeGoals) return match.awayTeamName;
+  return 'Draw';
+};
+
+const TeamLogo = ({ team, size = 'md' }: { team: any; size?: 'sm' | 'md' | 'lg' }) => {
+  const sizes = { sm: 'w-10 h-10', md: 'w-14 h-14', lg: 'w-20 h-20' };
+  return (
+    <div className={`${sizes[size]} rounded-xl overflow-hidden border-2 border-amber-500/30 bg-[#1a0f00] flex items-center justify-center shrink-0`}>
+      {team?.logo
+        ? <img src={team.logo} alt={team.name} className="w-full h-full object-cover" />
+        : <Shield className="w-5 h-5 text-amber-500/40" />
+      }
+    </div>
+  );
+};
 
 function computeNextLeg(matches: any[]): number {
   const legs = matches.map((m) => m.leg);
@@ -39,54 +59,18 @@ function computeNextLeg(matches: any[]): number {
   return -1;
 }
 
-function computeStadium(leg: number, matches: any[]): string {
-  if (leg === 1) {
-    return Math.random() < 0.5 ? STADIUMS.team1 : STADIUMS.team2;
-  }
-  if (leg === 2) {
-    const leg1 = matches.find((m) => m.leg === 1);
-    if (!leg1) return STADIUMS.team1;
-    return leg1.stadium === STADIUMS.team1 ? STADIUMS.team2 : STADIUMS.team1;
-  }
-  if (leg === 3) {
-    const leg1 = matches.find((m) => m.leg === 1);
-    const leg2 = matches.find((m) => m.leg === 2);
-    if (!leg1 || !leg2) return Math.random() < 0.5 ? STADIUMS.team1 : STADIUMS.team2;
+function computeLeg3Stadium(matches: any[]): string {
+  const leg1 = matches.find((m) => m.leg === 1);
+  const leg2 = matches.find((m) => m.leg === 2);
+  if (!leg1 || !leg2) return Math.random() < 0.5 ? 'Ocean Hell Arena' : 'Harbor United Battlefield';
 
-    const team1Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team1' ? m.homeGoals : m.awayGoals), 0);
-    const team2Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team2' ? m.homeGoals : m.awayGoals), 0);
+  const team1Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team1' ? m.homeGoals : m.awayGoals), 0);
+  const team2Goals = [leg1, leg2].reduce((sum, m) => sum + (m.homeTeamId === 'team2' ? m.homeGoals : m.awayGoals), 0);
 
-    if (team1Goals > team2Goals) return STADIUMS.team1;
-    if (team2Goals > team1Goals) return STADIUMS.team2;
-    return Math.random() < 0.5 ? STADIUMS.team1 : STADIUMS.team2;
-  }
-  return STADIUMS.team1;
+  if (team1Goals > team2Goals) return 'Ocean Hell Arena';
+  if (team2Goals > team1Goals) return 'Harbor United Battlefield';
+  return Math.random() < 0.5 ? 'Ocean Hell Arena' : 'Harbor United Battlefield';
 }
-
-const getLegLabel = (leg: number) => {
-  if (leg === 1) return 'Leg 1';
-  if (leg === 2) return 'Leg 2';
-  if (leg === 3) return 'Leg 3 — Decider';
-  return `Leg ${leg}`;
-};
-
-const getMatchWinner = (match: any) => {
-  if (match.homeGoals > match.awayGoals) return match.homeTeamName;
-  if (match.awayGoals > match.homeGoals) return match.awayTeamName;
-  return 'Draw';
-};
-
-const TeamLogo = ({ team, size = 'md' }: { team: any; size?: 'sm' | 'md' | 'lg' }) => {
-  const sizes = { sm: 'w-8 h-8', md: 'w-12 h-12', lg: 'w-16 h-16' };
-  return (
-    <div className={`${sizes[size]} rounded-xl overflow-hidden border border-amber-500/20 bg-amber-900/20 flex items-center justify-center shrink-0`}>
-      {team?.logo
-        ? <img src={team.logo} alt={team.name} className="w-full h-full object-cover" />
-        : <Shield className="w-5 h-5 text-amber-500/40" />
-      }
-    </div>
-  );
-};
 
 const CupDetail = () => {
   const { cupId } = useParams();
@@ -100,17 +84,12 @@ const CupDetail = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Stadium is computed once when form opens, stored in ref
-  const stadiumRef = useRef<string>('');
-  const nextLegRef = useRef<number>(1);
-
   const [matchFormOpen, setMatchFormOpen] = useState(false);
   const [homeGoals, setHomeGoals] = useState(0);
   const [awayGoals, setAwayGoals] = useState(0);
   const [scorers, setScorers] = useState<ScorerEntry[]>([]);
-  const [matchDate, setMatchDate] = useState(new Date().toISOString().split('T')[0]);
-  const [currentStadium, setCurrentStadium] = useState('');
   const [currentNextLeg, setCurrentNextLeg] = useState(1);
+  const [currentStadium, setCurrentStadium] = useState('');
 
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
 
@@ -128,21 +107,39 @@ const CupDetail = () => {
     load();
   }, [cupId, fetchCups]);
 
-  const handleOpenMatchForm = () => {
+  const team1 = teams.find((t: any) => t.id === 'team1');
+  const team2 = teams.find((t: any) => t.id === 'team2');
+
+  const handleOpenMatchForm = async () => {
     if (!cup) return;
     const nextLeg = computeNextLeg(cup.matches || []);
-    const stadium = computeStadium(nextLeg, cup.matches || []);
-    nextLegRef.current = nextLeg;
-    stadiumRef.current = stadium;
+
+    let stadium = '';
+    if (nextLeg === 1) stadium = cup.stadiums?.leg1 || 'Ocean Hell Arena';
+    if (nextLeg === 2) stadium = cup.stadiums?.leg2 || 'Harbor United Battlefield';
+    if (nextLeg === 3) {
+      // Compute leg3 stadium and save it permanently if not already saved
+      if (cup.stadiums?.leg3) {
+        stadium = cup.stadiums.leg3;
+      } else {
+        stadium = computeLeg3Stadium(cup.matches || []);
+        const updatedCup = { ...cup, stadiums: { ...cup.stadiums, leg3: stadium } };
+        const updatedCups = allCups.map((c: any) => c.id === cup.id ? updatedCup : c);
+        await updateCups({ cups: updatedCups });
+        setCup(updatedCup);
+        setAllCups(updatedCups);
+      }
+    }
+
     setCurrentNextLeg(nextLeg);
     setCurrentStadium(stadium);
     setMatchFormOpen(true);
   };
 
-  const homeTeam = currentStadium === STADIUMS.team1
+  const homeTeam = currentStadium === 'Ocean Hell Arena'
     ? teams.find((t: any) => t.id === 'team1')
     : teams.find((t: any) => t.id === 'team2');
-  const awayTeam = currentStadium === STADIUMS.team1
+  const awayTeam = currentStadium === 'Ocean Hell Arena'
     ? teams.find((t: any) => t.id === 'team2')
     : teams.find((t: any) => t.id === 'team1');
 
@@ -179,7 +176,6 @@ const CupDetail = () => {
         if (!s.isOwnGoal && isAwayPlayer) return sum + s.goals;
         return sum;
       }, 0);
-
       if (effectiveHomeGoals !== homeGoals || effectiveAwayGoals !== awayGoals) {
         toast.error(`Goals don't add up. Home: ${effectiveHomeGoals}/${homeGoals}, Away: ${effectiveAwayGoals}/${awayGoals}`);
         return;
@@ -199,7 +195,7 @@ const CupDetail = () => {
       homeGoals,
       awayGoals,
       scorers,
-      date: new Date(matchDate).toISOString(),
+      date: cup.date,
     };
 
     const updatedMatches = [...(cup.matches || []), newMatch];
@@ -214,7 +210,6 @@ const CupDetail = () => {
       setHomeGoals(0);
       setAwayGoals(0);
       setScorers([]);
-      setMatchDate(new Date().toISOString().split('T')[0]);
       toast.success(`${getLegLabel(currentNextLeg)} recorded!`);
     }
     setSaving(false);
@@ -238,8 +233,9 @@ const CupDetail = () => {
   }
 
   const nextLegForDisplay = computeNextLeg(cup.matches || []);
-  const team1 = teams.find((t: any) => t.id === 'team1');
-  const team2 = teams.find((t: any) => t.id === 'team2');
+  const leg1Stadium = cup.stadiums?.leg1 || '—';
+  const leg2Stadium = cup.stadiums?.leg2 || '—';
+  const leg3Stadium = cup.stadiums?.leg3 || null;
 
   return (
     <div className="min-h-screen bg-[#0f0800] relative overflow-hidden">
@@ -265,45 +261,81 @@ const CupDetail = () => {
 
       <div className="relative z-10 container mx-auto px-4 py-24 max-w-3xl">
 
-        <button onClick={() => navigate('/cups')} className="text-amber-400/60 hover:text-amber-400 text-sm mb-8 flex items-center gap-2 transition-colors">
+        <button onClick={() => navigate('/cups')} className="text-amber-400/50 hover:text-amber-400 text-sm mb-10 flex items-center gap-2 transition-colors">
           ← Back to Cups
         </button>
 
         {/* Cup Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-14">
           {cup.image && (
-            <img src={cup.image} alt={cup.name} className="w-32 h-32 object-cover rounded-2xl mx-auto mb-6 border border-amber-500/20" />
+            <img src={cup.image} alt={cup.name} className="w-28 h-28 object-cover rounded-2xl mx-auto mb-6 border-2 border-amber-500/30" />
           )}
-          <p className="text-amber-600/70 uppercase tracking-[0.4em] text-xs font-semibold mb-3">Cup Competition</p>
-          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 mb-6">
+          <p className="text-amber-600/60 uppercase tracking-[0.4em] text-xs font-semibold mb-3">Cup Competition</p>
+          <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-amber-200 via-amber-400 to-amber-700 mb-8">
             {cup.name}
           </h1>
 
           {/* Teams with logos */}
-          <div className="flex items-center justify-center gap-6 mb-6">
-            <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center justify-center gap-8 mb-6">
+            <div className="flex flex-col items-center gap-3">
               <TeamLogo team={team1} size="lg" />
-              <span className="text-orange-300 font-bold text-sm">{team1?.name}</span>
+              <span className="text-amber-200 font-semibold text-sm">{team1?.name}</span>
             </div>
-            <span className="text-amber-600/60 font-bold text-lg px-4 py-2 border border-amber-600/30 rounded-full">VS</span>
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-amber-600/40 font-bold text-2xl">VS</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
               <TeamLogo team={team2} size="lg" />
-              <span className="text-orange-300 font-bold text-sm">{team2?.name}</span>
+              <span className="text-amber-200 font-semibold text-sm">{team2?.name}</span>
             </div>
           </div>
 
           {cup.winner && (
-            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full mb-3">
-              <span className="text-amber-400 font-bold">🏆 {cup.winner}</span>
+            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-5 py-2 rounded-full mb-3">
+              <span className="text-amber-400 font-bold text-sm">🏆 {cup.winner}</span>
             </div>
           )}
-          {cup.date && <p className="text-amber-400/40 text-sm">📅 {cup.date}</p>}
+          {cup.date && <p className="text-amber-500/40 text-sm mt-2">📅 {cup.date}</p>}
         </div>
+
+        {/* Stadium Schedule */}
+        <div className="mb-10 bg-gradient-to-br from-[#1a0f00] to-[#0f0800] border border-amber-500/15 rounded-2xl p-6">
+          <h3 className="text-amber-400/80 text-xs uppercase tracking-widest mb-4">Stadium Schedule</h3>
+          <div className="space-y-3">
+            {[
+              { leg: 'Leg 1', stadium: leg1Stadium },
+              { leg: 'Leg 2', stadium: leg2Stadium },
+              { leg: 'Leg 3 — Decider', stadium: leg3Stadium || 'TBD after Leg 2' },
+            ].map((item) => (
+              <div key={item.leg} className="flex items-center justify-between py-2 border-b border-amber-500/10 last:border-0">
+                <span className="text-amber-500/60 text-sm">{item.leg}</span>
+                <span className="text-amber-300/80 text-sm font-medium">🏟️ {item.stadium}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* No matches yet */}
+        {(!cup.matches || cup.matches.length === 0) && (
+          <div className="relative mb-10">
+            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 rounded-2xl opacity-20 blur-md" />
+            <div className="relative bg-gradient-to-br from-[#1f1200] to-[#0f0800] border border-amber-500/20 rounded-2xl p-8 text-center">
+              <div className="text-5xl mb-4">🏆</div>
+              <h3 className="text-amber-300 font-bold text-lg mb-2">The battle is about to begin</h3>
+              <p className="text-amber-500/50 text-sm mb-1">
+                The first match will take place at
+              </p>
+              <p className="text-amber-400 font-bold text-base">🏟️ {leg1Stadium}</p>
+            </div>
+          </div>
+        )}
 
         {/* Match Results */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-amber-400">Match Results</h2>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-bold text-amber-400">
+              {cup.matches?.length > 0 ? 'Match Results' : ''}
+            </h2>
             {isAdmin && nextLegForDisplay > 0 && (
               <button
                 onClick={handleOpenMatchForm}
@@ -314,64 +346,52 @@ const CupDetail = () => {
             )}
           </div>
 
-          {(!cup.matches || cup.matches.length === 0) ? (
-            <div className="text-center py-12 text-amber-400/40 border border-amber-500/10 rounded-2xl">
-              No matches played yet.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {cup.matches.map((match: any) => {
-                const matchHomeTeam = teams.find((t: any) => t.id === match.homeTeamId);
-                const matchAwayTeam = teams.find((t: any) => t.id === match.awayTeamId);
-                return (
-                  <div
-                    key={match.id}
-                    onClick={() => setSelectedMatch(match)}
-                    className="group cursor-pointer relative"
-                  >
-                    <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 rounded-2xl opacity-10 group-hover:opacity-30 blur-md transition-all duration-500" />
-                    <div className="relative bg-gradient-to-br from-[#1f1508] via-[#150f04] to-[#0f0800] rounded-2xl border border-amber-500/20 group-hover:border-amber-500/40 p-5 transition-all">
+          <div className="space-y-4">
+            {cup.matches?.map((match: any) => {
+              const matchHomeTeam = teams.find((t: any) => t.id === match.homeTeamId);
+              const matchAwayTeam = teams.find((t: any) => t.id === match.awayTeamId);
+              return (
+                <div key={match.id} onClick={() => setSelectedMatch(match)} className="group cursor-pointer relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-600 to-amber-500 rounded-2xl opacity-10 group-hover:opacity-30 blur-md transition-all duration-500" />
+                  <div className="relative bg-gradient-to-br from-[#1f1508] to-[#0f0800] rounded-2xl border border-amber-500/20 group-hover:border-amber-500/40 p-5 transition-all">
 
-                      {/* Leg + Stadium */}
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-xs uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
-                          {getLegLabel(match.leg)}
-                        </span>
-                        <span className="text-xs text-amber-500/40">🏟️ {match.stadium}</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-xs uppercase tracking-widest text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                        {getLegLabel(match.leg)}
+                      </span>
+                      <span className="text-xs text-amber-500/40">🏟️ {match.stadium}</span>
+                    </div>
+
+                    {/* Score inline with logos */}
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 flex-1 justify-end">
+                        <p className="text-amber-200 font-semibold text-sm text-right">{match.homeTeamName}</p>
+                        <TeamLogo team={matchHomeTeam} size="sm" />
                       </div>
-
-                      {/* Score with logos */}
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex flex-col items-center gap-2 flex-1">
-                          <TeamLogo team={matchHomeTeam} size="md" />
-                          <p className="text-amber-200 font-semibold text-sm text-center">{match.homeTeamName}</p>
-                          <p className="text-4xl font-bold text-amber-400">{match.homeGoals}</p>
-                        </div>
-                        <div className="text-center shrink-0">
-                          <p className="text-amber-600/40 font-bold text-2xl">—</p>
-                        </div>
-                        <div className="flex flex-col items-center gap-2 flex-1">
-                          <TeamLogo team={matchAwayTeam} size="md" />
-                          <p className="text-amber-200 font-semibold text-sm text-center">{match.awayTeamName}</p>
-                          <p className="text-4xl font-bold text-amber-400">{match.awayGoals}</p>
-                        </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-3xl font-bold text-amber-400">{match.homeGoals}</span>
+                        <span className="text-amber-600/40 font-bold text-xl">—</span>
+                        <span className="text-3xl font-bold text-amber-400">{match.awayGoals}</span>
                       </div>
-
-                      {/* Footer */}
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-500/10">
-                        <span className="text-xs text-amber-500/50">
-                          {match.date ? new Date(match.date).toLocaleDateString() : '—'}
-                        </span>
-                        <span className="text-xs font-semibold text-amber-300">
-                          {getMatchWinner(match) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(match)}`}
-                        </span>
+                      <div className="flex items-center gap-3 flex-1 justify-start">
+                        <TeamLogo team={matchAwayTeam} size="sm" />
+                        <p className="text-amber-200 font-semibold text-sm">{match.awayTeamName}</p>
                       </div>
                     </div>
+
+                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-500/10">
+                      <span className="text-xs text-amber-500/40">
+                        {match.date ? new Date(match.date).toLocaleDateString() : '—'}
+                      </span>
+                      <span className="text-xs font-semibold text-amber-300">
+                        {getMatchWinner(match) === 'Draw' ? '🤝 Draw' : `🏆 ${getMatchWinner(match)}`}
+                      </span>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -384,41 +404,25 @@ const CupDetail = () => {
 
           <div className="space-y-6 pt-4">
 
-            {/* Stadium info */}
             <div className="text-center text-xs text-amber-400/60 bg-amber-500/5 border border-amber-500/10 rounded-lg py-2">
               🏟️ {currentStadium}
             </div>
 
-            {/* Date */}
-            <div className="space-y-2">
-              <Label className="text-amber-200/80 text-sm">Match Date</Label>
-              <Input
-                type="date"
-                value={matchDate}
-                onChange={(e) => setMatchDate(e.target.value)}
-                className="bg-[#0a0e2a] border-amber-400/20 text-amber-100"
-              />
-            </div>
-
-            {/* Score with logos */}
-            <div className="flex items-end justify-center gap-2 md:gap-4">
-              <div className="text-center flex-1 space-y-2">
-                <div className="flex justify-center">
-                  <TeamLogo team={homeTeam} size="sm" />
-                </div>
-                <p className="text-xs text-amber-400/60">{homeTeam?.name}</p>
+            {/* Score inline with logos */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col items-center gap-2 flex-1">
+                <TeamLogo team={homeTeam} size="sm" />
+                <p className="text-xs text-amber-400/60 text-center">{homeTeam?.name}</p>
                 <Input
                   type="number" min={0} value={homeGoals}
                   onChange={(e) => setHomeGoals(parseInt(e.target.value || '0') || 0)}
                   className="text-center text-2xl font-bold h-14 bg-[#0a0e2a] border-amber-400/20 text-amber-100"
                 />
               </div>
-              <span className="text-xl text-amber-600/60 font-bold pb-3">VS</span>
-              <div className="text-center flex-1 space-y-2">
-                <div className="flex justify-center">
-                  <TeamLogo team={awayTeam} size="sm" />
-                </div>
-                <p className="text-xs text-amber-400/60">{awayTeam?.name}</p>
+              <span className="text-xl text-amber-600/50 font-bold shrink-0 mt-6">VS</span>
+              <div className="flex flex-col items-center gap-2 flex-1">
+                <TeamLogo team={awayTeam} size="sm" />
+                <p className="text-xs text-amber-400/60 text-center">{awayTeam?.name}</p>
                 <Input
                   type="number" min={0} value={awayGoals}
                   onChange={(e) => setAwayGoals(parseInt(e.target.value || '0') || 0)}
@@ -495,20 +499,20 @@ const CupDetail = () => {
                     🏟️ {selectedMatch.stadium}
                   </div>
 
-                  {/* Score with logos */}
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex flex-col items-center gap-2 flex-1">
-                      <TeamLogo team={matchHomeTeam} size="lg" />
-                      <p className="text-amber-200 font-semibold text-sm text-center">{selectedMatch.homeTeamName}</p>
-                      <p className="text-5xl font-bold text-amber-400">{selectedMatch.homeGoals}</p>
+                  {/* Score inline with logos */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 justify-end">
+                      <p className="text-amber-200 font-semibold text-sm text-right leading-tight">{selectedMatch.homeTeamName}</p>
+                      <TeamLogo team={matchHomeTeam} size="md" />
                     </div>
-                    <div className="text-center shrink-0">
-                      <p className="text-amber-600/40 font-bold text-2xl">—</p>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="text-4xl font-bold text-amber-400">{selectedMatch.homeGoals}</span>
+                      <span className="text-amber-600/40 font-bold text-2xl">—</span>
+                      <span className="text-4xl font-bold text-amber-400">{selectedMatch.awayGoals}</span>
                     </div>
-                    <div className="flex flex-col items-center gap-2 flex-1">
-                      <TeamLogo team={matchAwayTeam} size="lg" />
-                      <p className="text-amber-200 font-semibold text-sm text-center">{selectedMatch.awayTeamName}</p>
-                      <p className="text-5xl font-bold text-amber-400">{selectedMatch.awayGoals}</p>
+                    <div className="flex items-center gap-3 flex-1 justify-start">
+                      <TeamLogo team={matchAwayTeam} size="md" />
+                      <p className="text-amber-200 font-semibold text-sm leading-tight">{selectedMatch.awayTeamName}</p>
                     </div>
                   </div>
 
@@ -521,15 +525,14 @@ const CupDetail = () => {
                     )}
                   </div>
 
-                  {/* Scorers */}
                   {selectedMatch.scorers && selectedMatch.scorers.length > 0 && (
                     <div className="space-y-2">
-                      <p className="text-xs uppercase tracking-widest text-amber-400/60 mb-3">Goal Scorers</p>
+                      <p className="text-xs uppercase tracking-widest text-amber-400/50 mb-3">Goal Scorers</p>
                       {selectedMatch.scorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         const team = teams.find((t: any) => t.id === player?.teamId);
                         return (
-                          <div key={i} className="flex items-center justify-between bg-amber-500/5 border border-amber-500/10 rounded-lg px-4 py-2">
+                          <div key={i} className="flex items-center justify-between bg-amber-500/5 border border-amber-500/10 rounded-xl px-4 py-2">
                             <div className="flex items-center gap-3">
                               {player?.image
                                 ? <img src={player.image} alt={player.name} className="w-9 h-9 rounded-full object-cover border border-amber-500/20 shrink-0" />
@@ -539,7 +542,7 @@ const CupDetail = () => {
                               }
                               <div>
                                 <p className="text-amber-200 text-sm font-semibold">{player?.name || 'Unknown'}</p>
-                                <p className="text-amber-500/50 text-xs">{team?.name}</p>
+                                <p className="text-amber-500/40 text-xs">{team?.name}</p>
                               </div>
                             </div>
                             <div className="text-right">

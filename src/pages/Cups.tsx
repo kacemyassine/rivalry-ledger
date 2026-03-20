@@ -51,14 +51,22 @@ const Cups = () => {
       imagePath = await uploadImage(cupImage, filename);
     }
 
-    const newCup = {
-      id: `cup-${Date.now()}`,
-      name: cupName.trim(),
-      winner: '',
-      date: cupDate,
-      image: imagePath,
-      matches: [],
-    };
+    const leg1Stadium = Math.random() < 0.5 ? 'Ocean Hell Arena' : 'Harbor United Battlefield';
+const leg2Stadium = leg1Stadium === 'Ocean Hell Arena' ? 'Harbor United Battlefield' : 'Ocean Hell Arena';
+
+const newCup = {
+  id: `cup-${Date.now()}`,
+  name: cupName.trim(),
+  winner: '',
+  date: cupDate,
+  image: imagePath,
+  matches: [],
+  stadiums: {
+    leg1: leg1Stadium,
+    leg2: leg2Stadium,
+    leg3: null,
+    },
+  };
 
     const updatedCups = [...cups, newCup];
     const success = await updateCups({ cups: updatedCups });
