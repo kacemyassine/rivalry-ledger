@@ -1,3 +1,17 @@
 {
-  "cups": []
+  "cups": [
+    {
+      "id": "cup-1773980135188",
+      "name": "Aid Al Fitr 2026",
+      "winner": "",
+      "date": "2026-03-20",
+      "image": "/images/aid-al-fitr-2026-cup.jpeg",
+      "matches": [],
+      "stadiums": {
+        "leg1": "Ocean Hell Arena",
+        "leg2": "Harbor United Battlefield",
+        "leg3": null
+      }
+    }
+  ]
 }
