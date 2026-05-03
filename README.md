@@ -1,73 +1,187 @@
-# Welcome to your Lovable project
+# Rivalry Ledger — QA Portfolio Project
 
-## Project info
+A full-stack football league management web application, used as the subject of a complete QA automation portfolio. This repository contains both the application source code and the full test suite.
 
-**URL**: https://lovable.dev/projects/976a671f-096c-49a1-a267-ed827e734ed5
+---
 
-## How can I edit this code?
+## Application Overview
 
-There are several ways of editing your application.
+**Rivalry Ledger** is a football league tracker built for real use. It allows admins to record match results, manage players, track standings, manage cup competitions, and archive completed seasons. Visitors can view live standings, top scorers, head-to-head stats, and match history.
 
-**Use Lovable**
+**Live:** https://rivalry-ledger.vercel.app
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/976a671f-096c-49a1-a267-ed827e734ed5) and start prompting.
+### Tech Stack
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React + TypeScript + Vite |
+| State Management | Zustand (persisted via localStorage) |
+| UI | Tailwind CSS + shadcn/ui |
+| Backend | Supabase (Edge Functions) |
+| Data Persistence | GitHub API |
+| Deployment | Vercel |
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## QA Strategy
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+This project follows a structured QA approach with two automation layers:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+| Layer | Tool | Scope |
+|-------|------|-------|
+| Unit & Integration | Jest + ts-jest | Pure logic — store actions, auth service, stat calculations |
+| End-to-End | Cypress | Full browser flows — auth, match recording, navigation, standings |
+| CI/CD | GitHub Actions | Runs full test suite on every push to main |
 
-Follow these steps:
+**Key principle:** No mocking except for unreproducible failure scenarios (forced 500s, GitHub API rate limits). Every test runs against real application logic.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+**Test environment:** All automated tests run against `localhost:5173`. Production is never touched by automation.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+rivalry-ledger/
+├── src/                        # Application source code
+│   ├── store/
+│   │   └── leagueStore.ts      # Core state — all match/player/team logic
+│   ├── lib/
+│   │   └── authService.ts      # Admin authentication logic
+│   ├── pages/                  # Route pages
+│   └── components/             # UI components
+├── tests/
+│   └── unit/
+│       ├── leagueStore.test.ts # Jest unit tests — match logic
+│       └── authService.test.ts # Jest unit tests — authentication
+├── cypress/
+│   ├── e2e/
+│   │   ├── auth.cy.ts          # E2E — authentication flow
+│   │   ├── navigation.cy.ts    # E2E — routing and navigation
+│   │   └── matchFlow.cy.ts     # E2E — match recording and standings
+│   ├── fixtures/               # Test data
+│   └── support/                # Custom commands and config
+├── docs/
+│   ├── test-strategy.md        # QA strategy document
+│   └── test-plan.md            # Test cases and automation mapping
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions CI pipeline
+├── cypress.config.ts
+├── jest.config.ts
+└── package.json
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Getting Started
 
-**Use GitHub Codespaces**
+### Prerequisites
+- Node.js 18+
+- npm 9+
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Install dependencies
+```bash
+npm install
+```
 
-## What technologies are used for this project?
+### Run the application locally
+```bash
+npm run dev
+```
+App runs on `http://localhost:5173`
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Running Tests
 
-## How can I deploy this project?
+### Unit Tests (Jest)
+```bash
+# Run all unit tests
+npm run test
 
-Simply open [Lovable](https://lovable.dev/projects/976a671f-096c-49a1-a267-ed827e734ed5) and click on Share -> Publish.
+# Run in watch mode
+npm run test:watch
 
-## Can I connect a custom domain to my Lovable project?
+# Run with coverage
+npm run test:coverage
+```
 
-Yes, you can!
+### E2E Tests (Cypress)
+```bash
+# Make sure the app is running locally first
+npm run dev
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Open Cypress interactive runner
+npm run cypress:open
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+# Run Cypress headless
+npm run cypress:run
+```
+
+---
+
+## Test Coverage
+
+### Unit Tests — leagueStore
+| Test ID | Scenario | Status |
+|---------|----------|--------|
+| MATCH-01 | Home win → 3 points for home team | 🔜 |
+| MATCH-02 | Draw → 1 point for both teams | 🔜 |
+| MATCH-03 | Away win → 3 points for away team | 🔜 |
+| MATCH-04 | Goals for/against update correctly | 🔜 |
+| MATCH-05 | Played count increments for both teams | 🔜 |
+| MATCH-06 | Scorer goals update after match | 🔜 |
+| MATCH-07 | Own goal does not increment scorer goals | 🔜 |
+| DEL-01 | Match deletion reverses all team stats | 🔜 |
+| DEL-02 | Match deletion reverses player goals | 🔜 |
+| EDIT-01 | Result change from win to draw updates points | 🔜 |
+| EDIT-02 | Editing scorers updates player goal counts | 🔜 |
+
+### Unit Tests — AuthService
+| Test ID | Scenario | Status |
+|---------|----------|--------|
+| AUTH-01 | Correct password returns true | 🔜 |
+| AUTH-02 | Incorrect password returns false | 🔜 |
+| AUTH-03 | Empty password returns false | 🔜 |
+| AUTH-04 | isAuthenticated returns true after login | 🔜 |
+| AUTH-05 | logout clears session | 🔜 |
+
+### E2E Tests — Cypress
+| Test ID | Scenario | Status |
+|---------|----------|--------|
+| AUTH-E2E-01 | Login with correct password navigates to admin | 🔜 |
+| AUTH-E2E-02 | Login with wrong password shows error | 🔜 |
+| AUTH-E2E-03 | Unauthenticated user redirected from /admin | 🔜 |
+| AUTH-E2E-04 | Session persists on page refresh | 🔜 |
+| AUTH-E2E-05 | Logout clears session | 🔜 |
+| NAV-01 | All routes load correctly | 🔜 |
+| NAV-02 | Unknown route shows 404 | 🔜 |
+| MATCH-E2E-01 | Record a match → standings update | 🔜 |
+
+---
+
+## CI/CD
+
+Every push to `main` triggers the GitHub Actions pipeline:
+
+1. Install dependencies
+2. Run Jest unit tests
+3. Start the dev server
+4. Run Cypress E2E tests headless
+5. Upload test artifacts on failure
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Test Strategy](./docs/test-strategy.md) | Overall QA approach, risk analysis, tools, environments |
+| [Test Plan](./docs/test-plan.md) | Full test case list with steps, expected results, automation mapping |
+
+---
+
+## Author
+
+**Yassine Kacem** — Junior QA Automation Engineer
+ISTQB Certified | Jest · Cypress · GitHub Actions
