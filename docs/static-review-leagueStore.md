@@ -75,16 +75,26 @@ A player with the same name can be added multiple times. Each entry receives a u
 ---
 
 ### FIND-06 — Silent failure on match guard check in `addMatch`
+### FIND-06 — Silent failure on guard checks in `addMatch` and `deleteMatch`
 **Severity:** Major
-**Location:** `addMatch()` — guard clause
+**Location:** `addMatch()` — team guard clause, `deleteMatch()` — match not found guard
 **Description:**
+Two silent failure points identified:
+
+1. In `addMatch()`:
 ```ts
 if (!homeTeam || !awayTeam || homeTeam.id === awayTeam.id) {
   return;
 }
 ```
-If the guard triggers, the function exits silently with no error, no log, and no user feedback. The admin clicks record and nothing happens with no explanation.
-**Recommendation:** Surface a meaningful error to the user when the guard condition is met.
+
+2. In `deleteMatch()`:
+```ts
+if (!match) return;
+```
+
+In both cases the function exits silently with no error, no log, and no user feedback. The admin triggers an action and nothing happens with no explanation.
+**Recommendation:** Surface a meaningful error to the user when any guard condition is met. At minimum log a warning — ideally show a user-facing error message.
 
 ---
 
