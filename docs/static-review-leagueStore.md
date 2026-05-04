@@ -74,7 +74,7 @@ A player with the same name can be added multiple times. Each entry receives a u
 
 ---
 
-### FIND-06 — Silent failure on match guard check in `addMatch`
+
 ### FIND-06 — Silent failure on guard checks in `addMatch` and `deleteMatch`
 **Severity:** Major
 **Location:** `addMatch()` — team guard clause, `deleteMatch()` — match not found guard
