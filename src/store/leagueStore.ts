@@ -23,7 +23,7 @@ interface Player {
   teamId: string;
   goals: number;
   image: string | null;
-  fullImage: string | null;
+  fullImage?: string | null;
 }
 
 interface Match {

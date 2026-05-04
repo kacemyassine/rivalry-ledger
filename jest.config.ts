@@ -5,4 +5,7 @@ export default {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['**/tests/unit/**/*.test.ts'],
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
+  },
 };

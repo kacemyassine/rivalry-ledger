@@ -133,12 +133,12 @@ Win/draw/loss detection, points calculation, and goals tally logic is duplicated
 
 ---
 
-### FIND-12 — Single-letter variable name `t` used for team in `.map()`
+### FIND-12 — Single-letter variable names used in `.map()` callbacks
 **Severity:** Trivial
-**Location:** `deleteMatch()`, `addMatch()`, `editMatch()` — `.map()` callbacks
+**Location:** `addMatch()`, `deleteMatch()`, `editMatch()` — `.map()` callbacks
 **Description:**
-Variable `t` is used instead of `team` inside `.map()` callbacks. Reduces readability.
-**Recommendation:** Use `team` for clarity and consistency.
+Variable `t` is used instead of `team` and `s` instead of `scorer` inside `.map()` callbacks. Reduces readability and forces the reader to infer what the variable represents from context.
+**Recommendation:** Use `team` and `scorer` for clarity and consistency. Alternatively, inline comments can serve as a lightweight solution if the developer prefers shorter variable names for speed.
 
 ---
 
