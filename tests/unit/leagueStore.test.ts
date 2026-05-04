@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 
 // =================================================================
-// Tests for addMatch function
+// Unit Tests for addMatch function
 // =================================================================
 
 describe("addMatch", () => {
@@ -253,3 +253,61 @@ describe("addMatch", () => {
       });
     });
   });
+
+
+// =================================================================
+// Unit Tests for addPlayer function
+// =================================================================
+
+describe("addPlayer", () => {
+
+  test("adds a new player to the league", () => {
+  const { addPlayer } = useLeagueStore.getState();
+
+  const safePlayers = mockLeagueData.players.filter(
+    (p) => !p.name.toLowerCase().includes("neymar jr")
+  );
+
+  useLeagueStore.setState({
+    teams: mockLeagueData.teams,
+    players: safePlayers,
+    matches: mockLeagueData.matches,
+  });
+
+  const newPlayerData = {
+    name: "Neymar Jr",
+    teamId: mockLeagueData.teams[0].id,
+    goals: 0,
+    image: "",
+    fullImage: "",
+  };
+
+  addPlayer(newPlayerData);
+
+  const { players } = useLeagueStore.getState();
+
+  const addedPlayer = players.find(
+    (p) =>
+      p.name === newPlayerData.name &&
+      p.teamId === newPlayerData.teamId
+  );
+
+  expect(addedPlayer).toBeDefined();
+});
+});
+
+    test.todo("throws an error if player name is empty");
+
+    test.todo("throws an error if teamId does not exist");
+      
+    test.todo("throws an error if a player with the same name already exists in the same team");
+
+    test.todo("throws an error if any parameter has a wrong type");
+
+    test.todo("throws an error if player name is unrealistically long");
+
+    test.todo("throws an error if player name contains invalid characters");
+
+    
+
+    
