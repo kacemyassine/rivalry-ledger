@@ -459,3 +459,40 @@ describe("addPlayer", () => {
     ).toThrow(PLAYER_ERRORS.NAME_INVALID);
   });
 });
+
+// =================================================================
+//  unit tests for editPlayer function
+// =================================================================
+
+describe("editPlayer", () => {
+  
+  test.todo("updates player name correctly");   
+    
+  test.todo("updates player teamID correctly");
+
+  test.todo("updates multiple fields at once correctly");
+
+  test.todo("partial update does not overwrite unchanged fields");
+
+  test.todo("throws an error if player id does not exist");
+
+  test.todo("throws an error if updated name is empty");
+
+  test.todo("throws an error if updated name is whitespace only")
+
+  test.todo("throws an error if updated name contains invalid characters");
+
+  test.todo("throws an error if updated name is below 3 characters");
+
+  test.todo("throws an error if updated name exceeds 40 characters");
+
+  test.todo("throws an error if updated name already exists in the same team");
+
+  test.todo("throws an error if updated teamId does not exist");
+
+  test.todo("does not allow editing goals directly — goals are managed by match operations only");
+
+  test.todo("editing a player with no changes does not corrupt state");
+
+  test.todo("editing a player does not affect other players");
+});
