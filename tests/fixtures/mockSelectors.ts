@@ -1,18 +1,18 @@
-import { mockLeagueData } from "./mockLeagueData";
+import { useLeagueStore } from "@/store/leagueStore";
 
 export const getPlayerByTeamId = (teamId: string) =>
-  mockLeagueData.players.find(p => p.teamId === teamId)!;
+  useLeagueStore.getState().players.find(p => p.teamId === teamId)!;
 
 export const getPlayersByTeamId = (teamId: string) =>
-  mockLeagueData.players.filter(p => p.teamId === teamId);
+  useLeagueStore.getState().players.filter(p => p.teamId === teamId);
 
 export const getPlayerById = (playerId: string) =>
-  mockLeagueData.players.find(p => p.id === playerId)!;
+  useLeagueStore.getState().players.find(p => p.id === playerId)!;
 
 export const getTeamById = (teamId: string) =>
-  mockLeagueData.teams.find(t => t.id === teamId)!;
+  useLeagueStore.getState().teams.find(t => t.id === teamId)!;
 
 export const getPlayerByName = (name: string) =>
-  mockLeagueData.players.find(p => 
+  useLeagueStore.getState().players.find(p =>
     new RegExp(name, "i").test(p.name)
   )!;
