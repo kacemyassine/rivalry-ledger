@@ -1,5 +1,7 @@
+const MAX_GOALS = 20;
+
 export const MATCH_ERRORS = {
   GOALS_NEGATIVE: "Goals cannot be negative",
-  GOALS_UNREALISTIC: "Unrealistic number of goals",
-  SCORER_GOALS_MISMATCH: "Scorer goals do not match total goals",
+  GOALS_UNREALISTIC: `Goals cannot exceed ${MAX_GOALS}`,
+  SCORER_GOALS_MISMATCH: /Goals don't add up/,
 };
