@@ -1,6 +1,12 @@
 import { useLeagueStore } from "@/store/leagueStore";
-import { mockLeagueData } from "./fixtures/mockLeagueData";
-import { MATCH_ERRORS, PLAYER_ERRORS, TEAM_ERRORS} from "./fixtures/errorMessages";
+import { mockLeagueData } from "../fixtures/mockLeagueData";
+import {
+  MATCH_ERRORS,
+  PLAYER_ERRORS,
+  TEAM_ERRORS,
+} from "../fixtures/errorMessages";
+
+import { PLAYER_NAME_RULES } from "../fixtures/playerNameRules";
 
 beforeEach(() => {
   localStorage.clear();
@@ -234,7 +240,9 @@ describe("addMatch", () => {
     // missing validation — no upper bound on goal values
     test.skip("unrealistically high number of goals throws an error", () => {
       const { addMatch } = useLeagueStore.getState();
-      expect(() => addMatch(999, 999, [])).toThrow(MATCH_ERRORS.GOALS_UNREALISTIC);
+      expect(() => addMatch(999, 999, [])).toThrow(
+        MATCH_ERRORS.GOALS_UNREALISTIC,
+      );
     });
 
     // missing validation — scorer goals sum not validated against total goals
@@ -270,18 +278,19 @@ describe("addMatch", () => {
 describe("addPlayer", () => {
   test("adds a new player with all required properties to the league with correct data", () => {
     const { addPlayer } = useLeagueStore.getState();
-
-    addPlayer({
+    const player = {
       name: "Neymar Jr",
       teamId: mockLeagueData.teams[0].id,
       goals: 0,
       image: "",
       fullImage: "",
-    });
+    }
+    addPlayer(player);
 
     const { players } = useLeagueStore.getState();
     const addedPlayer = players.find((p) => p.name === "Neymar Jr");
     expect(addedPlayer).toBeDefined();
+    expect(addedPlayer).toMatchObject(player);
   });
 
   // FIND-05: no teamId validation — addPlayer accepts any teamId including non-existent ones
@@ -416,14 +425,14 @@ describe("addPlayer", () => {
   test.skip("player name with exactly 3 characters and no invalid characters is allowed, no spaces", () => {
     const { addPlayer } = useLeagueStore.getState();
     addPlayer({
-      name: "abc", // 3 characters -- should be allowed
+      name: "a".repeat(PLAYER_NAME_RULES.minLength), // 3 characters -- should be allowed
       teamId: mockLeagueData.teams[0].id,
       goals: 0,
       image: "",
       fullImage: "",
     });
     const { players } = useLeagueStore.getState();
-    const addedPlayer = players.find((p) => p.name === "abc");
+    const addedPlayer = players.find((p) => p.name === "a".repeat(PLAYER_NAME_RULES.minLength));
     expect(addedPlayer).toBeDefined();
   });
 
@@ -431,7 +440,7 @@ describe("addPlayer", () => {
   test.skip("player name with exactly 40 characters is allowed", () => {
     const { addPlayer } = useLeagueStore.getState();
     addPlayer({
-      name: "cristiano ronaldo do santo aveiro gullit", // 40 characters -- should be allowed
+      name: "a".repeat(PLAYER_NAME_RULES.maxLength), // 40 characters -- should be allowed
       teamId: mockLeagueData.teams[0].id,
       goals: 0,
       image: "",
@@ -439,7 +448,7 @@ describe("addPlayer", () => {
     });
     const { players } = useLeagueStore.getState();
     const addedPlayer = players.find(
-      (p) => p.name === "cristiano ronaldo do santo aveiro gullit",
+      (p) => p.name === "a".repeat(PLAYER_NAME_RULES.maxLength),
     );
     expect(addedPlayer).toBeDefined();
   });
@@ -450,7 +459,7 @@ describe("addPlayer", () => {
     const { addPlayer } = useLeagueStore.getState();
     expect(() =>
       addPlayer({
-        name: "cristiano ronaldo dos santo aveiro gullit", // 41 characters -- should be at most 40 characters
+        name: "a".repeat(PLAYER_NAME_RULES.maxLength + 1), // 41 characters -- should be at most 40 characters
         teamId: mockLeagueData.teams[0].id,
         goals: 0,
         image: "",
@@ -465,9 +474,8 @@ describe("addPlayer", () => {
 // =================================================================
 
 describe("editPlayer", () => {
-  
-  test.todo("updates player name correctly");   
-    
+  test.todo("updates player name correctly");
+
   test.todo("updates player teamID correctly");
 
   test.todo("updates multiple fields at once correctly");
@@ -478,7 +486,7 @@ describe("editPlayer", () => {
 
   test.todo("throws an error if updated name is empty");
 
-  test.todo("throws an error if updated name is whitespace only")
+  test.todo("throws an error if updated name is whitespace only");
 
   test.todo("throws an error if updated name contains invalid characters");
 
@@ -490,9 +498,39 @@ describe("editPlayer", () => {
 
   test.todo("throws an error if updated teamId does not exist");
 
-  test.todo("does not allow editing goals directly — goals are managed by match operations only");
+  test.todo(
+    "does not allow editing goals directly — goals are managed by match operations only",
+  );
 
   test.todo("editing a player with no changes does not corrupt state");
 
   test.todo("editing a player does not affect other players");
+});
+
+
+// =================================================================
+//  unit tests for editMatch function
+// =================================================================
+
+describe("editMatch", () => {
+  test.todo("updates home goals correctly");
+  test.todo("updates away goals correctly");
+  test.todo("updates scorers correctly");
+  test.todo("updates date correctly");
+  test.todo("updates multiple fields at once correctly");
+
+  test.todo("recalculates points correctly after edit");
+  test.todo("recalculates goals for and against correctly after edit");
+  test.todo("recalculates win, draw, loss correctly after edit");
+  test.todo("recalculates player goals correctly after edit");
+
+  test.todo("throws an error if match id does not exist");
+  test.todo("throws an error if home goals is negative");
+  test.todo("throws an error if away goals is negative");
+  test.todo("throws an error if goals are unrealistically high");
+  test.todo("throws an error if scorer goals sum is less than total goals");
+  test.todo("throws an error if scorer goals sum exceeds total goals");
+  test.todo("throws an error if scorers data contains a playerId that does not exist");
+  test.todo("throws an error if scorers data contains a playerId that belongs to the opposing team");
+  test.todo("editing a match does not affect other matches");
 });
