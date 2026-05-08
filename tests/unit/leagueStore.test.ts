@@ -1,7 +1,6 @@
 import { useLeagueStore } from "@/store/leagueStore";
 import { mockLeagueData } from "../fixtures/mockLeagueData";
 import {
-  MATCH_ERRORS,
   PLAYER_ERRORS,
   TEAM_ERRORS,
 } from "../fixtures/errorMessages";
@@ -187,7 +186,7 @@ describe("addMatch", () => {
       });
 
       // FIND-15: duplicate player entries not summed — store only counts last entry via Array.find()
-      test.skip("player listed twice in scorers has their goals summed correctly", () => {
+      test("player listed twice in scorers has their goals summed correctly", () => {
         const { addMatch } = useLeagueStore.getState();
         const player1 = getPlayerByTeamId("team-1");
         addMatch(3, 0, [
@@ -199,14 +198,15 @@ describe("addMatch", () => {
       });
     });
   });
+});
 
   describe("when adding a match with invalid data", () => {
-    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
-      const { addMatch } = useLeagueStore.getState();
-      addMatch(homeGoals, awayGoals, scorers);
-    });
+  runMatchValidationTests((homeGoals, awayGoals, scorers) => {
+    const { addMatch } = useLeagueStore.getState();
+    addMatch(homeGoals, awayGoals, scorers);
   });
 });
+
 
 // =================================================================
 // Unit Tests for addPlayer function
