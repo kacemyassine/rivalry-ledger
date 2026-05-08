@@ -9,4 +9,5 @@ export const PLAYER_ERRORS = {
   NOT_FOUND: "Player not found",
   WRONG_TEAM: "Player does not belong to the scoring team",
   NAME_INVALID_BOUNDARIES: "Player name must start and end with a letter",
+  GOALS_READONLY: "Goals cannot be edited directly — they are managed by match operations only",
 };
