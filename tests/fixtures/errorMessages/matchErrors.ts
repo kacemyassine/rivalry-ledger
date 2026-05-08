@@ -1,4 +1,4 @@
-const MAX_GOALS = 20;
+export const MAX_GOALS = 20;
 
 export const MATCH_ERRORS = {
   GOALS_NEGATIVE: "Goals cannot be negative",
