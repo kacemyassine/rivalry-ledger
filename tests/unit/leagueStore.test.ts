@@ -5,6 +5,13 @@ import {
   PLAYER_ERRORS,
   TEAM_ERRORS,
 } from "../fixtures/errorMessages";
+import { runMatchValidationTests } from "../fixtures/matchValidationSuite";
+import {
+  getTeamById,
+  getPlayerById,
+  getPlayerByTeamId,
+  getPlayersByTeamId,
+} from "../fixtures/mockSelectors";
 
 import { PLAYER_NAME_RULES } from "../fixtures/playerNameRules";
 
@@ -28,27 +35,24 @@ describe("addMatch", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(2, 1, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].points).toBe(3);
-        expect(teams[1].points).toBe(0);
+        expect(getTeamById("team-1").points).toBe(3);
+        expect(getTeamById("team-2").points).toBe(0);
       });
 
       test("away win -> away team gains 3 points, home team gains 0 points", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(1, 2, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].points).toBe(0);
-        expect(teams[1].points).toBe(3);
+        expect(getTeamById("team-1").points).toBe(0);
+        expect(getTeamById("team-2").points).toBe(3);
       });
 
       test("draw -> both teams gain 1 point", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(0, 0, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].points).toBe(1);
-        expect(teams[1].points).toBe(1);
+        expect(getTeamById("team-1").points).toBe(1);
+        expect(getTeamById("team-2").points).toBe(1);
       });
 
       test("multiple matches -> points are accumulated correctly", () => {
@@ -56,44 +60,50 @@ describe("addMatch", () => {
         addMatch(2, 1, []);
         addMatch(1, 2, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].points).toBe(3);
-        expect(teams[1].points).toBe(3);
+        expect(getTeamById("team-1").points).toBe(3);
+        expect(getTeamById("team-2").points).toBe(3);
       });
     });
 
     describe("goals calculation", () => {
       test("home goals and away goals are updated correctly when home team wins", () => {
         const { addMatch } = useLeagueStore.getState();
+
         addMatch(3, 2, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].goalsFor).toBe(3);
-        expect(teams[0].goalsAgainst).toBe(2);
-        expect(teams[1].goalsFor).toBe(2);
-        expect(teams[1].goalsAgainst).toBe(3);
+        const homeTeam = getTeamById("team-1");
+        const awayTeam = getTeamById("team-2");
+
+        expect(homeTeam.goalsFor).toBe(3);
+        expect(homeTeam.goalsAgainst).toBe(2);
+        expect(awayTeam.goalsFor).toBe(2);
+        expect(awayTeam.goalsAgainst).toBe(3);
       });
 
       test("home goals and away goals are updated correctly when away team wins", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(2, 3, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].goalsFor).toBe(2);
-        expect(teams[0].goalsAgainst).toBe(3);
-        expect(teams[1].goalsFor).toBe(3);
-        expect(teams[1].goalsAgainst).toBe(2);
+        const homeTeam = getTeamById("team-1");
+        const awayTeam = getTeamById("team-2");
+
+        expect(homeTeam.goalsFor).toBe(2);
+        expect(homeTeam.goalsAgainst).toBe(3);
+        expect(awayTeam.goalsFor).toBe(3);
+        expect(awayTeam.goalsAgainst).toBe(2);
       });
 
       test("home goals and away goals are updated correctly when it is a draw", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(2, 2, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].goalsFor).toBe(2);
-        expect(teams[0].goalsAgainst).toBe(2);
-        expect(teams[1].goalsFor).toBe(2);
-        expect(teams[1].goalsAgainst).toBe(2);
+        const homeTeam = getTeamById("team-1");
+        const awayTeam = getTeamById("team-2");
+
+        expect(homeTeam.goalsFor).toBe(2);
+        expect(homeTeam.goalsAgainst).toBe(2);
+        expect(awayTeam.goalsFor).toBe(2);
+        expect(awayTeam.goalsAgainst).toBe(2);
       });
     });
 
@@ -102,9 +112,8 @@ describe("addMatch", () => {
         const { addMatch } = useLeagueStore.getState();
         addMatch(1, 0, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].played).toBe(1);
-        expect(teams[1].played).toBe(1);
+        expect(getTeamById("team-1").played).toBe(1);
+        expect(getTeamById("team-2").played).toBe(1);
       });
 
       test("matches played is accumulated correctly over multiple matches", () => {
@@ -112,161 +121,89 @@ describe("addMatch", () => {
         addMatch(2, 2, []);
         addMatch(1, 1, []);
 
-        const { teams } = useLeagueStore.getState();
-        expect(teams[0].played).toBe(2);
-        expect(teams[1].played).toBe(2);
+        expect(getTeamById("team-1").played).toBe(2);
+        expect(getTeamById("team-2").played).toBe(2);
       });
     });
 
     describe("scorers and players goals", () => {
-      test("sum of goals scored by players matches total goals for the team", () => {
+      test("players goals are updated correctly", () => {
         const { addMatch } = useLeagueStore.getState();
-        addMatch(3, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 2 },
-          { playerId: mockLeagueData.players[1].id, goals: 1 },
-        ]);
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(2);
-        expect(players[1].goals).toBe(1);
-      });
+        const [player1, player2] = getPlayersByTeamId("team-1", 2);
+        const [player3] = getPlayersByTeamId("team-2", 1);
 
-      test("players' goals are updated correctly", () => {
-        const { addMatch } = useLeagueStore.getState();
         addMatch(2, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 1 },
-          { playerId: mockLeagueData.players[1].id, goals: 1 },
-          { playerId: mockLeagueData.players[2].id, goals: 1 },
+          { playerId: player1.id, goals: 1 },
+          { playerId: player2.id, goals: 1 },
+          { playerId: player3.id, goals: 1 },
         ]);
 
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(1);
-        expect(players[1].goals).toBe(1);
-        expect(players[2].goals).toBe(1);
+        expect(getPlayerById(player1.id).goals).toBe(1);
+        expect(getPlayerById(player2.id).goals).toBe(1);
+        expect(getPlayerById(player3.id).goals).toBe(1);
       });
 
       test("player scoring more than once in a match has their goals updated correctly", () => {
         const { addMatch } = useLeagueStore.getState();
+        const [player1, player2] = getPlayersByTeamId("team-1", 2);
+        const player3 = getPlayerByTeamId("team-2");
         addMatch(3, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 2 },
-          { playerId: mockLeagueData.players[1].id, goals: 1 },
+          { playerId: player1.id, goals: 2 },
+          { playerId: player2.id, goals: 1 },
+          { playerId: player3.id, goals: 1 },
         ]);
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(2);
-        expect(players[1].goals).toBe(1);
+
+        expect(getPlayerById(player1.id).goals).toBe(2);
+        expect(getPlayerById(player2.id).goals).toBe(1);
+        expect(getPlayerById(player3.id).goals).toBe(1);
       });
 
       test("own goals are handled correctly", () => {
         const { addMatch } = useLeagueStore.getState();
+        const [player1, player2, player3] = getPlayersByTeamId("team-1", 3);
+        
         addMatch(2, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 1 },
-          {
-            playerId: mockLeagueData.players[1].id,
-            goals: 1,
-            isOwnGoal: true,
-          },
+          { playerId: player1.id, goals: 1 },
+          { playerId: player2.id, goals: 1, isOwnGoal: true },
+          { playerId: player3.id, goals: 1 },
         ]);
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(1);
-        expect(players[1].goals).toBe(0);
+
+        expect(getPlayerById(player1.id).goals).toBe(1);
+        expect(getPlayerById(player2.id).goals).toBe(0); // own goal should not count towards player's goals tally
+        expect(getPlayerById(player3.id).goals).toBe(1);
       });
 
       test("a player scoring an own goal and a regular goal in the same match has their goals updated correctly", () => {
         const { addMatch } = useLeagueStore.getState();
+        const [player1, player2] = getPlayersByTeamId("team-1", 2);
         addMatch(2, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 1 },
-          {
-            playerId: mockLeagueData.players[0].id,
-            goals: 1,
-            isOwnGoal: true,
-          },
+          { playerId: player1.id, goals: 1 },
+          { playerId: player1.id, goals: 1, isOwnGoal: true },
+          { playerId: player2.id, goals: 1 },
         ]);
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(1);
+
+        expect(getPlayerById(player1.id).goals).toBe(1);
+        expect(getPlayerById(player2.id).goals).toBe(1);
       });
 
       // FIND-15: duplicate player entries not summed — store only counts last entry via Array.find()
       test.skip("player listed twice in scorers has their goals summed correctly", () => {
         const { addMatch } = useLeagueStore.getState();
+        const player1 = getPlayerByTeamId("team-1");
         addMatch(3, 0, [
-          { playerId: mockLeagueData.players[0].id, goals: 1 },
-          { playerId: mockLeagueData.players[0].id, goals: 2 },
+          { playerId: player1.id, goals: 1 },
+          { playerId: player1.id, goals: 2 },
         ]);
-        const { players } = useLeagueStore.getState();
-        expect(players[0].goals).toBe(3);
+
+        expect(getPlayerById(player1.id).goals).toBe(3);
       });
     });
   });
 
   describe("when adding a match with invalid data", () => {
-    // FIND-13: no validation on goal values — negative goals accepted and processed
-    test.skip("throws an error if home goals is negative", () => {
+    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
       const { addMatch } = useLeagueStore.getState();
-      expect(() => addMatch(-1, 2, [])).toThrow(MATCH_ERRORS.GOALS_NEGATIVE);
-    });
-
-    // FIND-13: no validation on goal values — negative goals accepted and processed
-    test.skip("throws an error if away goals is negative", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() => addMatch(2, -1, [])).toThrow(MATCH_ERRORS.GOALS_NEGATIVE);
-    });
-
-    // FIND-14: non-existent playerId accepted as scorer — match recorded with dangling reference
-    test.skip("throws an error if scorers data contains a playerId that does not exist", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() =>
-        addMatch(2, 1, [{ playerId: "non-existent", goals: 1 }]),
-      ).toThrow(PLAYER_ERRORS.NOT_FOUND);
-    });
-
-    // missing validation — player team ownership not checked against scorer list
-    test.skip("throws an error if scorers data contains a playerId that belongs to the opposing team", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() =>
-        addMatch(2, 1, [{ playerId: mockLeagueData.players[3].id, goals: 1 }]),
-      ).toThrow(PLAYER_ERRORS.WRONG_TEAM);
-    });
-
-    // missing runtime type validation — TypeScript types not enforced at runtime
-    test.skip("throws an error if any parameter has a wrong type", () => {
-      const { addMatch } = useLeagueStore.getState();
-      // @ts-expect-error : testing runtime type validation
-      expect(() => addMatch("two", 1, [])).toThrow();
-      // @ts-expect-error : testing runtime type validation
-      expect(() => addMatch(2, "one", [])).toThrow();
-      // @ts-expect-error : testing runtime type validation
-      expect(() => addMatch(2, 1, "not an array")).toThrow();
-    });
-
-    // missing validation — no upper bound on goal values
-    test.skip("unrealistically high number of goals throws an error", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() => addMatch(999, 999, [])).toThrow(
-        MATCH_ERRORS.GOALS_UNREALISTIC,
-      );
-    });
-
-    // missing validation — scorer goals sum not validated against total goals
-    test.skip("scorer goals sum less than total goals throws an error", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() =>
-        addMatch(2, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 1 },
-          { playerId: mockLeagueData.players[1].id, goals: 1 },
-          // Total goals is 3 but scorers only account for 2
-        ]),
-      ).toThrow(MATCH_ERRORS.SCORER_GOALS_MISMATCH);
-    });
-
-    // missing validation — scorer goals sum not validated against total goals
-    test.skip("scorer goals sum exceeds total goals throws an error", () => {
-      const { addMatch } = useLeagueStore.getState();
-      expect(() =>
-        addMatch(2, 1, [
-          { playerId: mockLeagueData.players[0].id, goals: 2 },
-          { playerId: mockLeagueData.players[1].id, goals: 1 },
-          // Total goals is 3 but scorers account for 4
-        ]),
-      ).toThrow(MATCH_ERRORS.SCORER_GOALS_MISMATCH);
+      addMatch(homeGoals, awayGoals, scorers);
     });
   });
 });
@@ -284,7 +221,7 @@ describe("addPlayer", () => {
       goals: 0,
       image: "",
       fullImage: "",
-    }
+    };
     addPlayer(player);
 
     const { players } = useLeagueStore.getState();
@@ -432,7 +369,9 @@ describe("addPlayer", () => {
       fullImage: "",
     });
     const { players } = useLeagueStore.getState();
-    const addedPlayer = players.find((p) => p.name === "a".repeat(PLAYER_NAME_RULES.minLength));
+    const addedPlayer = players.find(
+      (p) => p.name === "a".repeat(PLAYER_NAME_RULES.minLength),
+    );
     expect(addedPlayer).toBeDefined();
   });
 
@@ -507,7 +446,6 @@ describe("editPlayer", () => {
   test.todo("editing a player does not affect other players");
 });
 
-
 // =================================================================
 //  unit tests for editMatch function
 // =================================================================
@@ -530,7 +468,11 @@ describe("editMatch", () => {
   test.todo("throws an error if goals are unrealistically high");
   test.todo("throws an error if scorer goals sum is less than total goals");
   test.todo("throws an error if scorer goals sum exceeds total goals");
-  test.todo("throws an error if scorers data contains a playerId that does not exist");
-  test.todo("throws an error if scorers data contains a playerId that belongs to the opposing team");
+  test.todo(
+    "throws an error if scorers data contains a playerId that does not exist",
+  );
+  test.todo(
+    "throws an error if scorers data contains a playerId that belongs to the opposing team",
+  );
   test.todo("editing a match does not affect other matches");
 });
