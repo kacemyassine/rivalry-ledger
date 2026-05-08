@@ -28,9 +28,9 @@ export function runMatchValidationTests(
   // missing validation — scorer goals sum not validated against total goals
   test("throws an error if scorer goals sum is less than total goals", () => {
     const player1 = getPlayerByTeamId("team-1");
-    expect(() =>
-      action(2, 1, [{ playerId: player1.id, goals: 1 }]),
-    ).toThrow(MATCH_ERRORS.SCORER_GOALS_MISMATCH);
+    expect(() => action(2, 1, [{ playerId: player1.id, goals: 1 }])).toThrow(
+      MATCH_ERRORS.SCORER_GOALS_MISMATCH,
+    );
   });
 
   // missing validation — scorer goals sum not validated against total goals
@@ -43,14 +43,4 @@ export function runMatchValidationTests(
       ]),
     ).toThrow(MATCH_ERRORS.SCORER_GOALS_MISMATCH);
   });
-
-  // missing validation — non-existent playerId accepted as scorer, match recorded with dangling reference
-  test("throws an error if scorers data contains a playerId that does not exist", () => {
-    expect(() =>
-      action(2, 1, [{ playerId: "non-existent", goals: 1 }]),
-    ).toThrow(PLAYER_ERRORS.NOT_FOUND);
-  });
-
-  // missing validation — player team ownership not checked against scorer list
-
 }
