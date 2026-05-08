@@ -10,9 +10,12 @@ import {
   getPlayerById,
   getPlayerByTeamId,
   getPlayersByTeamId,
+  getPlayerByName,
 } from "../fixtures/mockSelectors";
 
 import { PLAYER_NAME_RULES } from "../fixtures/playerNameRules";
+import { get } from "react-hook-form";
+import { add } from "date-fns";
 
 beforeEach(() => {
   localStorage.clear();
@@ -215,17 +218,17 @@ describe("addMatch", () => {
 describe("addPlayer", () => {
   test("adds a new player with all required properties to the league with correct data", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     const player = {
       name: "Neymar Jr",
-      teamId: mockLeagueData.teams[0].id,
+      teamId: team.id,
       goals: 0,
       image: "",
       fullImage: "",
     };
     addPlayer(player);
-
-    const { players } = useLeagueStore.getState();
-    const addedPlayer = players.find((p) => p.name === "Neymar Jr");
+    
+    const addedPlayer = getPlayerByName(player.name);
     expect(addedPlayer).toBeDefined();
     expect(addedPlayer).toMatchObject(player);
   });
@@ -246,26 +249,29 @@ describe("addPlayer", () => {
 
   // FIND-05: no duplicate player validation — same name in same team is accepted silently
   test.skip("throws an error if a player with the same name already exists in the same team", () => {
-    // didier drogba is in the mock data and belongs to team-2, so adding another player with the same name to team-2 should throw an error
-    const { addPlayer } = useLeagueStore.getState();
-    expect(() =>
-      addPlayer({
-        name: "didier drogba",
-        teamId: mockLeagueData.teams[1].id,
-        goals: 0,
-        image: "",
-        fullImage: "",
-      }),
-    ).toThrow(PLAYER_ERRORS.DUPLICATE);
-  });
+  const { addPlayer } = useLeagueStore.getState();
+  const team = getTeamById("team-2");
+  const existingPlayer = getPlayerByTeamId("team-2");
+
+  expect(() =>
+    addPlayer({
+      name: existingPlayer.name,
+      teamId: team.id,
+      goals: 0,
+      image: "",
+      fullImage: "",
+    }),
+  ).toThrow(PLAYER_ERRORS.DUPLICATE);
+});
 
   // FIND-18: no empty name validation in store — UI silently blocks but store accepts empty string
   test.skip("throws an error if player name is empty", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     expect(() =>
       addPlayer({
         name: "",
-        teamId: mockLeagueData.teams[0].id,
+        teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
@@ -276,10 +282,11 @@ describe("addPlayer", () => {
   // FIND-18: no whitespace validation in store — UI silently blocks but store accepts whitespace-only strings
   test.skip("throws an error if player name is whitespace only", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     expect(() =>
       addPlayer({
         name: "     ",
-        teamId: mockLeagueData.teams[0].id,
+        teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
@@ -297,10 +304,12 @@ describe("addPlayer", () => {
     "throws an error if player name contains invalid characters: %s (%s)",
     (name) => {
       const { addPlayer } = useLeagueStore.getState();
+      const team = getTeamById("team-1");
+
       expect(() =>
         addPlayer({
           name,
-          teamId: mockLeagueData.teams[0].id,
+          teamId: team.id,
           goals: 0,
           image: "",
           fullImage: "",
@@ -312,10 +321,11 @@ describe("addPlayer", () => {
   // missing validation — no minimum length check in store
   test.skip("throws an error if player name below 3 characters", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     expect(() =>
       addPlayer({
         name: "cr", // 2 characters c: cristiano r: ronaldo -- should be at least 3 characters
-        teamId: mockLeagueData.teams[0].id,
+        teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
@@ -331,10 +341,11 @@ describe("addPlayer", () => {
     "name with 3 characters but not 3 valid letters is not allowed: %s (%s)",
     (name) => {
       const { addPlayer } = useLeagueStore.getState();
+      const team = getTeamById("team-1");
       expect(() =>
         addPlayer({
           name,
-          teamId: mockLeagueData.teams[0].id,
+          teamId: team.id,
           goals: 0,
           image: "",
           fullImage: "",
@@ -347,10 +358,12 @@ describe("addPlayer", () => {
   test.skip("name with 3 characters space at the beginning and end is not allowed", () => {
     // the function should read this as a single character name
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
+
     expect(() =>
       addPlayer({
         name: " c ", // c stands for cristiano
-        teamId: mockLeagueData.teams[0].id,
+        teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
@@ -361,34 +374,33 @@ describe("addPlayer", () => {
   // BVA: minimum valid boundary — exactly 3 characters
   test.skip("player name with exactly 3 characters and no invalid characters is allowed, no spaces", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
+
     addPlayer({
       name: "a".repeat(PLAYER_NAME_RULES.minLength), // 3 characters -- should be allowed
-      teamId: mockLeagueData.teams[0].id,
+      teamId: team.id,
       goals: 0,
       image: "",
       fullImage: "",
     });
-    const { players } = useLeagueStore.getState();
-    const addedPlayer = players.find(
-      (p) => p.name === "a".repeat(PLAYER_NAME_RULES.minLength),
-    );
+    
+    const addedPlayer = getPlayerByName("a".repeat(PLAYER_NAME_RULES.minLength));
     expect(addedPlayer).toBeDefined();
   });
 
   // BVA: maximum valid boundary — exactly 40 characters
   test.skip("player name with exactly 40 characters is allowed", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     addPlayer({
       name: "a".repeat(PLAYER_NAME_RULES.maxLength), // 40 characters -- should be allowed
-      teamId: mockLeagueData.teams[0].id,
+      teamId: team.id,
       goals: 0,
       image: "",
       fullImage: "",
     });
-    const { players } = useLeagueStore.getState();
-    const addedPlayer = players.find(
-      (p) => p.name === "a".repeat(PLAYER_NAME_RULES.maxLength),
-    );
+    
+    const addedPlayer = getPlayerByName("a".repeat(PLAYER_NAME_RULES.maxLength));
     expect(addedPlayer).toBeDefined();
   });
 
@@ -396,10 +408,11 @@ describe("addPlayer", () => {
   // missing validation — no maximum length check in store
   test.skip("throws an error if player name exceeds 40 characters", () => {
     const { addPlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
     expect(() =>
       addPlayer({
         name: "a".repeat(PLAYER_NAME_RULES.maxLength + 1), // 41 characters -- should be at most 40 characters
-        teamId: mockLeagueData.teams[0].id,
+        teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
