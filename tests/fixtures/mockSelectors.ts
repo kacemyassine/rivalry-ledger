@@ -18,3 +18,6 @@ export const getPlayerByName = (name: string) =>
   useLeagueStore.getState().players.find(p =>
     new RegExp(name, "i").test(p.name)
   )!;
+
+export const getMatchById = (matchId: string) =>
+  useLeagueStore.getState().matches.find(m => m.id === matchId)!;
