@@ -1,4 +1,4 @@
-import { MATCH_ERRORS, PLAYER_ERRORS, MAX_GOALS } from "./errorMessages";
+import { MATCH_ERRORS, MAX_GOALS } from "./errorMessages";
 import { getPlayersByTeamId, getPlayerByTeamId } from "./mockSelectors";
 
 export function runMatchValidationTests(
@@ -6,6 +6,7 @@ export function runMatchValidationTests(
     homeGoals: number,
     awayGoals: number,
     scorers: { playerId: string; goals: number; isOwnGoal?: boolean }[],
+    matchId?: string,
   ) => void,
 ) {
   // missing validation — no validation on goal values, negative goals accepted and processed

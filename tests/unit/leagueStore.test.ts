@@ -1,21 +1,20 @@
 import { useLeagueStore } from "@/store/leagueStore";
 import { mockLeagueData } from "../fixtures/mockLeagueData";
 import {
+  MATCH_ERRORS,
   PLAYER_ERRORS,
   TEAM_ERRORS,
 } from "../fixtures/errorMessages";
 import { runMatchValidationTests } from "../fixtures/matchValidationSuite";
+import { runNameValidationTests } from "../fixtures/playerValidationSuite";
 import {
   getTeamById,
   getPlayerById,
   getPlayerByTeamId,
   getPlayersByTeamId,
   getPlayerByName,
+  getMatchById
 } from "../fixtures/mockSelectors";
-
-import { PLAYER_NAME_RULES } from "../fixtures/playerNameRules";
-import { get } from "react-hook-form";
-import { add } from "date-fns";
 
 beforeEach(() => {
   localStorage.clear();
@@ -227,7 +226,7 @@ describe("addPlayer", () => {
       fullImage: "",
     };
     addPlayer(player);
-    
+
     const addedPlayer = getPlayerByName(player.name);
     expect(addedPlayer).toBeDefined();
     expect(addedPlayer).toMatchObject(player);
@@ -249,175 +248,25 @@ describe("addPlayer", () => {
 
   // FIND-05: no duplicate player validation — same name in same team is accepted silently
   test.skip("throws an error if a player with the same name already exists in the same team", () => {
-  const { addPlayer } = useLeagueStore.getState();
-  const team = getTeamById("team-2");
-  const existingPlayer = getPlayerByTeamId("team-2");
-
-  expect(() =>
-    addPlayer({
-      name: existingPlayer.name,
-      teamId: team.id,
-      goals: 0,
-      image: "",
-      fullImage: "",
-    }),
-  ).toThrow(PLAYER_ERRORS.DUPLICATE);
-});
-
-  // FIND-18: no empty name validation in store — UI silently blocks but store accepts empty string
-  test.skip("throws an error if player name is empty", () => {
     const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
+    const team = getTeamById("team-2");
+    const existingPlayer = getPlayerByTeamId("team-2");
+
     expect(() =>
       addPlayer({
-        name: "",
+        name: existingPlayer.name,
         teamId: team.id,
         goals: 0,
         image: "",
         fullImage: "",
       }),
-    ).toThrow(PLAYER_ERRORS.NAME_REQUIRED);
+    ).toThrow(PLAYER_ERRORS.DUPLICATE);
   });
 
-  // FIND-18: no whitespace validation in store — UI silently blocks but store accepts whitespace-only strings
-  test.skip("throws an error if player name is whitespace only", () => {
+  runNameValidationTests((name) => {
     const { addPlayer } = useLeagueStore.getState();
     const team = getTeamById("team-1");
-    expect(() =>
-      addPlayer({
-        name: "     ",
-        teamId: team.id,
-        goals: 0,
-        image: "",
-        fullImage: "",
-      }),
-    ).toThrow(PLAYER_ERRORS.NAME_REQUIRED);
-  });
-
-  // missing validation — no character type validation in store, digits and symbols accepted
-  test.skip.each([
-    ["cr7", "contains a digit"],
-    ["Player!", "contains a symbol"],
-    ["Player@name", "contains @ symbol"],
-    ["Player#1", "contains # and digit"],
-  ])(
-    "throws an error if player name contains invalid characters: %s (%s)",
-    (name) => {
-      const { addPlayer } = useLeagueStore.getState();
-      const team = getTeamById("team-1");
-
-      expect(() =>
-        addPlayer({
-          name,
-          teamId: team.id,
-          goals: 0,
-          image: "",
-          fullImage: "",
-        }),
-      ).toThrow(PLAYER_ERRORS.NAME_INVALID);
-    },
-  );
-
-  // missing validation — no minimum length check in store
-  test.skip("throws an error if player name below 3 characters", () => {
-    const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
-    expect(() =>
-      addPlayer({
-        name: "cr", // 2 characters c: cristiano r: ronaldo -- should be at least 3 characters
-        teamId: team.id,
-        goals: 0,
-        image: "",
-        fullImage: "",
-      }),
-    ).toThrow(PLAYER_ERRORS.NAME_INVALID);
-  });
-
-  // missing validation — no minimum letter count check, separators count toward length
-  test.skip.each([
-    ["c r", "space between two single letters"],
-    ["c-r", "hyphen between two single letters"],
-  ])(
-    "name with 3 characters but not 3 valid letters is not allowed: %s (%s)",
-    (name) => {
-      const { addPlayer } = useLeagueStore.getState();
-      const team = getTeamById("team-1");
-      expect(() =>
-        addPlayer({
-          name,
-          teamId: team.id,
-          goals: 0,
-          image: "",
-          fullImage: "",
-        }),
-      ).toThrow(PLAYER_ERRORS.NAME_INVALID);
-    },
-  );
-
-  // missing validation — no leading/trailing whitespace trimming in store
-  test.skip("name with 3 characters space at the beginning and end is not allowed", () => {
-    // the function should read this as a single character name
-    const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
-
-    expect(() =>
-      addPlayer({
-        name: " c ", // c stands for cristiano
-        teamId: team.id,
-        goals: 0,
-        image: "",
-        fullImage: "",
-      }),
-    ).toThrow(PLAYER_ERRORS.NAME_INVALID);
-  });
-
-  // BVA: minimum valid boundary — exactly 3 characters
-  test.skip("player name with exactly 3 characters and no invalid characters is allowed, no spaces", () => {
-    const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
-
-    addPlayer({
-      name: "a".repeat(PLAYER_NAME_RULES.minLength), // 3 characters -- should be allowed
-      teamId: team.id,
-      goals: 0,
-      image: "",
-      fullImage: "",
-    });
-    
-    const addedPlayer = getPlayerByName("a".repeat(PLAYER_NAME_RULES.minLength));
-    expect(addedPlayer).toBeDefined();
-  });
-
-  // BVA: maximum valid boundary — exactly 40 characters
-  test.skip("player name with exactly 40 characters is allowed", () => {
-    const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
-    addPlayer({
-      name: "a".repeat(PLAYER_NAME_RULES.maxLength), // 40 characters -- should be allowed
-      teamId: team.id,
-      goals: 0,
-      image: "",
-      fullImage: "",
-    });
-    
-    const addedPlayer = getPlayerByName("a".repeat(PLAYER_NAME_RULES.maxLength));
-    expect(addedPlayer).toBeDefined();
-  });
-
-  // BVA: above maximum boundary — 41 characters should be rejected
-  // missing validation — no maximum length check in store
-  test.skip("throws an error if player name exceeds 40 characters", () => {
-    const { addPlayer } = useLeagueStore.getState();
-    const team = getTeamById("team-1");
-    expect(() =>
-      addPlayer({
-        name: "a".repeat(PLAYER_NAME_RULES.maxLength + 1), // 41 characters -- should be at most 40 characters
-        teamId: team.id,
-        goals: 0,
-        image: "",
-        fullImage: "",
-      }),
-    ).toThrow(PLAYER_ERRORS.NAME_INVALID);
+    addPlayer({ name, teamId: team.id, goals: 0, image: "", fullImage: "" });
   });
 });
 
@@ -426,37 +275,114 @@ describe("addPlayer", () => {
 // =================================================================
 
 describe("editPlayer", () => {
-  test.todo("updates player name correctly");
+  describe("when editing a player with valid data", () => {
+    test("updates player name correctly", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
 
-  test.todo("updates player teamID correctly");
+      editPlayer(player.id, { name: "Neymar Jr" });
 
-  test.todo("updates multiple fields at once correctly");
+      expect(getPlayerById(player.id).name).toBe("Neymar Jr");
+    });
 
-  test.todo("partial update does not overwrite unchanged fields");
+    test("updates player teamId correctly", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
 
-  test.todo("throws an error if player id does not exist");
+      editPlayer(player.id, { teamId: "team-2" });
 
-  test.todo("throws an error if updated name is empty");
+      expect(getPlayerById(player.id).teamId).toBe("team-2");
+    });
 
-  test.todo("throws an error if updated name is whitespace only");
+    test("updates multiple fields at once correctly", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
 
-  test.todo("throws an error if updated name contains invalid characters");
+      editPlayer(player.id, { name: "Neymar Jr", teamId: "team-2" });
 
-  test.todo("throws an error if updated name is below 3 characters");
+      const updated = getPlayerById(player.id);
+      expect(updated.name).toBe("Neymar Jr");
+      expect(updated.teamId).toBe("team-2");
+    });
 
-  test.todo("throws an error if updated name exceeds 40 characters");
+    test("partial update does not overwrite unchanged fields", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
 
-  test.todo("throws an error if updated name already exists in the same team");
+      editPlayer(player.id, { name: "Neymar Jr" });
 
-  test.todo("throws an error if updated teamId does not exist");
+      const updated = getPlayerById(player.id);
+      expect(updated.teamId).toBe(player.teamId);
+      expect(updated.goals).toBe(player.goals);
+    });
 
-  test.todo(
-    "does not allow editing goals directly — goals are managed by match operations only",
-  );
+    test("editing a player with no changes does not corrupt state", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
 
-  test.todo("editing a player with no changes does not corrupt state");
+      editPlayer(player.id, {});
 
-  test.todo("editing a player does not affect other players");
+      const updated = getPlayerById(player.id);
+      expect(updated.name).toBe(player.name);
+      expect(updated.teamId).toBe(player.teamId);
+      expect(updated.goals).toBe(player.goals);
+    });
+
+    test("editing a player does not affect other players", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+      editPlayer(player1.id, { name: "Neymar Jr" });
+
+      expect(getPlayerById(player2.id).name).toBe(player2.name);
+    });
+
+    // missing validation — store allows editing goals directly
+    test.skip("does not allow editing goals directly — goals are managed by match operations only", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
+
+      expect(() =>
+        editPlayer(player.id, { goals: 99 }),
+      ).toThrow(PLAYER_ERRORS.GOALS_READONLY);
+    });
+  });
+
+  describe("when editing a player with invalid data", () => {
+    // FIND-05: no id validation
+    test.skip("throws an error if player id does not exist", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      expect(() =>
+        editPlayer("non-existent-id", { name: "Neymar Jr" }),
+      ).toThrow(PLAYER_ERRORS.NOT_FOUND);
+    });
+
+    // FIND-05: no teamId validation
+    test.skip("throws an error if updated teamId does not exist", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
+
+      expect(() =>
+        editPlayer(player.id, { teamId: "non-existent-team-id" }),
+      ).toThrow(TEAM_ERRORS.NOT_FOUND);
+    });
+
+    // FIND-05: no duplicate validation
+    test.skip("throws an error if updated name already exists in the same team", () => {
+      const { editPlayer } = useLeagueStore.getState();
+      const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+      expect(() =>
+        editPlayer(player1.id, { name: player2.name }),
+      ).toThrow(PLAYER_ERRORS.DUPLICATE);
+    });
+
+    runNameValidationTests((name) => {
+      const { editPlayer } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
+      editPlayer(player.id, { name });
+    });
+  });
 });
 
 // =================================================================
@@ -464,28 +390,144 @@ describe("editPlayer", () => {
 // =================================================================
 
 describe("editMatch", () => {
-  test.todo("updates home goals correctly");
-  test.todo("updates away goals correctly");
-  test.todo("updates scorers correctly");
-  test.todo("updates date correctly");
-  test.todo("updates multiple fields at once correctly");
+  let matchId: string;
 
-  test.todo("recalculates points correctly after edit");
-  test.todo("recalculates goals for and against correctly after edit");
-  test.todo("recalculates win, draw, loss correctly after edit");
-  test.todo("recalculates player goals correctly after edit");
+  beforeEach(() => {
+    const { addMatch } = useLeagueStore.getState();
+    addMatch(2, 1, []);
+    matchId = "match-1";
+  });
 
-  test.todo("throws an error if match id does not exist");
-  test.todo("throws an error if home goals is negative");
-  test.todo("throws an error if away goals is negative");
-  test.todo("throws an error if goals are unrealistically high");
-  test.todo("throws an error if scorer goals sum is less than total goals");
-  test.todo("throws an error if scorer goals sum exceeds total goals");
-  test.todo(
-    "throws an error if scorers data contains a playerId that does not exist",
-  );
-  test.todo(
-    "throws an error if scorers data contains a playerId that belongs to the opposing team",
-  );
-  test.todo("editing a match does not affect other matches");
+  describe("when editing a match with valid data", () => {
+    test("updates home goals correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, match.awayGoals, match.scorers, match.date);
+
+      expect(getMatchById(matchId).homeGoals).toBe(3);
+      expect(getMatchById(matchId).awayGoals).toBe(1); // away goals should remain unchanged
+    });
+
+    test("updates away goals correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, match.homeGoals, 3, match.scorers, match.date);
+
+      expect(getMatchById(matchId).awayGoals).toBe(3);
+      expect(getMatchById(matchId).homeGoals).toBe(2); // home goals should remain unchanged
+    });
+
+    test("updates scorers correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+      editMatch(matchId, 2, 0, [
+        { playerId: player1.id, goals: 1 },
+        { playerId: player2.id, goals: 1 },
+      ], match.date);
+
+      expect(getMatchById(matchId).scorers).toHaveLength(2);
+    });
+
+    test("updates date correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const newDate = "2026-01-01";
+      editMatch(matchId, match.homeGoals, match.awayGoals, match.scorers, newDate);
+
+      expect(getMatchById(matchId).date).toBe(newDate);
+    });
+
+    test("updates multiple fields at once correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const updated = getMatchById(matchId);
+      expect(updated.homeGoals).toBe(3);
+      expect(updated.awayGoals).toBe(2);
+    });
+
+    test("recalculates points correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      // original was 2-1 home win — team-1 has 3 points, team-2 has 0
+      // edit to a draw — both should have 1 point
+      editMatch(matchId, 1, 1, match.scorers, match.date);
+
+      expect(getTeamById("team-1").points).toBe(1);
+      expect(getTeamById("team-2").points).toBe(1);
+    });
+
+    test("recalculates goals for and against correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.goalsFor).toBe(3);
+      expect(homeTeam.goalsAgainst).toBe(2);
+      expect(awayTeam.goalsFor).toBe(2);
+      expect(awayTeam.goalsAgainst).toBe(3);
+    });
+
+    test("recalculates win, draw, loss correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      // original was 2-1 home win — edit to away win
+      editMatch(matchId, 1, 2, match.scorers, match.date);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.won).toBe(0);
+      expect(homeTeam.lost).toBe(1);
+      expect(awayTeam.won).toBe(1);
+      expect(awayTeam.lost).toBe(0);
+    });
+
+    test("recalculates player goals correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const player = getPlayerByTeamId("team-1");
+
+      editMatch(matchId, 1, 0, [
+        { playerId: player.id, goals: 1 },
+      ], match.date);
+
+      expect(getPlayerById(player.id).goals).toBe(1);
+    });
+
+    test("editing a match does not affect other matches", () => {
+      const { addMatch, editMatch } = useLeagueStore.getState();
+      addMatch(1, 0, []);
+      const secondMatchId = "match-2";
+
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const secondMatch = getMatchById(secondMatchId);
+      expect(secondMatch.homeGoals).toBe(1);
+      expect(secondMatch.awayGoals).toBe(0);
+    });
+  });
+
+  describe("when editing a match with invalid data", () => {
+    test("throws an error if match id does not exist", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      expect(() =>
+        editMatch("non-existent-id", 2, 1, match.scorers, match.date),
+      ).toThrow(MATCH_ERRORS.NOT_FOUND);
+    });
+
+    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, homeGoals, awayGoals, scorers, match.date);
+    });
+  });
 });
