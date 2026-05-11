@@ -751,3 +751,34 @@ describe("deletePlayer", () => {
     expect(players.find((p) => p.id === player2.id)).toBeUndefined();
   });
 });
+
+// =================================================================
+// Unit Tests for updateTeamLogo function
+// =================================================================
+
+describe("updateTeamLogo", () => {
+  test("updates the logo for the correct team", () => {
+    const { updateTeamLogo } = useLeagueStore.getState();
+    const newLogo = "https://cdn.rivalryledger.com/logo1.png";
+    
+    updateTeamLogo("team-1", newLogo);
+
+    expect(getTeamById("team-1").logo).toBe(newLogo);
+  });
+
+  test("throws an error if teamId does not exist", () => {
+    const { updateTeamLogo } = useLeagueStore.getState();
+    
+    expect(() => 
+      updateTeamLogo("fake-id", "logo.png")
+    ).toThrow(TEAM_ERRORS.NOT_FOUND);
+  });
+
+  test("allows clearing the logo with an empty string", () => {
+    const { updateTeamLogo } = useLeagueStore.getState();
+    
+    updateTeamLogo("team-1", "");
+
+    expect(getTeamById("team-1").logo).toBe("");
+  });
+});
