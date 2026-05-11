@@ -200,12 +200,12 @@ describe("addMatch", () => {
       });
     });
   });
+});
 
   describe("when adding a match with invalid data", () => {
-    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
-      const { addMatch } = useLeagueStore.getState();
-      addMatch(homeGoals, awayGoals, scorers);
-    });
+  runMatchValidationTests((homeGoals, awayGoals, scorers) => {
+    const { addMatch } = useLeagueStore.getState();
+    addMatch(homeGoals, awayGoals, scorers);
   });
 });
 
@@ -233,7 +233,7 @@ describe("addPlayer", () => {
   });
 
   // FIND-05: no teamId validation — addPlayer accepts any teamId including non-existent ones
-  test.skip("throws an error if teamId does not exist", () => {
+  test("throws an error if teamId does not exist", () => {
     const { addPlayer } = useLeagueStore.getState();
     expect(() =>
       addPlayer({
@@ -247,7 +247,7 @@ describe("addPlayer", () => {
   });
 
   // FIND-05: no duplicate player validation — same name in same team is accepted silently
-  test.skip("throws an error if a player with the same name already exists in the same team", () => {
+  test("throws an error if a player with the same name already exists in the same team", () => {
     const { addPlayer } = useLeagueStore.getState();
     const team = getTeamById("team-2");
     const existingPlayer = getPlayerByTeamId("team-2");
@@ -338,7 +338,7 @@ describe("editPlayer", () => {
     });
 
     // missing validation — store allows editing goals directly
-    test.skip("does not allow editing goals directly — goals are managed by match operations only", () => {
+    test("does not allow editing goals directly — goals are managed by match operations only", () => {
       const { editPlayer } = useLeagueStore.getState();
       const player = getPlayerByTeamId("team-1");
 
@@ -350,7 +350,7 @@ describe("editPlayer", () => {
 
   describe("when editing a player with invalid data", () => {
     // FIND-05: no id validation
-    test.skip("throws an error if player id does not exist", () => {
+    test("throws an error if player id does not exist", () => {
       const { editPlayer } = useLeagueStore.getState();
       expect(() =>
         editPlayer("non-existent-id", { name: "Neymar Jr" }),
@@ -358,7 +358,7 @@ describe("editPlayer", () => {
     });
 
     // FIND-05: no teamId validation
-    test.skip("throws an error if updated teamId does not exist", () => {
+    test("throws an error if updated teamId does not exist", () => {
       const { editPlayer } = useLeagueStore.getState();
       const player = getPlayerByTeamId("team-1");
 
@@ -368,7 +368,7 @@ describe("editPlayer", () => {
     });
 
     // FIND-05: no duplicate validation
-    test.skip("throws an error if updated name already exists in the same team", () => {
+    test("throws an error if updated name already exists in the same team", () => {
       const { editPlayer } = useLeagueStore.getState();
       const [player1, player2] = getPlayersByTeamId("team-1", 2);
 
