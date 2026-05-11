@@ -13,7 +13,7 @@ import {
   getPlayerByTeamId,
   getPlayersByTeamId,
   getPlayerByName,
-  getMatchById
+  getMatchById,
 } from "../fixtures/mockSelectors";
 
 beforeEach(() => {
@@ -162,7 +162,7 @@ describe("addMatch", () => {
       test("own goals are handled correctly", () => {
         const { addMatch } = useLeagueStore.getState();
         const [player1, player2, player3] = getPlayersByTeamId("team-1", 3);
-        
+
         addMatch(2, 1, [
           { playerId: player1.id, goals: 1 },
           { playerId: player2.id, goals: 1, isOwnGoal: true },
@@ -187,7 +187,6 @@ describe("addMatch", () => {
         expect(getPlayerById(player2.id).goals).toBe(1);
       });
 
-      // FIND-15: duplicate player entries not summed — store only counts last entry via Array.find()
       test("player listed twice in scorers has their goals summed correctly", () => {
         const { addMatch } = useLeagueStore.getState();
         const player1 = getPlayerByTeamId("team-1");
@@ -202,13 +201,286 @@ describe("addMatch", () => {
   });
 });
 
-  describe("when adding a match with invalid data", () => {
+describe("when adding a match with invalid data", () => {
   runMatchValidationTests((homeGoals, awayGoals, scorers) => {
     const { addMatch } = useLeagueStore.getState();
     addMatch(homeGoals, awayGoals, scorers);
   });
 });
 
+// =================================================================
+//  unit tests for editMatch function
+// =================================================================
+
+describe("editMatch", () => {
+  let matchId: string;
+
+  beforeEach(() => {
+    const { addMatch } = useLeagueStore.getState();
+    addMatch(2, 1, []);
+    matchId = "match-1";
+  });
+
+  describe("when editing a match with valid data", () => {
+    test("updates home goals correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, match.awayGoals, match.scorers, match.date);
+
+      expect(getMatchById(matchId).homeGoals).toBe(3);
+      expect(getMatchById(matchId).awayGoals).toBe(1); // away goals should remain unchanged
+    });
+
+    test("updates away goals correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, match.homeGoals, 3, match.scorers, match.date);
+
+      expect(getMatchById(matchId).awayGoals).toBe(3);
+      expect(getMatchById(matchId).homeGoals).toBe(2); // home goals should remain unchanged
+    });
+
+    test("updates scorers correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+      editMatch(
+        matchId,
+        2,
+        0,
+        [
+          { playerId: player1.id, goals: 1 },
+          { playerId: player2.id, goals: 1 },
+        ],
+        match.date,
+      );
+
+      expect(getMatchById(matchId).scorers).toHaveLength(2);
+    });
+
+    test("updates date correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const newDate = "2026-01-01";
+      editMatch(
+        matchId,
+        match.homeGoals,
+        match.awayGoals,
+        match.scorers,
+        newDate,
+      );
+
+      expect(getMatchById(matchId).date).toBe(newDate);
+    });
+
+    test("updates multiple fields at once correctly", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const updated = getMatchById(matchId);
+      expect(updated.homeGoals).toBe(3);
+      expect(updated.awayGoals).toBe(2);
+    });
+
+    test("recalculates points correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      // original was 2-1 home win — team-1 has 3 points, team-2 has 0
+      // edit to a draw — both should have 1 point
+      editMatch(matchId, 1, 1, match.scorers, match.date);
+
+      expect(getTeamById("team-1").points).toBe(1);
+      expect(getTeamById("team-2").points).toBe(1);
+    });
+
+    test("recalculates goals for and against correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.goalsFor).toBe(3);
+      expect(homeTeam.goalsAgainst).toBe(2);
+      expect(awayTeam.goalsFor).toBe(2);
+      expect(awayTeam.goalsAgainst).toBe(3);
+    });
+
+    test("recalculates win, draw, loss correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      // original was 2-1 home win — edit to away win
+      editMatch(matchId, 1, 2, match.scorers, match.date);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.won).toBe(0);
+      expect(homeTeam.lost).toBe(1);
+      expect(awayTeam.won).toBe(1);
+      expect(awayTeam.lost).toBe(0);
+    });
+
+    test("recalculates player goals correctly after edit", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      const player = getPlayerByTeamId("team-1");
+
+      editMatch(matchId, 1, 0, [{ playerId: player.id, goals: 1 }], match.date);
+
+      expect(getPlayerById(player.id).goals).toBe(1);
+    });
+
+    test("editing a match does not affect other matches", () => {
+      const { addMatch, editMatch } = useLeagueStore.getState();
+      addMatch(1, 0, []);
+      const secondMatchId = "match-2";
+
+      const match = getMatchById(matchId);
+      editMatch(matchId, 3, 2, match.scorers, match.date);
+
+      const secondMatch = getMatchById(secondMatchId);
+      expect(secondMatch.homeGoals).toBe(1);
+      expect(secondMatch.awayGoals).toBe(0);
+    });
+  });
+
+  describe("when editing a match with invalid data", () => {
+    test("throws an error if match id does not exist", () => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      expect(() =>
+        editMatch("non-existent-id", 2, 1, match.scorers, match.date),
+      ).toThrow(MATCH_ERRORS.NOT_FOUND);
+    });
+
+    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
+      const { editMatch } = useLeagueStore.getState();
+      const match = getMatchById(matchId);
+      editMatch(matchId, homeGoals, awayGoals, scorers, match.date);
+    });
+  });
+});
+
+// =================================================================
+// Unit Tests for deleteMatch function
+// =================================================================
+
+describe("deleteMatch", () => {
+  describe("deleteMatch", () => {
+    let matchId: string;
+
+    beforeEach(() => {
+      const { addMatch } = useLeagueStore.getState();
+      addMatch(2, 1, []);
+      matchId = "match-1";
+    });
+
+    test("removes the match from the matches list", () => {
+      const { deleteMatch } = useLeagueStore.getState();
+      deleteMatch(matchId);
+
+      const { matches } = useLeagueStore.getState();
+      // not using getMatchById selector since the selector promises always a valid return
+      expect(matches.find((m) => m.id === matchId)).toBeUndefined();
+    });
+
+    test("recalculates points correctly after deletion", () => {
+      const { deleteMatch } = useLeagueStore.getState();
+      deleteMatch(matchId);
+
+      expect(getTeamById("team-1").points).toBe(0);
+      expect(getTeamById("team-2").points).toBe(0);
+    });
+
+    test("recalculates goals for and against correctly after deletion", () => {
+      const { deleteMatch } = useLeagueStore.getState();
+      deleteMatch(matchId);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.goalsFor).toBe(0);
+      expect(homeTeam.goalsAgainst).toBe(0);
+      expect(awayTeam.goalsFor).toBe(0);
+      expect(awayTeam.goalsAgainst).toBe(0);
+    });
+
+    test("recalculates win, draw, loss correctly after deletion", () => {
+      const { deleteMatch } = useLeagueStore.getState();
+      deleteMatch(matchId);
+
+      const homeTeam = getTeamById("team-1");
+      const awayTeam = getTeamById("team-2");
+
+      expect(homeTeam.won).toBe(0);
+      expect(homeTeam.lost).toBe(0);
+      expect(awayTeam.won).toBe(0);
+      expect(awayTeam.lost).toBe(0);
+    });
+
+    test("recalculates player goals correctly after deletion", () => {
+      const { addMatch, deleteMatch } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
+
+      addMatch(1, 0, [{ playerId: player.id, goals: 1 }]);
+      const scoredMatchId = "match-2";
+
+      deleteMatch(scoredMatchId);
+
+      expect(getPlayerById(player.id).goals).toBe(0);
+    });
+
+    test("recalculates player goals correctly when match with multiple scorers is deleted", () => {
+      const { addMatch, deleteMatch } = useLeagueStore.getState();
+      const [player1, player2] = getPlayersByTeamId("team-1", 2);
+      addMatch(2, 0, [
+        { playerId: player1.id, goals: 1 },
+        { playerId: player2.id, goals: 1 },
+      ]);
+      const scoredMatchId = "match-2";
+      deleteMatch(scoredMatchId);
+
+      expect(getPlayerById(player1.id).goals).toBe(0);
+      expect(getPlayerById(player2.id).goals).toBe(0);
+    });
+
+    test("recalculates player goals correctly when a single player is listed multiple times as scorer and the match is deleted", () => {
+      const { addMatch, deleteMatch } = useLeagueStore.getState();
+      const player = getPlayerByTeamId("team-1");
+      addMatch(3, 0, [
+        { playerId: player.id, goals: 1 },
+        { playerId: player.id, goals: 2 },
+      ]);
+      const scoredMatchId = "match-2";
+      deleteMatch(scoredMatchId);
+
+      expect(getPlayerById(player.id).goals).toBe(0);
+    });
+
+    test("deleting a match does not affect other matches", () => {
+      const { addMatch, deleteMatch } = useLeagueStore.getState();
+      addMatch(1, 0, []);
+      const secondMatchId = "match-2";
+
+      deleteMatch(matchId);
+
+      const secondMatch = getMatchById(secondMatchId);
+      expect(secondMatch.homeGoals).toBe(1);
+      expect(secondMatch.awayGoals).toBe(0);
+    });
+
+    test("throws an error if match id does not exist", () => {
+      const { deleteMatch } = useLeagueStore.getState();
+      expect(() => deleteMatch("non-existent-id")).toThrow(
+        MATCH_ERRORS.NOT_FOUND,
+      );
+    });
+  });
+});
 
 // =================================================================
 // Unit Tests for addPlayer function
@@ -342,9 +614,9 @@ describe("editPlayer", () => {
       const { editPlayer } = useLeagueStore.getState();
       const player = getPlayerByTeamId("team-1");
 
-      expect(() =>
-        editPlayer(player.id, { goals: 99 }),
-      ).toThrow(PLAYER_ERRORS.GOALS_READONLY);
+      expect(() => editPlayer(player.id, { goals: 99 })).toThrow(
+        PLAYER_ERRORS.GOALS_READONLY,
+      );
     });
   });
 
@@ -372,9 +644,9 @@ describe("editPlayer", () => {
       const { editPlayer } = useLeagueStore.getState();
       const [player1, player2] = getPlayersByTeamId("team-1", 2);
 
-      expect(() =>
-        editPlayer(player1.id, { name: player2.name }),
-      ).toThrow(PLAYER_ERRORS.DUPLICATE);
+      expect(() => editPlayer(player1.id, { name: player2.name })).toThrow(
+        PLAYER_ERRORS.DUPLICATE,
+      );
     });
 
     runNameValidationTests((name) => {
@@ -386,148 +658,96 @@ describe("editPlayer", () => {
 });
 
 // =================================================================
-//  unit tests for editMatch function
+// Unit Tests for deletePlayer function
 // =================================================================
 
-describe("editMatch", () => {
-  let matchId: string;
+import { SQUAD_RULES } from "../fixtures/playerNameRules";
 
-  beforeEach(() => {
-    const { addMatch } = useLeagueStore.getState();
-    addMatch(2, 1, []);
-    matchId = "match-1";
+describe("deletePlayer", () => {
+  beforeAll(() => {
+    SQUAD_RULES.minSize = 4;
   });
 
-  describe("when editing a match with valid data", () => {
-    test("updates home goals correctly", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      editMatch(matchId, 3, match.awayGoals, match.scorers, match.date);
-
-      expect(getMatchById(matchId).homeGoals).toBe(3);
-      expect(getMatchById(matchId).awayGoals).toBe(1); // away goals should remain unchanged
-    });
-
-    test("updates away goals correctly", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      editMatch(matchId, match.homeGoals, 3, match.scorers, match.date);
-
-      expect(getMatchById(matchId).awayGoals).toBe(3);
-      expect(getMatchById(matchId).homeGoals).toBe(2); // home goals should remain unchanged
-    });
-
-    test("updates scorers correctly", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      const [player1, player2] = getPlayersByTeamId("team-1", 2);
-
-      editMatch(matchId, 2, 0, [
-        { playerId: player1.id, goals: 1 },
-        { playerId: player2.id, goals: 1 },
-      ], match.date);
-
-      expect(getMatchById(matchId).scorers).toHaveLength(2);
-    });
-
-    test("updates date correctly", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      const newDate = "2026-01-01";
-      editMatch(matchId, match.homeGoals, match.awayGoals, match.scorers, newDate);
-
-      expect(getMatchById(matchId).date).toBe(newDate);
-    });
-
-    test("updates multiple fields at once correctly", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      editMatch(matchId, 3, 2, match.scorers, match.date);
-
-      const updated = getMatchById(matchId);
-      expect(updated.homeGoals).toBe(3);
-      expect(updated.awayGoals).toBe(2);
-    });
-
-    test("recalculates points correctly after edit", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      // original was 2-1 home win — team-1 has 3 points, team-2 has 0
-      // edit to a draw — both should have 1 point
-      editMatch(matchId, 1, 1, match.scorers, match.date);
-
-      expect(getTeamById("team-1").points).toBe(1);
-      expect(getTeamById("team-2").points).toBe(1);
-    });
-
-    test("recalculates goals for and against correctly after edit", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      editMatch(matchId, 3, 2, match.scorers, match.date);
-
-      const homeTeam = getTeamById("team-1");
-      const awayTeam = getTeamById("team-2");
-
-      expect(homeTeam.goalsFor).toBe(3);
-      expect(homeTeam.goalsAgainst).toBe(2);
-      expect(awayTeam.goalsFor).toBe(2);
-      expect(awayTeam.goalsAgainst).toBe(3);
-    });
-
-    test("recalculates win, draw, loss correctly after edit", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      // original was 2-1 home win — edit to away win
-      editMatch(matchId, 1, 2, match.scorers, match.date);
-
-      const homeTeam = getTeamById("team-1");
-      const awayTeam = getTeamById("team-2");
-
-      expect(homeTeam.won).toBe(0);
-      expect(homeTeam.lost).toBe(1);
-      expect(awayTeam.won).toBe(1);
-      expect(awayTeam.lost).toBe(0);
-    });
-
-    test("recalculates player goals correctly after edit", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      const player = getPlayerByTeamId("team-1");
-
-      editMatch(matchId, 1, 0, [
-        { playerId: player.id, goals: 1 },
-      ], match.date);
-
-      expect(getPlayerById(player.id).goals).toBe(1);
-    });
-
-    test("editing a match does not affect other matches", () => {
-      const { addMatch, editMatch } = useLeagueStore.getState();
-      addMatch(1, 0, []);
-      const secondMatchId = "match-2";
-
-      const match = getMatchById(matchId);
-      editMatch(matchId, 3, 2, match.scorers, match.date);
-
-      const secondMatch = getMatchById(secondMatchId);
-      expect(secondMatch.homeGoals).toBe(1);
-      expect(secondMatch.awayGoals).toBe(0);
-    });
+  afterAll(() => {
+    SQUAD_RULES.minSize = 23;
   });
 
-  describe("when editing a match with invalid data", () => {
-    test("throws an error if match id does not exist", () => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      expect(() =>
-        editMatch("non-existent-id", 2, 1, match.scorers, match.date),
-      ).toThrow(MATCH_ERRORS.NOT_FOUND);
+  test("removes the player from the players list", () => {
+    const { deletePlayer } = useLeagueStore.getState();
+    const player = getPlayerByTeamId("team-1");
+
+    deletePlayer(player.id);
+
+    const { players } = useLeagueStore.getState();
+
+    expect(players.find((p) => p.id === player.id)).toBeUndefined();
+  });
+
+  test("throws an error if player id does not exist", () => {
+    const { deletePlayer } = useLeagueStore.getState();
+    expect(() => deletePlayer("non-existent-id")).toThrow(
+      PLAYER_ERRORS.NOT_FOUND,
+    );
+  });
+
+  test("throws an error if player has scored goals", () => {
+    const { addMatch, deletePlayer } = useLeagueStore.getState();
+    const player = getPlayerByTeamId("team-1");
+
+    addMatch(1, 0, [{ playerId: player.id, goals: 1 }]);
+
+    expect(() => deletePlayer(player.id)).toThrow(PLAYER_ERRORS.HAS_GOALS);
+  });
+
+  test("throws an error if deleting the player would leave the team with minimum or fewer players", () => {
+    const { deletePlayer } = useLeagueStore.getState();
+    const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+    deletePlayer(player1.id);
+
+    expect(() => deletePlayer(player2.id)).toThrow(
+      PLAYER_ERRORS.MIN_SQUAD_SIZE,
+    );
+  });
+
+  test("deleting a player does not affect other players", () => {
+    const { deletePlayer } = useLeagueStore.getState();
+    const [player1, player2] = getPlayersByTeamId("team-1", 2);
+
+    deletePlayer(player1.id);
+
+    const { players } = useLeagueStore.getState();
+    expect(players.find((p) => p.id === player2.id)).toBeDefined();
+    expect(getPlayerById(player2.id).name).toBe(player2.name);
+  });
+
+  test("handles deleting multiple players sequentially", () => {
+    const { addPlayer, deletePlayer } = useLeagueStore.getState();
+    const team = getTeamById("team-1");
+
+    addPlayer({
+      name: "aaa",
+      teamId: team.id,
+      goals: 0,
+      image: "",
+      fullImage: "",
+    });
+    addPlayer({
+      name: "bbb",
+      teamId: team.id,
+      goals: 0,
+      image: "",
+      fullImage: "",
     });
 
-    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
-      const { editMatch } = useLeagueStore.getState();
-      const match = getMatchById(matchId);
-      editMatch(matchId, homeGoals, awayGoals, scorers, match.date);
-    });
+    const player1 = getPlayerByName("aaa");
+    const player2 = getPlayerByName("bbb");
+
+    deletePlayer(player1.id);
+    deletePlayer(player2.id);
+
+    const { players } = useLeagueStore.getState();
+    expect(players.find((p) => p.id === player1.id)).toBeUndefined();
+    expect(players.find((p) => p.id === player2.id)).toBeUndefined();
   });
 });

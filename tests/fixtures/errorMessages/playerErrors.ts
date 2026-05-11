@@ -1,4 +1,4 @@
-import { PLAYER_NAME_RULES } from "../playerNameRules";
+import { PLAYER_NAME_RULES, SQUAD_RULES} from "../playerNameRules";
 
 export const PLAYER_ERRORS = {
   NAME_REQUIRED: "Player name is required",
@@ -9,5 +9,8 @@ export const PLAYER_ERRORS = {
   NOT_FOUND: "Player not found",
   WRONG_TEAM: "Player does not belong to the scoring team",
   NAME_INVALID_BOUNDARIES: "Player name must start and end with a letter",
-  GOALS_READONLY: "Goals cannot be edited directly — they are managed by match operations only",
+  GOALS_READONLY:
+    "Goals cannot be edited directly — they are managed by match operations only",
+  HAS_GOALS: "Cannot delete a player with goals",
+  MIN_SQUAD_SIZE: `Squad must have more than ${SQUAD_RULES.minSize} players`,
 };

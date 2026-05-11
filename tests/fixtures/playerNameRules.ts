@@ -5,3 +5,7 @@ export const PLAYER_NAME_RULES = {
   maxLength: 40,
   validPattern: /^[a-zA-ZÀ-ÿ][a-zA-ZÀ-ÿ\s'-]*[a-zA-ZÀ-ÿ]$/,
 } as const;
+
+export const SQUAD_RULES = {
+  minSize: 23,
+};
