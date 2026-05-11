@@ -6,7 +6,7 @@ import {
   TEAM_ERRORS,
 } from "../../tests/fixtures/errorMessages";
 import { MAX_GOALS } from "../../tests/fixtures/errorMessages";
-import { PLAYER_NAME_RULES } from "../../tests/fixtures/playerNameRules";
+import { PLAYER_NAME_RULES, SQUAD_RULES } from "../../tests/fixtures/playerNameRules";
 
 const STORAGE_KEY = "football-league-data";
 
@@ -348,13 +348,20 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   },
 
   deletePlayer: (id) => {
-    const state = get();
-    const updatedPlayers = state.players.filter((p) => p.id !== id);
+  const state = get();
+  const player = state.players.find(p => p.id === id);
+  if (!player) throw new Error(PLAYER_ERRORS.NOT_FOUND);
 
-    const newState = { ...state, players: updatedPlayers };
-    saveState(newState);
-    set({ players: updatedPlayers });
-  },
+  if (player.goals > 0) throw new Error(PLAYER_ERRORS.HAS_GOALS);
+
+  const teamPlayers = state.players.filter(p => p.teamId === player.teamId);
+  if (teamPlayers.length <= SQUAD_RULES.minSize) throw new Error(PLAYER_ERRORS.MIN_SQUAD_SIZE);
+
+  const updatedPlayers = state.players.filter(p => p.id !== id);
+  const newState = { ...state, players: updatedPlayers };
+  saveState(newState);
+  set({ players: updatedPlayers });
+},
 
   updateTeamLogo: (teamId, logo) => {
     const state = get();
