@@ -364,15 +364,24 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
 },
 
   updateTeamLogo: (teamId, logo) => {
-    const state = get();
-    const updatedTeams = state.teams.map((t) =>
-      t.id === teamId ? { ...t, logo } : t,
-    );
+  const state = get();
+  
+  // 1. Check if team exists
+  const teamExists = state.teams.some(t => t.id === teamId);
+  
+  
+  if (!teamExists) {
+    throw new Error(TEAM_ERRORS.NOT_FOUND); 
+  }
 
-    const newState = { ...state, teams: updatedTeams };
-    saveState(newState);
-    set({ teams: updatedTeams });
-  },
+  const updatedTeams = state.teams.map((t) =>
+    t.id === teamId ? { ...t, logo } : t,
+  );
+
+  const newState = { ...state, teams: updatedTeams };
+  saveState(newState);
+  set({ teams: updatedTeams });
+},
 
   deleteMatch: (matchId) => {
   const state = get();
