@@ -209,7 +209,7 @@ if (homeTeam.id === awayTeam.id) {
   });
 
   const newMatch: Match = {
-    id: `match-${Date.now()}`,
+    id: `match-${state.matches.length + 1}`,
     homeTeamId: homeTeam.id,
     awayTeamId: awayTeam.id,
     homeTeamName: homeTeam.name,
@@ -234,7 +234,7 @@ if (homeTeam.id === awayTeam.id) {
     const state = get();
     const newPlayer: Player = {
       ...playerData,
-      id: `player-${Date.now()}`,
+      id: `player-${state.players.length + 1}`
     };
 
     const newState = {
