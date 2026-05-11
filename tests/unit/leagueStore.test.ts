@@ -200,12 +200,12 @@ describe("addMatch", () => {
       });
     });
   });
-});
 
   describe("when adding a match with invalid data", () => {
-  runMatchValidationTests((homeGoals, awayGoals, scorers) => {
-    const { addMatch } = useLeagueStore.getState();
-    addMatch(homeGoals, awayGoals, scorers);
+    runMatchValidationTests((homeGoals, awayGoals, scorers) => {
+      const { addMatch } = useLeagueStore.getState();
+      addMatch(homeGoals, awayGoals, scorers);
+    });
   });
 });
 
