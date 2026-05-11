@@ -368,58 +368,53 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   },
 
   deleteMatch: (matchId) => {
-    const state = get();
-    const match = state.matches.find((m) => m.id === matchId);
-    if (!match) return;
+  const state = get();
+  const match = state.matches.find((m) => m.id === matchId);
+  if (!match) throw new Error(MATCH_ERRORS.NOT_FOUND);
 
-    const homeWin = match.homeGoals > match.awayGoals;
-    const draw = match.homeGoals === match.awayGoals;
+  const homeWin = match.homeGoals > match.awayGoals;
+  const draw = match.homeGoals === match.awayGoals;
 
-    const updatedTeams = state.teams.map((t) => {
-      if (t.id === match.homeTeamId) {
-        return {
-          ...t,
-          played: t.played - 1,
-          won: t.won - (homeWin ? 1 : 0),
-          drawn: t.drawn - (draw ? 1 : 0),
-          lost: t.lost - (!homeWin && !draw ? 1 : 0),
-          goalsFor: t.goalsFor - match.homeGoals,
-          goalsAgainst: t.goalsAgainst - match.awayGoals,
-          points: t.points - (homeWin ? 3 : draw ? 1 : 0),
-        };
-      }
-      if (t.id === match.awayTeamId) {
-        return {
-          ...t,
-          played: t.played - 1,
-          won: t.won - (!homeWin && !draw ? 1 : 0),
-          drawn: t.drawn - (draw ? 1 : 0),
-          lost: t.lost - (homeWin ? 1 : 0),
-          goalsFor: t.goalsFor - match.awayGoals,
-          goalsAgainst: t.goalsAgainst - match.homeGoals,
-          points: t.points - (!homeWin && !draw ? 3 : draw ? 1 : 0),
-        };
-      }
-      return t;
-    });
+  const updatedTeams = state.teams.map((t) => {
+    if (t.id === match.homeTeamId) {
+      return {
+        ...t,
+        played: t.played - 1,
+        won: t.won - (homeWin ? 1 : 0),
+        drawn: t.drawn - (draw ? 1 : 0),
+        lost: t.lost - (!homeWin && !draw ? 1 : 0),
+        goalsFor: t.goalsFor - match.homeGoals,
+        goalsAgainst: t.goalsAgainst - match.awayGoals,
+        points: t.points - (homeWin ? 3 : draw ? 1 : 0),
+      };
+    }
+    if (t.id === match.awayTeamId) {
+      return {
+        ...t,
+        played: t.played - 1,
+        won: t.won - (!homeWin && !draw ? 1 : 0),
+        drawn: t.drawn - (draw ? 1 : 0),
+        lost: t.lost - (homeWin ? 1 : 0),
+        goalsFor: t.goalsFor - match.awayGoals,
+        goalsAgainst: t.goalsAgainst - match.homeGoals,
+        points: t.points - (!homeWin && !draw ? 3 : draw ? 1 : 0),
+      };
+    }
+    return t;
+  });
 
-    const updatedPlayers = state.players.map((p) => {
-      const scorer = match.scorers?.find(
-        (s) => s.playerId === p.id && !s.isOwnGoal,
-      );
-      return scorer ? { ...p, goals: p.goals - scorer.goals } : p;
-    });
+  const updatedPlayers = state.players.map((p) => {
+    const scorers = match.scorers?.filter((s) => s.playerId === p.id && !s.isOwnGoal);
+    const totalGoals = scorers?.reduce((sum, s) => sum + s.goals, 0) ?? 0;
+    return totalGoals > 0 ? { ...p, goals: p.goals - totalGoals } : p;
+  });
 
-    const updatedMatches = state.matches.filter((m) => m.id !== matchId);
+  const updatedMatches = state.matches.filter((m) => m.id !== matchId);
 
-    const newState = {
-      teams: updatedTeams,
-      players: updatedPlayers,
-      matches: updatedMatches,
-    };
-    saveState(newState);
-    set(newState);
-  },
+  const newState = { teams: updatedTeams, players: updatedPlayers, matches: updatedMatches };
+  saveState(newState);
+  set(newState);
+},
 
   editMatch: (matchId, newHomeGoals, newAwayGoals, newScorers, newDate) => {
     const state = get();
