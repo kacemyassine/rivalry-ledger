@@ -94,9 +94,9 @@ describe("AuthService", () => {
     });
 
     test("returns a unique value on each call", () => {
-      const a = AuthService.generateToken();
-      const b = AuthService.generateToken();
-      expect(a).not.toBe(b);
+      const token1 = AuthService.generateToken();
+      const token2 = AuthService.generateToken();
+      expect(token1).not.toBe(token2);
     });
 
     test("token starts with admin_ prefix", () => {
@@ -195,4 +195,59 @@ describe("AuthService", () => {
     expect(AuthService.authenticate('0217')).toBe(true);
   });
 });
+});
+
+describe('FIND-04: cryptographically secure token generation', () => {
+  test('generated token uses crypto.randomUUID() not Math.random()', () => {
+    const spy = jest.spyOn(crypto, 'randomUUID');
+    AuthService.generateToken();
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  });
+});
+
+describe('FIND-03: session token integrity', () => {
+  test('returns false for isAuthenticated if token format is invalid', () => {
+    sessionStorage.setItem('atlantis_admin_token', 'invalid-token');
+    expect(AuthService.isAuthenticated()).toBe(false);
+  });
+
+  test('returns false if token was manually injected via devtools', () => {
+    sessionStorage.setItem('atlantis_admin_token', '123');
+    expect(AuthService.isAuthenticated()).toBe(false);
+  });
+
+  test('returns true for a valid token format', () => {
+    AuthService.authenticate('0217');
+    expect(AuthService.isAuthenticated()).toBe(true);
+  });
+});
+
+describe('FIND-05: listener memory leak prevention', () => {
+  test('warns when the same listener is registered twice', () => {
+    const spy = jest.spyOn(console, 'warn');
+    const cb = jest.fn();
+    AuthService.addListener(cb);
+    AuthService.addListener(cb); // duplicate — this is the leak
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('listener'));
+    spy.mockRestore();
+  });
+
+  test('does not warn when listener is properly removed before re-adding', () => {
+    const spy = jest.spyOn(console, 'warn');
+    const cb = jest.fn();
+    AuthService.addListener(cb);
+    AuthService.removeListener(cb);
+    AuthService.addListener(cb); // clean re-add — no warn
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  test('ghost callback is not triggered after component unmount', () => {
+    const cb = jest.fn();
+    AuthService.addListener(cb);
+    AuthService.listeners = [];
+    AuthService.authenticate('0217');
+    expect(cb).not.toHaveBeenCalled();
+  });
 });
