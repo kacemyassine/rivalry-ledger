@@ -17,7 +17,7 @@ export const AuthService = {
   listeners: [] as Listener[],
 
   generateToken: (): string => {
-    return `admin_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    return `admin_${Date.now()}_${crypto.randomUUID()}`;
   },
 
   authenticate: (password: string): boolean => {
@@ -47,7 +47,8 @@ export const AuthService = {
 
   isAuthenticated: (): boolean => {
     const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
-    return !!token;
+    if (!token) return false;
+    return /^admin_\d+_[0-9a-f-]{36}$/.test(token);
   },
 
   logout: (): void => {
@@ -62,6 +63,11 @@ export const AuthService = {
   },
 
   addListener: (callback: Listener) => {
+    if (AuthService.listeners.includes(callback)) {
+      console.warn(
+        "AuthService: listener already registered — did you forget to call removeListener on unmount?",
+      );
+    }
     AuthService.listeners.push(callback);
   },
 
