@@ -1,7 +1,7 @@
-import { AUTH_ERRORS } from './authErrors';
+import { AUTH_ERRORS } from "./authErrors";
 
-const AUTH_TOKEN_KEY = 'atlantis_admin_token';
-const ADMIN_PASSWORD = '0217';
+const AUTH_TOKEN_KEY = "atlantis_admin_token";
+const ADMIN_PASSWORD = "0217";
 const MAX_ATTEMPTS = 5;
 const RATE_LIMIT_ATTEMPTS = 3;
 const LOCKOUT_DURATION = 30_000; // 30 seconds
@@ -25,24 +25,24 @@ export const AuthService = {
       throw new Error(AUTH_ERRORS.LOCKED_OUT);
     }
 
-    if (failedAttempts >= RATE_LIMIT_ATTEMPTS) {
-      throw new Error(AUTH_ERRORS.RATE_LIMITED);
+    if (password !== ADMIN_PASSWORD) {
+      failedAttempts++;
+      if (failedAttempts >= MAX_ATTEMPTS) {
+        lockoutUntil = Date.now() + LOCKOUT_DURATION;
+        throw new Error(AUTH_ERRORS.LOCKED_OUT);
+      }
+      if (failedAttempts >= RATE_LIMIT_ATTEMPTS) {
+        throw new Error(AUTH_ERRORS.RATE_LIMITED);
+      }
+      return false;
     }
 
-    if (password === ADMIN_PASSWORD) {
-      failedAttempts = 0;
-      lockoutUntil = null;
-      const token = AuthService.generateToken();
-      sessionStorage.setItem(AUTH_TOKEN_KEY, token);
-      AuthService.notifyListeners(true);
-      return true;
-    }
-
-    failedAttempts++;
-    if (failedAttempts >= MAX_ATTEMPTS) {
-      lockoutUntil = Date.now() + LOCKOUT_DURATION;
-    }
-    return false;
+    failedAttempts = 0;
+    lockoutUntil = null;
+    const token = AuthService.generateToken();
+    sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+    AuthService.notifyListeners(true);
+    return true;
   },
 
   isAuthenticated: (): boolean => {
@@ -66,7 +66,9 @@ export const AuthService = {
   },
 
   removeListener: (callback: Listener) => {
-    AuthService.listeners = AuthService.listeners.filter((cb) => cb !== callback);
+    AuthService.listeners = AuthService.listeners.filter(
+      (cb) => cb !== callback,
+    );
   },
 
   notifyListeners: (state: boolean) => {
