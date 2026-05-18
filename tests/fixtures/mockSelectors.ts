@@ -1,6 +1,10 @@
 import { useLeagueStore } from "@/store/leagueStore";
 import { mockLeagueData } from "./mockLeagueData";
 
+// ================================================================================
+// Mock Selectors - read from mockLeagueData ( no store dependency )
+// ================================================================================
+
 export const getMockTeamById = (id: string) => {
   return mockLeagueData.teams.find((team) => team.id === id)!;
 };
@@ -9,6 +13,18 @@ export const getMockPlayerById = (id: string) => {
   return mockLeagueData.players.find((player) => player.id === id)!;
 };
 
+export const getMockPlayersByTeamId = (teamId: string, n?: number) => {
+  const players = mockLeagueData.players.filter(p => p.teamId === teamId);
+  return n !== undefined ? players.slice(0, n) : players;
+};
+
+export const getMockPlayerByTeamId = (teamId: string) =>
+  mockLeagueData.players.find(p => p.teamId === teamId)!;
+
+
+// ================================================================================ 
+// Real Selectors - read from store ( live state dependency )
+// ================================================================================
 export const getPlayerByTeamId = (teamId: string) => 
   useLeagueStore.getState().players.find((p) => p.teamId === teamId)!;
 
