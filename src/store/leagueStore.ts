@@ -10,7 +10,7 @@ import { PLAYER_NAME_RULES, SQUAD_RULES } from "../../tests/fixtures/playerNameR
 
 const STORAGE_KEY = "football-league-data";
 
-interface Team {
+export interface Team {
   id: string;
   name: string;
   coach: string;

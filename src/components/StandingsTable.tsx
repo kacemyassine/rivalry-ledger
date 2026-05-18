@@ -1,6 +1,7 @@
-import { useLeagueStore } from '@/store/leagueStore';
+import { useLeagueStore, Team } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
 import { Shield } from 'lucide-react';
+import { sortTeams, calculatePoints, calculateGoalDifference } from '@/lib/standingsUtils';
 
 interface StandingsTableProps {
   theme?: 'default' | 'ramadan';
@@ -9,15 +10,7 @@ interface StandingsTableProps {
 export function StandingsTable({ theme = 'default' }: StandingsTableProps) {
   const { teams } = useLeagueStore();
   const isRamadan = theme === 'ramadan';
-
-  const sortedTeams = [...teams].sort((a: any, b: any) => {
-    const pointsA = a.won * 3 + a.drawn;
-    const pointsB = b.won * 3 + b.drawn;
-    if (pointsB !== pointsA) return pointsB - pointsA;
-    const gdA = a.goalsFor - a.goalsAgainst;
-    const gdB = b.goalsFor - b.goalsAgainst;
-    return gdB - gdA;
-  });
+  const sortedTeams = sortTeams(teams);
 
   return (
     <div
@@ -29,7 +22,6 @@ export function StandingsTable({ theme = 'default' }: StandingsTableProps) {
       )}
       style={{ animationDelay: '0.1s' }}
     >
-      {/* Title */}
       <div className={cn('flex items-center gap-2 mb-4 md:mb-6')}>
         {isRamadan && <span className="text-yellow-400">🏆</span>}
         <h2
@@ -65,9 +57,9 @@ export function StandingsTable({ theme = 'default' }: StandingsTableProps) {
             </tr>
           </thead>
           <tbody>
-            {sortedTeams.map((team: any, index: number) => {
-              const points = team.won * 3 + team.drawn;
-              const goalDiff = team.goalsFor - team.goalsAgainst;
+            {sortedTeams.map((team: Team, index: number) => {
+              const points = calculatePoints(team.won, team.drawn);
+              const goalDiff = calculateGoalDifference(team.goalsFor, team.goalsAgainst);
               const isFirst = index === 0;
 
               return (
