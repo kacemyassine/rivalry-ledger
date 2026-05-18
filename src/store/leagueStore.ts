@@ -4,9 +4,9 @@ import {
   MATCH_ERRORS,
   PLAYER_ERRORS,
   TEAM_ERRORS,
-} from "../../tests/fixtures/errorMessages";
-import { MAX_GOALS } from "../../tests/fixtures/errorMessages";
-import { PLAYER_NAME_RULES, SQUAD_RULES } from "../../tests/fixtures/playerNameRules";
+} from "@/lib/errors";
+import { MAX_GOALS } from "@/lib/rules";
+import { PLAYER_NAME_RULES, SQUAD_RULES } from "@/lib/rules";
 
 const STORAGE_KEY = "football-league-data";
 
@@ -24,7 +24,7 @@ export interface Team {
   points: number;
 }
 
-interface Player {
+export interface Player {
   id: string;
   name: string;
   teamId: string;

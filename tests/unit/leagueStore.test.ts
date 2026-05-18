@@ -1,10 +1,11 @@
 import { useLeagueStore } from "@/store/leagueStore";
 import { mockLeagueData } from "../fixtures/mockLeagueData";
+import { SQUAD_RULES } from "@/lib/rules";
 import {
   MATCH_ERRORS,
   PLAYER_ERRORS,
   TEAM_ERRORS,
-} from "../fixtures/errorMessages";
+} from "@/lib/errors";
 import { runMatchValidationTests } from "../fixtures/matchValidationSuite";
 import { runNameValidationTests } from "../fixtures/playerValidationSuite";
 import {
@@ -661,7 +662,6 @@ describe("editPlayer", () => {
 // Unit Tests for deletePlayer function
 // =================================================================
 
-import { SQUAD_RULES } from "../fixtures/playerNameRules";
 
 describe("deletePlayer", () => {
   beforeAll(() => {

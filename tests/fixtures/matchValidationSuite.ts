@@ -1,4 +1,5 @@
-import { MATCH_ERRORS, MAX_GOALS } from "./errorMessages";
+import { MATCH_ERRORS } from "@/lib/errors";
+import { MAX_GOALS } from "@/lib/rules";
 import { getPlayersByTeamId, getPlayerByTeamId } from "./mockSelectors";
 
 export function runMatchValidationTests(

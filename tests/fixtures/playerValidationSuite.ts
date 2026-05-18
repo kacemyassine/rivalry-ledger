@@ -1,5 +1,5 @@
-import { PLAYER_NAME_RULES } from "./playerNameRules";
-import { PLAYER_ERRORS } from "./errorMessages";
+import { PLAYER_NAME_RULES } from "@/lib/rules";
+import { PLAYER_ERRORS } from "@/lib/errors";
 
 export function runNameValidationTests(action: (name: string) => void) {
   // FIND-18: no empty name validation in store — UI silently blocks but store accepts empty string
