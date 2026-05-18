@@ -1,5 +1,4 @@
 import { sortTeams, calculatePoints, calculateGoalDifference } from '../../src/lib/standingsUtils';
-import { Team } from '../../src/store/leagueStore';
 import { mockLeagueData } from '../fixtures/mockLeagueData';
 import { getMockTeamById } from '../fixtures/mockSelectors';
 
