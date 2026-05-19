@@ -26,6 +26,7 @@ describe("scorersUtils", () => {
 
     test("treats undefined goals as 0", () => {
       const players = [
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { ...getMockPlayerById("player-1"), goals: undefined as any },
         { ...getMockPlayerById("player-2"), goals: 3 },
       ];
