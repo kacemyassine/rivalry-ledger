@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Player, Team , Match} from '@/store/leagueStore';
+
 
 const GITHUB_CONFIG = {
   owner: 'kacemyassine',
@@ -14,9 +16,9 @@ export interface LeagueData {
     name: string;
     id: string;
   };
-  teams: any[];
-  players: any[];
-  matches: any[];
+  teams: Team[];
+  players: Player[];
+  matches: Match[];
   targetMatches?: number;
 }
 
