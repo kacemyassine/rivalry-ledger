@@ -1,25 +1,44 @@
 import { useLeagueStore } from "@/store/leagueStore";
-import { mockLeagueData } from "./mockLeagueData";
+import { mockLeagueData, mockMatchesWithoutScorers, mockMatchesWithScorers, mockPlayersWithGoals } from './mockLeagueData';
+import { LeagueData } from '@/hooks/useGitHubData';
 
 // ================================================================================
 // Mock Selectors - read from mockLeagueData ( no store dependency )
 // ================================================================================
 
-export const getMockTeamById = (id: string) => {
-  return mockLeagueData.teams.find((team) => team.id === id)!;
+export const getMockLeagueData = (options?: { withMatches?: boolean; withScorers?: boolean }): LeagueData => {
+  if (!options?.withMatches) return mockLeagueData;
+
+  if (options?.withScorers) {
+    return {
+      ...mockLeagueData,
+      matches: mockMatchesWithScorers,
+      players: mockPlayersWithGoals,
+    };
+  }
+
+  return {
+    ...mockLeagueData,
+    matches: mockMatchesWithoutScorers,
+  };
 };
 
-export const getMockPlayerById = (id: string) => {
-  return mockLeagueData.players.find((player) => player.id === id)!;
-};
+export const getMockTeamById = (data: LeagueData, id: string) =>
+  data.teams.find(t => t.id === id)!;
 
-export const getMockPlayersByTeamId = (teamId: string, n?: number) => {
-  const players = mockLeagueData.players.filter(p => p.teamId === teamId);
+export const getMockPlayerById = (data: LeagueData, id: string) =>
+  data.players.find(p => p.id === id)!;
+
+export const getMockPlayersByTeamId = (data: LeagueData, teamId: string, n?: number) => {
+  const players = data.players.filter(p => p.teamId === teamId);
   return n !== undefined ? players.slice(0, n) : players;
 };
 
-export const getMockPlayerByTeamId = (teamId: string) =>
-  mockLeagueData.players.find(p => p.teamId === teamId)!;
+export const getMockPlayerByTeamId = (data: LeagueData, teamId: string) =>
+  data.players.find(p => p.teamId === teamId)!;
+
+export const getMockMatchById = (data: LeagueData, id: string) =>
+  data.matches.find(m => m.id === id)!;
 
 
 // ================================================================================ 

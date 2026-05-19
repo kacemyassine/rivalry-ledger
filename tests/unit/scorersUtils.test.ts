@@ -9,16 +9,19 @@ import {
   getMockPlayerById,
   getMockPlayersByTeamId,
   getMockPlayerByTeamId,
+  getMockLeagueData,
 } from "../fixtures/mockSelectors";
 import { SQUAD_RULES } from "../../src/lib/rules";
+
+const data = getMockLeagueData();
 
 describe("scorersUtils", () => {
   describe("sortPlayers()", () => {
     test("sorts players by goals descending", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 2 },
-        { ...getMockPlayerById("player-2"), goals: 5 },
-        { ...getMockPlayerById("player-3"), goals: 1 },
+        { ...getMockPlayerById(data, "player-1"), goals: 2 },
+        { ...getMockPlayerById(data, "player-2"), goals: 5 },
+        { ...getMockPlayerById(data, "player-3"), goals: 1 },
       ];
       const result = sortPlayers(players);
       expect(result[0].id).toBe("player-2");
@@ -27,8 +30,8 @@ describe("scorersUtils", () => {
     test("treats undefined goals as 0", () => {
       const players = [
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        { ...getMockPlayerById("player-1"), goals: undefined as any },
-        { ...getMockPlayerById("player-2"), goals: 3 },
+        { ...getMockPlayerById(data, "player-1"), goals: undefined as any },
+        { ...getMockPlayerById(data, "player-2"), goals: 3 },
       ];
       const result = sortPlayers(players);
       expect(result[0].id).toBe("player-2");
@@ -36,8 +39,8 @@ describe("scorersUtils", () => {
 
     test("does not mutate the original array", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 0 },
-        { ...getMockPlayerById("player-2"), goals: 5 },
+        { ...getMockPlayerById(data, "player-1"), goals: 0 },
+        { ...getMockPlayerById(data, "player-2"), goals: 5 },
       ];
       sortPlayers(players);
       expect(players[0].id).toBe("player-1"); // player-2 should be first if mutated
@@ -47,9 +50,9 @@ describe("scorersUtils", () => {
   describe("getScorers()", () => {
     test("returns only players with goals > 0", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 3 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
-        { ...getMockPlayerById("player-3"), goals: 1 },
+        { ...getMockPlayerById(data, "player-1"), goals: 3 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-3"), goals: 1 },
       ];
       const result = getScorers(players);
       expect(result).toHaveLength(2);
@@ -58,8 +61,8 @@ describe("scorersUtils", () => {
 
     test("returns empty array when no players have goals", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 0 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-1"), goals: 0 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
       ];
       expect(getScorers(players)).toHaveLength(0);
     });
@@ -68,8 +71,8 @@ describe("scorersUtils", () => {
   describe("getNonScorers()", () => {
     test("returns only players with 0 goals", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 3 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-1"), goals: 3 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
       ];
       const result = getNonScorers(players);
       expect(result).toHaveLength(1);
@@ -78,8 +81,8 @@ describe("scorersUtils", () => {
 
     test("returns all players when none have scored", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 0 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-1"), goals: 0 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
       ];
       expect(getNonScorers(players)).toHaveLength(2);
     });
@@ -88,8 +91,8 @@ describe("scorersUtils", () => {
   describe("getVisiblePlayers()", () => {
     test("returns only scorers when showAll is false", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 3 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-1"), goals: 3 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
       ];
       const result = getVisiblePlayers(players, false);
       expect(result).toHaveLength(1);
@@ -98,8 +101,8 @@ describe("scorersUtils", () => {
 
     test("returns all players sorted when showAll is true", () => {
       const players = [
-        { ...getMockPlayerById("player-1"), goals: 3 },
-        { ...getMockPlayerById("player-2"), goals: 0 },
+        { ...getMockPlayerById(data, "player-1"), goals: 3 },
+        { ...getMockPlayerById(data, "player-2"), goals: 0 },
       ];
       const result = getVisiblePlayers(players, true);
       expect(result).toHaveLength(2);
@@ -119,8 +122,9 @@ describe("scorersUtils", () => {
     });
 
     test("returns true when player has 0 goals and squad exceeds min size", () => {
-      const player = { ...getMockPlayerByTeamId("team-1"), goals: 0 };
+      const player = { ...getMockPlayerByTeamId(data, "team-1"), goals: 0 };
       const teamPlayers = getMockPlayersByTeamId(
+        data,
         "team-1",
         SQUAD_RULES.minSize + 1,
       );
@@ -128,8 +132,9 @@ describe("scorersUtils", () => {
     });
 
     test("returns false when player has goals", () => {
-      const player = { ...getMockPlayerByTeamId("team-1"), goals: 3 };
+      const player = { ...getMockPlayerByTeamId(data, "team-1"), goals: 3 };
       const teamPlayers = getMockPlayersByTeamId(
+        data,
         "team-1",
         SQUAD_RULES.minSize + 1,
       );
@@ -137,14 +142,22 @@ describe("scorersUtils", () => {
     });
 
     test("returns false when squad is at min size", () => {
-      const player = { ...getMockPlayerByTeamId("team-1"), goals: 0 };
-      const teamPlayers = getMockPlayersByTeamId("team-1", SQUAD_RULES.minSize);
+      const player = { ...getMockPlayerByTeamId(data, "team-1"), goals: 0 };
+      const teamPlayers = getMockPlayersByTeamId(
+        data,
+        "team-1",
+        SQUAD_RULES.minSize
+      );
       expect(canDeletePlayer(player, teamPlayers)).toBe(false);
     });
 
     test("returns false when squad is below min size", () => {
-      const player = { ...getMockPlayerByTeamId("team-1"), goals: 0 };
-      const teamPlayers = getMockPlayersByTeamId("team-1", 0);
+      const player = { ...getMockPlayerByTeamId(data, "team-1"), goals: 0 };
+      const teamPlayers = getMockPlayersByTeamId(
+        data,
+        "team-1",
+        0
+      );
       expect(canDeletePlayer(player, teamPlayers)).toBe(false);
     });
   });
