@@ -1,6 +1,8 @@
 import { sortTeams, calculatePoints, calculateGoalDifference } from '../../src/lib/standingsUtils';
-import { mockLeagueData } from '../fixtures/mockLeagueData';
-import { getMockTeamById } from '../fixtures/mockSelectors';
+import { getMockTeamById, getMockLeagueData } from '../fixtures/mockSelectors';
+
+const data = getMockLeagueData();
+
 
 describe('standingsUtils', () => {
 
@@ -40,8 +42,8 @@ describe('calculateGoalDifference()', () => {
     
     test('sorts by points descending', () => {
     const teams = [
-      { ...getMockTeamById('team-1'), won: 1 }, // 3 points
-      { ...getMockTeamById('team-2'), won: 2 }, // 6 points
+      { ...getMockTeamById(data, 'team-1'), won: 1 }, // 3 points
+      { ...getMockTeamById(data, 'team-2'), won: 2 }, // 6 points
     ];
     const result = sortTeams(teams);
     expect(result[0].id).toBe('team-2');
@@ -49,8 +51,8 @@ describe('calculateGoalDifference()', () => {
 
   test('sorts by goal difference when points are equal', () => {
     const teams = [
-      { ...getMockTeamById('team-1'), drawn: 1, goalsFor: 1, goalsAgainst: 2 }, // 1 point, GD -1
-      { ...getMockTeamById('team-2'), drawn: 1, goalsFor: 3, goalsAgainst: 1 }, // 1 point, GD +2
+      { ...getMockTeamById(data, 'team-1'), drawn: 1, goalsFor: 1, goalsAgainst: 2 }, // 1 point, GD -1
+      { ...getMockTeamById(data, 'team-2'), drawn: 1, goalsFor: 3, goalsAgainst: 1 }, // 1 point, GD +2
     ];
     const result = sortTeams(teams);
     expect(result[0].id).toBe('team-2');
@@ -58,8 +60,8 @@ describe('calculateGoalDifference()', () => {
 
   test('sorts by goals scored when points and goal difference are equal', () => {
     const teams = [
-      { ...getMockTeamById('team-1'), drawn: 1, goalsFor: 1, goalsAgainst: 0 }, // 1 point, GD +1, GF 1
-      { ...getMockTeamById('team-2'), drawn: 1, goalsFor: 3, goalsAgainst: 2 }, // 1 point, GD +1, GF 3
+      { ...getMockTeamById(data, 'team-1'), drawn: 1, goalsFor: 1, goalsAgainst: 0 }, // 1 point, GD +1, GF 1
+      { ...getMockTeamById(data, 'team-2'), drawn: 1, goalsFor: 3, goalsAgainst: 2 }, // 1 point, GD +1, GF 3
     ];
     const result = sortTeams(teams);
     expect(result[0].id).toBe('team-2');
@@ -67,15 +69,15 @@ describe('calculateGoalDifference()', () => {
 
   test('sorts alphabetically when all stats are equal', () => {
     const teams = [
-      { ...getMockTeamById('team-1'), name: 'Zoo FC' },
-      { ...getMockTeamById('team-2'), name: 'Atlas FC' },
+      { ...getMockTeamById(data, 'team-1'), name: 'Zoo FC' },
+      { ...getMockTeamById(data, 'team-2'), name: 'Atlas FC' },
     ];
     const result = sortTeams(teams);
     expect(result[0].name).toBe('Atlas FC');
   });
 
   test('does not mutate the original array', () => {
-    const teams = [...mockLeagueData.teams];
+    const teams = [...data.teams];
     sortTeams(teams);
     expect(teams[0].id).toBe('team-1');
   });
