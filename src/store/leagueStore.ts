@@ -33,7 +33,7 @@ export interface Player {
   fullImage?: string | null;
 }
 
-interface Match {
+export interface Match {
   id: string;
   homeTeamId: string;
   awayTeamId: string;
