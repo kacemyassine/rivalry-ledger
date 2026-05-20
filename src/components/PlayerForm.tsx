@@ -4,6 +4,8 @@ import { useGitHubData } from '@/hooks/useGitHubData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { populatePlayerForm, resetPlayerForm, generateImageFilename } from '@/lib/playerFormUtils';
+import { Player } from '@/store/leagueStore';
 import {
   Dialog,
   DialogContent,
@@ -30,23 +32,25 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
   const { players, teams, addPlayer, editPlayer } = useLeagueStore();
   const { uploadImage } = useGitHubData();
   const [name, setName] = useState('');
-  const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || 'team1');
+  const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || '');
   const [image, setImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
-  const editingPlayer = editingPlayerId ? players?.find((p: any) => p.id === editingPlayerId) : null;
+  const editingPlayer = editingPlayerId ? players?.find((p: Player) => p.id === editingPlayerId) : null;
   const hasGoals = (editingPlayer?.goals || 0) > 0;
 
   useEffect(() => {
     if (editingPlayer) {
-      setName(editingPlayer.name);
-      setTeamId(editingPlayer.teamId);
-      setImage(editingPlayer.image || null);
+      const state = populatePlayerForm(editingPlayer, teams);
+      setName(state.name);
+      setTeamId(state.teamId);
+      setImage(state.image);
     } else {
-      setName('');
-      setTeamId(teams?.[0]?.id || 'team1');
-      setImage(null);
+      const state = resetPlayerForm(teams);
+      setName(state.name);
+      setTeamId(state.teamId);
+      setImage(state.image);
     }
     setPendingFile(null);
   }, [editingPlayer, open, teams]);
@@ -74,7 +78,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
         reader.readAsDataURL(pendingFile);
       });
 
-      const filename = `${name.trim().replace(/\s+/g, '-').toLowerCase()}.${pendingFile.name.split('.').pop()}`;
+      const filename = generateImageFilename(name, pendingFile);
       const path = await uploadImage(base64, filename);
       setUploading(false);
 
