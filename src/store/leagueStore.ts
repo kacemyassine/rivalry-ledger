@@ -1,10 +1,6 @@
 import { create } from "zustand";
 import defaultLeagueData from "@/data/defaultLeagueData.json";
-import {
-  MATCH_ERRORS,
-  PLAYER_ERRORS,
-  TEAM_ERRORS,
-} from "@/lib/errors";
+import { MATCH_ERRORS, PLAYER_ERRORS, TEAM_ERRORS } from "@/lib/errors";
 import { MAX_GOALS } from "@/lib/rules";
 import { PLAYER_NAME_RULES, SQUAD_RULES } from "@/lib/rules";
 
@@ -184,6 +180,9 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
     const homeTeam = state.selectedHomeTeam || state.teams[0];
     const awayTeam = state.selectedAwayTeam || state.teams[1];
 
+    if (state.matches.length >= state.targetMatches) {
+      throw new Error(MATCH_ERRORS.TARGET_REACHED);
+    }
     if (!homeTeam || !awayTeam) {
       throw new Error(TEAM_ERRORS.NOT_FOUND);
     }
@@ -348,89 +347,95 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   },
 
   deletePlayer: (id) => {
-  const state = get();
-  const player = state.players.find(p => p.id === id);
-  if (!player) throw new Error(PLAYER_ERRORS.NOT_FOUND);
+    const state = get();
+    const player = state.players.find((p) => p.id === id);
+    if (!player) throw new Error(PLAYER_ERRORS.NOT_FOUND);
 
-  if (player.goals > 0) throw new Error(PLAYER_ERRORS.HAS_GOALS);
+    if (player.goals > 0) throw new Error(PLAYER_ERRORS.HAS_GOALS);
 
-  const teamPlayers = state.players.filter(p => p.teamId === player.teamId);
-  if (teamPlayers.length <= SQUAD_RULES.minSize) throw new Error(PLAYER_ERRORS.MIN_SQUAD_SIZE);
+    const teamPlayers = state.players.filter((p) => p.teamId === player.teamId);
+    if (teamPlayers.length <= SQUAD_RULES.minSize)
+      throw new Error(PLAYER_ERRORS.MIN_SQUAD_SIZE);
 
-  const updatedPlayers = state.players.filter(p => p.id !== id);
-  const newState = { ...state, players: updatedPlayers };
-  saveState(newState);
-  set({ players: updatedPlayers });
-},
+    const updatedPlayers = state.players.filter((p) => p.id !== id);
+    const newState = { ...state, players: updatedPlayers };
+    saveState(newState);
+    set({ players: updatedPlayers });
+  },
 
   updateTeamLogo: (teamId, logo) => {
-  const state = get();
-  
-  // 1. Check if team exists
-  const teamExists = state.teams.some(t => t.id === teamId);
-  
-  
-  if (!teamExists) {
-    throw new Error(TEAM_ERRORS.NOT_FOUND); 
-  }
+    const state = get();
 
-  const updatedTeams = state.teams.map((t) =>
-    t.id === teamId ? { ...t, logo } : t,
-  );
+    // 1. Check if team exists
+    const teamExists = state.teams.some((t) => t.id === teamId);
 
-  const newState = { ...state, teams: updatedTeams };
-  saveState(newState);
-  set({ teams: updatedTeams });
-},
+    if (!teamExists) {
+      throw new Error(TEAM_ERRORS.NOT_FOUND);
+    }
+
+    const updatedTeams = state.teams.map((t) =>
+      t.id === teamId ? { ...t, logo } : t,
+    );
+
+    const newState = { ...state, teams: updatedTeams };
+    saveState(newState);
+    set({ teams: updatedTeams });
+  },
 
   deleteMatch: (matchId) => {
-  const state = get();
-  const match = state.matches.find((m) => m.id === matchId);
-  if (!match) throw new Error(MATCH_ERRORS.NOT_FOUND);
+    const state = get();
+    const match = state.matches.find((m) => m.id === matchId);
+    if (!match) throw new Error(MATCH_ERRORS.NOT_FOUND);
 
-  const homeWin = match.homeGoals > match.awayGoals;
-  const draw = match.homeGoals === match.awayGoals;
+    const homeWin = match.homeGoals > match.awayGoals;
+    const draw = match.homeGoals === match.awayGoals;
 
-  const updatedTeams = state.teams.map((t) => {
-    if (t.id === match.homeTeamId) {
-      return {
-        ...t,
-        played: t.played - 1,
-        won: t.won - (homeWin ? 1 : 0),
-        drawn: t.drawn - (draw ? 1 : 0),
-        lost: t.lost - (!homeWin && !draw ? 1 : 0),
-        goalsFor: t.goalsFor - match.homeGoals,
-        goalsAgainst: t.goalsAgainst - match.awayGoals,
-        points: t.points - (homeWin ? 3 : draw ? 1 : 0),
-      };
-    }
-    if (t.id === match.awayTeamId) {
-      return {
-        ...t,
-        played: t.played - 1,
-        won: t.won - (!homeWin && !draw ? 1 : 0),
-        drawn: t.drawn - (draw ? 1 : 0),
-        lost: t.lost - (homeWin ? 1 : 0),
-        goalsFor: t.goalsFor - match.awayGoals,
-        goalsAgainst: t.goalsAgainst - match.homeGoals,
-        points: t.points - (!homeWin && !draw ? 3 : draw ? 1 : 0),
-      };
-    }
-    return t;
-  });
+    const updatedTeams = state.teams.map((t) => {
+      if (t.id === match.homeTeamId) {
+        return {
+          ...t,
+          played: t.played - 1,
+          won: t.won - (homeWin ? 1 : 0),
+          drawn: t.drawn - (draw ? 1 : 0),
+          lost: t.lost - (!homeWin && !draw ? 1 : 0),
+          goalsFor: t.goalsFor - match.homeGoals,
+          goalsAgainst: t.goalsAgainst - match.awayGoals,
+          points: t.points - (homeWin ? 3 : draw ? 1 : 0),
+        };
+      }
+      if (t.id === match.awayTeamId) {
+        return {
+          ...t,
+          played: t.played - 1,
+          won: t.won - (!homeWin && !draw ? 1 : 0),
+          drawn: t.drawn - (draw ? 1 : 0),
+          lost: t.lost - (homeWin ? 1 : 0),
+          goalsFor: t.goalsFor - match.awayGoals,
+          goalsAgainst: t.goalsAgainst - match.homeGoals,
+          points: t.points - (!homeWin && !draw ? 3 : draw ? 1 : 0),
+        };
+      }
+      return t;
+    });
 
-  const updatedPlayers = state.players.map((p) => {
-    const scorers = match.scorers?.filter((s) => s.playerId === p.id && !s.isOwnGoal);
-    const totalGoals = scorers?.reduce((sum, s) => sum + s.goals, 0) ?? 0;
-    return totalGoals > 0 ? { ...p, goals: p.goals - totalGoals } : p;
-  });
+    const updatedPlayers = state.players.map((p) => {
+      const scorers = match.scorers?.filter(
+        (s) => s.playerId === p.id && !s.isOwnGoal,
+      );
+      const totalGoals = scorers?.reduce((sum, s) => sum + s.goals, 0) ?? 0;
+      return totalGoals > 0 ? { ...p, goals: p.goals - totalGoals } : p;
+    });
 
-  const updatedMatches = state.matches.filter((m) => m.id !== matchId);
+    const updatedMatches = state.matches.filter((m) => m.id !== matchId);
 
-  const newState = { teams: updatedTeams, players: updatedPlayers, matches: updatedMatches };
-  saveState(newState);
-  set(newState);
-},
+    const newState = {
+      teams: updatedTeams,
+      players: updatedPlayers,
+      matches: updatedMatches,
+    };
+    saveState(newState);
+    set(newState);
+  },
 
   editMatch: (matchId, newHomeGoals, newAwayGoals, newScorers, newDate) => {
     const state = get();

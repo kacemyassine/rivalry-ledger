@@ -1,11 +1,7 @@
 import { useLeagueStore } from "@/store/leagueStore";
 import { mockLeagueData } from "../fixtures/mockLeagueData";
 import { SQUAD_RULES } from "@/lib/rules";
-import {
-  MATCH_ERRORS,
-  PLAYER_ERRORS,
-  TEAM_ERRORS,
-} from "@/lib/errors";
+import { MATCH_ERRORS, PLAYER_ERRORS, TEAM_ERRORS } from "@/lib/errors";
 import { runMatchValidationTests } from "../fixtures/matchValidationSuite";
 import { runNameValidationTests } from "../fixtures/playerValidationSuite";
 import {
@@ -125,6 +121,15 @@ describe("addMatch", () => {
 
         expect(getTeamById("team-1").played).toBe(2);
         expect(getTeamById("team-2").played).toBe(2);
+      });
+
+      test("throws when matches exceed targetMatches", () => {
+        const { addMatch, setTargetMatches } = useLeagueStore.getState();
+        const originalTargetMatches = useLeagueStore.getState().targetMatches;
+        setTargetMatches(1);
+        addMatch(2, 1, []);
+        expect(() => addMatch(1, 0, [])).toThrow(MATCH_ERRORS.TARGET_REACHED);
+        setTargetMatches(originalTargetMatches);
       });
     });
 
@@ -662,7 +667,6 @@ describe("editPlayer", () => {
 // Unit Tests for deletePlayer function
 // =================================================================
 
-
 describe("deletePlayer", () => {
   beforeAll(() => {
     SQUAD_RULES.minSize = 4;
@@ -760,7 +764,7 @@ describe("updateTeamLogo", () => {
   test("updates the logo for the correct team", () => {
     const { updateTeamLogo } = useLeagueStore.getState();
     const newLogo = "https://cdn.rivalryledger.com/logo1.png";
-    
+
     updateTeamLogo("team-1", newLogo);
 
     expect(getTeamById("team-1").logo).toBe(newLogo);
@@ -768,15 +772,15 @@ describe("updateTeamLogo", () => {
 
   test("throws an error if teamId does not exist", () => {
     const { updateTeamLogo } = useLeagueStore.getState();
-    
-    expect(() => 
-      updateTeamLogo("fake-id", "logo.png")
-    ).toThrow(TEAM_ERRORS.NOT_FOUND);
+
+    expect(() => updateTeamLogo("fake-id", "logo.png")).toThrow(
+      TEAM_ERRORS.NOT_FOUND,
+    );
   });
 
   test("allows clearing the logo with an empty string", () => {
     const { updateTeamLogo } = useLeagueStore.getState();
-    
+
     updateTeamLogo("team-1", "");
 
     expect(getTeamById("team-1").logo).toBe("");
