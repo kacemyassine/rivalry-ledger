@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { ImageLightbox } from '@/components/ImageLightbox';
+import { calculateMatchProgress, getLeagueStatus } from '@/lib/leagueHeaderUtils';
 
 
 
@@ -22,8 +23,8 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
   const team1 = teams.find(t => t.id === 'team1');
   const team2 = teams.find(t => t.id === 'team2');
 
-  const matchProgress = Math.min((matches.length / targetMatches) * 100, 100);
-  const overallProgress = Math.round(matchProgress);
+  const overallProgress = calculateMatchProgress(matches, targetMatches);
+  const leagueStatus = getLeagueStatus(matches, targetMatches);
 
   const isRamadan = theme === 'ramadan';
 
@@ -36,25 +37,22 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
   };
 
   const handleLogoUpload = async (teamId: string, file: File) => {
-  // Show base64 preview immediately
-  const reader = new FileReader();
-  reader.onloadend = () => updateTeamLogo(teamId, reader.result as string);
-  reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onloadend = () => updateTeamLogo(teamId, reader.result as string);
+    reader.readAsDataURL(file);
 
-  // Upload to GitHub and store the path
-  const base64 = await new Promise<string>((resolve) => {
-    const r = new FileReader();
-    r.onloadend = () => resolve(r.result as string);
-    r.readAsDataURL(file);
-  });
+    const base64 = await new Promise<string>((resolve) => {
+      const r = new FileReader();
+      r.onloadend = () => resolve(r.result as string);
+      r.readAsDataURL(file);
+    });
 
-  const filename = `${teamId}-${Date.now()}.${file.name.split('.').pop()}`;
-  const path = await uploadImage(base64, filename);
+    const filename = `${teamId}-${Date.now()}.${file.name.split('.').pop()}`;
+    const path = await uploadImage(base64, filename);
 
-  if (path) updateTeamLogo(teamId, path);
-    updateTeamLogo(teamId, path);
+    if (path) updateTeamLogo(teamId, path);
     onLogoChange?.(teamId);
-};
+  };
 
   return (
     <header className="relative py-12 text-center">
