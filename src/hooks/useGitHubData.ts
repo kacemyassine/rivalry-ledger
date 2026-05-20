@@ -1,204 +1,41 @@
 import { useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { Player, Team , Match} from '@/store/leagueStore';
+import { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, fetchCups, updateCups } from '@/lib/githubUtils';
+import type { LeagueData, GitHubConfig } from '@/lib/githubUtils';
 
-
-const GITHUB_CONFIG = {
+const GITHUB_CONFIG: GitHubConfig = {
   owner: 'kacemyassine',
   repo: 'atlantis-showdown',
   path: 'src/data/defaultLeagueData.json',
   branch: 'main',
 };
 
-export interface LeagueData {
-  leagueConfig?: {
-    name: string;
-    id: string;
-  };
-  teams: Team[];
-  players: Player[];
-  matches: Match[];
-  targetMatches?: number;
-}
+const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
-function base64ToUtf8(str: string) {
-  return decodeURIComponent(escape(atob(str)));
-}
+export type { LeagueData };
 
 export function useGitHubData() {
-  const fetchData = useCallback(async (): Promise<LeagueData | null> => {
-    try {
-      const apiRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      if (!apiRes.ok) throw new Error('Failed to fetch');
-      const { content } = await apiRes.json();
-      return JSON.parse(base64ToUtf8(content)) as LeagueData;
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to fetch league data');
-      return null;
-    }
-  }, []);
+  const _fetchData = useCallback(() => fetchData(GITHUB_CONFIG, TOKEN), []);
+  const _updateData = useCallback((data: LeagueData, autoRefresh?: () => void) =>
+    updateData(data, GITHUB_CONFIG).then(result => {
+      if (result && autoRefresh) autoRefresh();
+      return result;
+    }), []);
+  const _archiveLeague = useCallback((archiveData: Parameters<typeof archiveLeague>[0]) =>
+    archiveLeague(archiveData, GITHUB_CONFIG), []);
+  const _uploadImage = useCallback((base64: string, filename: string) =>
+    uploadImage(base64, filename, GITHUB_CONFIG, TOKEN), []);
+  const _fetchArchiveIndex = useCallback(() => fetchArchiveIndex(GITHUB_CONFIG, TOKEN), []);
+  const _fetchCups = useCallback(() => fetchCups(GITHUB_CONFIG, TOKEN), []);
+  const _updateCups = useCallback((data: any) => updateCups(data, GITHUB_CONFIG), []);
 
-  const fetchArchiveIndex = useCallback(async () => {
-    try {
-      const apiRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/archives/index.json?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      if (!apiRes.ok) throw new Error('Failed to fetch archive index');
-      const { content } = await apiRes.json();
-      return JSON.parse(base64ToUtf8(content));
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to fetch archive index');
-      return null;
-    }
-  }, []);
-
-  const updateData = useCallback(
-    async (data: LeagueData, autoRefresh?: () => void): Promise<boolean> => {
-      try {
-        const { data: result, error } = await supabase.functions.invoke('update-json', {
-          body: { data, owner: GITHUB_CONFIG.owner, repo: GITHUB_CONFIG.repo, path: GITHUB_CONFIG.path, branch: GITHUB_CONFIG.branch },
-        });
-
-        if (error || result?.error) {
-          console.error(error || result.error);
-          toast.error('Failed to update data on GitHub');
-          return false;
-        }
-
-        toast.success('Data saved to GitHub successfully!');
-        if (autoRefresh) autoRefresh();
-        return true;
-      } catch (e) {
-        console.error(e);
-        toast.error('Failed to update data');
-        return false;
-      }
-    },
-    []
-  );
-
-  const archiveLeague = useCallback(
-    async (archiveData: {
-      currentData: LeagueData;
-      newLeagueConfig: { name: string; id: string };
-      newTargetMatches: number;
-      keepPlayers: boolean;
-      imageName: string;
-      winner: string;
-    }): Promise<boolean> => {
-      try {
-        const { data: result, error } = await supabase.functions.invoke('archive-league', {
-          body: {
-            ...archiveData,
-            owner: GITHUB_CONFIG.owner,
-            repo: GITHUB_CONFIG.repo,
-            branch: GITHUB_CONFIG.branch,
-          },
-        });
-
-        if (error || result?.error) {
-          console.error(error || result.error);
-          toast.error('Failed to archive league');
-          return false;
-        }
-
-        toast.success('League archived and new league started!');
-        return true;
-      } catch (e) {
-        console.error(e);
-        toast.error('Failed to archive league');
-        return false;
-      }
-    },
-    []
-  );
-
-  const uploadImage = useCallback(async (base64: string, filename: string): Promise<string | null> => {
-    try {
-      const path = `public/images/${filename}`;
-
-      const getRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      const sha = getRes.ok ? (await getRes.json()).sha : undefined;
-
-      const putRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}`,
-        {
-          method: 'PUT',
-          headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: `Upload image: ${filename}`,
-            content: base64.split(',')[1],
-            branch: GITHUB_CONFIG.branch,
-            ...(sha && { sha }),
-          }),
-        }
-      );
-
-      if (!putRes.ok) {
-        toast.error('Failed to upload image');
-        return null;
-      }
-
-      return `/images/${filename}`;
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to upload image');
-      return null;
-    }
-  }, []);
-
-  const fetchCups = useCallback(async () => {
-  try {
-    const apiRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/cups.json?ref=${GITHUB_CONFIG.branch}`,
-      { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-    );
-    if (!apiRes.ok) throw new Error('Failed to fetch cups');
-    const { content } = await apiRes.json();
-    return JSON.parse(base64ToUtf8(content));
-  } catch (e) {
-    console.error(e);
-    toast.error('Failed to fetch cups');
-    return null;
-  }
-}, []);
-
-const updateCups = useCallback(async (data: any): Promise<boolean> => {
-  try {
-    const { data: result, error } = await supabase.functions.invoke('update-json', {
-      body: {
-        data,
-        owner: GITHUB_CONFIG.owner,
-        repo: GITHUB_CONFIG.repo,
-        path: 'src/data/cups.json',
-        branch: GITHUB_CONFIG.branch,
-      },
-    });
-
-    if (error || result?.error) {
-      console.error(error || result.error);
-      toast.error('Failed to update cups');
-      return false;
-    }
-
-    toast.success('Cup saved successfully!');
-    return true;
-  } catch (e) {
-    console.error(e);
-    toast.error('Failed to update cups');
-    return false;
-  }
-}, []);
-
-  return { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, fetchCups, updateCups, config: GITHUB_CONFIG };
+  return {
+    fetchData: _fetchData,
+    updateData: _updateData,
+    archiveLeague: _archiveLeague,
+    uploadImage: _uploadImage,
+    fetchArchiveIndex: _fetchArchiveIndex,
+    fetchCups: _fetchCups,
+    updateCups: _updateCups,
+    config: GITHUB_CONFIG,
+  };
 }
