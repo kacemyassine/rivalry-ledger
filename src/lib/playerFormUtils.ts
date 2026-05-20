@@ -6,7 +6,7 @@ interface PlayerFormState {
 }
 
 export function generateImageFilename(name: string, file: File): string {
-  const ext = file.name.split('.').pop();
+  const ext = file.name.split('.').pop()?.toLowerCase();
   return `${name.trim().replace(/\s+/g, '-').toLowerCase()}.${ext}`;
 }
 
