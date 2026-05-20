@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useLeagueStore } from '@/store/leagueStore';
+import { Player, Team, useLeagueStore } from '@/store/leagueStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { calculateEffectiveGoals, populateEditForm, resetForm } from '@/lib/matchFormUtils';
 import {
   Dialog,
   DialogContent,
@@ -26,11 +27,7 @@ interface MatchFormProps {
   editingMatch?: any;
 }
 
-interface ScorerEntry {
-  playerId: string;
-  goals: number;
-  isOwnGoal: boolean;
-}
+
 
 export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFormProps) {
   const {
@@ -60,18 +57,17 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
 
   useEffect(() => {
     if (editingMatch) {
-      setHomeGoals(editingMatch.homeGoals);
-      setAwayGoals(editingMatch.awayGoals);
-      setScorers(editingMatch.scorers || []);
-      setDate(editingMatch.date
-        ? new Date(editingMatch.date).toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0]
-      );
+      const state = populateEditForm(editingMatch);
+      setHomeGoals(state.homeGoals);
+      setAwayGoals(state.awayGoals);
+      setScorers(state.scorers);
+      setDate(state.date);
     } else {
-      setHomeGoals(0);
-      setAwayGoals(0);
-      setScorers([]);
-      setDate(new Date().toISOString().split('T')[0]);
+      const state = resetForm();
+      setHomeGoals(state.homeGoals);
+      setAwayGoals(state.awayGoals);
+      setScorers(state.scorers);
+      setDate(state.date);
     }
   }, [editingMatch, open]);
 
@@ -106,21 +102,8 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
     }
 
     if (scorers.length > 0) {
-      const effectiveHomeGoals = scorers.reduce((sum, s) => {
-        const player = players.find((p: any) => p.id === s.playerId);
-        const isHomePlayer = player?.teamId === selectedHomeTeam.id;
-        if (s.isOwnGoal && !isHomePlayer) return sum + s.goals;
-        if (!s.isOwnGoal && isHomePlayer) return sum + s.goals;
-        return sum;
-      }, 0);
-
-      const effectiveAwayGoals = scorers.reduce((sum, s) => {
-        const player = players.find((p: any) => p.id === s.playerId);
-        const isAwayPlayer = player?.teamId === selectedAwayTeam.id;
-        if (s.isOwnGoal && !isAwayPlayer) return sum + s.goals;
-        if (!s.isOwnGoal && isAwayPlayer) return sum + s.goals;
-        return sum;
-      }, 0);
+      const effectiveHomeGoals = calculateEffectiveGoals(scorers, players, selectedHomeTeam.id);
+      const effectiveAwayGoals = calculateEffectiveGoals(scorers, players, selectedAwayTeam.id);
 
       if (effectiveHomeGoals !== homeGoals || effectiveAwayGoals !== awayGoals) {
         toast.error(`Goals don't add up. Home: ${effectiveHomeGoals}/${homeGoals}, Away: ${effectiveAwayGoals}/${awayGoals}`);
@@ -146,13 +129,13 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
       toast.success(`Match ${matchNumber} recorded!`);
     }
 
-    setHomeGoals(0);
-    setAwayGoals(0);
-    setScorers([]);
-    setDate(new Date().toISOString().split('T')[0]);
+    const state = resetForm();
+    setHomeGoals(state.homeGoals);
+    setAwayGoals(state.awayGoals);
+    setScorers(state.scorers);
+    setDate(state.date);
     onOpenChange(false);
   };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md w-[calc(100%-2rem)] mx-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -217,9 +200,9 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
                 <Select value={scorer.playerId} onValueChange={(v) => handleScorerChange(index, 'playerId', v)}>
                   <SelectTrigger className="flex-1 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent className="bg-[#0d1133] border-yellow-400/20">
-                    {players?.map((p: any) => (
+                    {players?.map((p: Player) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.name} ({teams?.find((t: any) => t.id === p.teamId)?.name})
+                        {p.name} ({teams?.find((t: Team) => t.id === p.teamId)?.name})
                       </SelectItem>
                     ))}
                   </SelectContent>

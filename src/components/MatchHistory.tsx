@@ -1,24 +1,25 @@
 import { useState } from 'react';
-import { useLeagueStore } from '@/store/leagueStore';
+import { Team, useLeagueStore } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
 import { Shield, ChevronDown, X, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Match } from 'date-fns';
 
 interface MatchHistoryProps {
   theme?: 'default' | 'ramadan';
-  onEditMatch?: (match: any) => void;
+  onEditMatch?: (match: Match) => void;
   onDeleteMatch?: (matchId: string) => void;
 }
 
 export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: MatchHistoryProps) {
   const { matches, teams, players } = useLeagueStore();
   const [showAll, setShowAll] = useState(false);
-  const [selectedMatch, setSelectedMatch] = useState<any>(null);
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; match: any } | null>(null);
-  const [matchToDelete, setMatchToDelete] = useState<any>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; match: Match } | null>(null);
+  const [matchToDelete, setMatchToDelete] = useState<Match | null>(null);
   const isRamadan = theme === 'ramadan';
 
-  const handleContextMenu = (e: React.MouseEvent, match: any) => {
+  const handleContextMenu = (e: React.MouseEvent, match: Match) => {
     if (!onEditMatch && !onDeleteMatch) return;
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, match });
@@ -69,9 +70,9 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         ) : (
           <div className="space-y-2 md:space-y-3 overflow-x-auto scroll-container -mx-4 md:mx-0 px-4 md:px-0">
             <div className="min-w-[320px]">
-              {displayedMatches.map((match: any, index: number) => {
-                const homeTeam = teams.find((t: any) => t.id === match.homeTeamId);
-                const awayTeam = teams.find((t: any) => t.id === match.awayTeamId);
+              {displayedMatches.map((match: Match, index: number) => {
+                const homeTeam = teams.find((t: Team) => t.id === match.homeTeamId);
+                const awayTeam = teams.find((t: Team) => t.id === match.awayTeamId);
                 const homeWin = match.homeGoals > match.awayGoals;
                 const awayWin = match.awayGoals > match.homeGoals;
                 const matchNum = matches.length - index;
