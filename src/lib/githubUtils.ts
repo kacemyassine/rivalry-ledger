@@ -40,7 +40,7 @@ export interface CupsData {
   [key: string]: unknown;
 }
 
-import { API_ERRORS as MESSAGES } from "@/lib/errors";
+import { API_SUCCESS, API_ERRORS } from "@/lib/errors";
 
 export function base64ToUtf8(str: string): string {
   return decodeURIComponent(escape(atob(str)));
@@ -159,10 +159,10 @@ export async function fetchData(
     );
 
     if (!apiRes.ok) {
-      if (apiRes.status === 404) toast.error(MESSAGES.LEAGUE_NOT_FOUND);
+      if (apiRes.status === 404) toast.error(API_ERRORS.LEAGUE_NOT_FOUND);
       else if (apiRes.status === 401 || apiRes.status === 403)
-        toast.error(MESSAGES.ACCESS_DENIED);
-      else toast.error(MESSAGES.GENERIC_ERROR);
+        toast.error(API_ERRORS.ACCESS_DENIED);
+      else toast.error(API_ERRORS.GENERIC_ERROR);
       return null;
     }
 
@@ -170,7 +170,7 @@ export async function fetchData(
     return JSON.parse(base64ToUtf8(content)) as LeagueData;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.CONNECTION_ERROR);
+    toast.error(API_ERRORS.CONNECTION_ERROR);
     return null;
   }
 }
@@ -180,7 +180,7 @@ export async function updateData(
   config: GitHubConfig,
 ): Promise<UpdateResult> {
   if (!validateLeagueDataShape(data)) {
-    toast.error(MESSAGES.SAVE_DATA_INTEGRITY);
+    toast.error(API_ERRORS.SAVE_DATA_INTEGRITY);
     return { success: false, error: "INVALID_DATA" };
   }
 
@@ -208,7 +208,7 @@ export async function updateData(
   for (let i = 0; i < RETRY_ATTEMPTS; i++) {
     try {
       const result = await attempt();
-      toast.success(MESSAGES.SAVE_SUCCESS);
+      toast.success(API_SUCCESS.SAVE_SUCCESS);
       return result;
     } catch (e) {
       const isLast = i === RETRY_ATTEMPTS - 1;
@@ -225,8 +225,8 @@ export async function updateData(
       console.error(e);
       toast.error(
         isNetworkError
-          ? MESSAGES.CONNECTION_ERROR
-          : MESSAGES.UPDATE_GITHUB_FAILED,
+          ? API_ERRORS.CONNECTION_ERROR
+          : API_ERRORS.UPDATE_GITHUB_FAILED,
       );
 
       return {
@@ -258,15 +258,15 @@ export async function archiveLeague(
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error(MESSAGES.ARCHIVE_FAILED);
+      toast.error(API_ERRORS.ARCHIVE_FAILED);
       return false;
     }
 
-    toast.success(MESSAGES.ARCHIVE_SUCCESS);
+    toast.success(API_SUCCESS.ARCHIVE_SUCCESS);
     return true;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.ARCHIVE_FAILED);
+    toast.error(API_ERRORS.ARCHIVE_FAILED);
     return false;
   }
 }
@@ -305,14 +305,14 @@ export async function uploadImage(
     );
 
     if (!putRes.ok) {
-      toast.error(MESSAGES.IMAGE_UPLOAD_FAILED);
+      toast.error(API_ERRORS.IMAGE_UPLOAD_FAILED);
       return null;
     }
 
     return `/images/${filename}`;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.IMAGE_UPLOAD_FAILED);
+    toast.error(API_ERRORS.IMAGE_UPLOAD_FAILED);
     return null;
   }
 }
@@ -333,7 +333,7 @@ export async function fetchCups(
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.CUPS_FETCH_FAILED);
+    toast.error(API_ERRORS.CUPS_FETCH_FAILED);
     return null;
   }
 }
@@ -358,15 +358,15 @@ export async function updateCups(
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error(MESSAGES.CUPS_FETCH_FAILED);
+      toast.error(API_ERRORS.CUPS_FETCH_FAILED);
       return false;
     }
 
-    toast.success(MESSAGES.CUP_SAVE_SUCCESS);
+    toast.success(API_SUCCESS.CUP_SAVE_SUCCESS);
     return true;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.CUPS_FETCH_FAILED);
+    toast.error(API_ERRORS.CUPS_FETCH_FAILED);
     return false;
   }
 }
@@ -387,7 +387,7 @@ export async function fetchArchiveIndex(
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error(MESSAGES.ARCHIVE_INDEX_FETCH_FAILED);
+    toast.error(API_ERRORS.ARCHIVE_INDEX_FETCH_FAILED);
     return null;
   }
 }
