@@ -1,6 +1,10 @@
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { Team, Player, Match } from '../store/leagueStore';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Team, Player, Match } from "../store/leagueStore";
+
+export type UpdateResult =
+  | { success: true }
+  | { success: false; error: 'INVALID_DATA' | 'INVOKE_ERROR' | 'NETWORK_ERROR' };
 
 export interface GitHubConfig {
   owner: string;
@@ -47,12 +51,15 @@ function isTransientError(status: number): boolean {
 async function fetchWithTimeout(
   url: string,
   options: RequestInit,
-  timeoutMs: number = FETCH_TIMEOUT_MS
+  timeoutMs: number = FETCH_TIMEOUT_MS,
 ): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
     return response;
   } finally {
     clearTimeout(timeoutId);
@@ -62,7 +69,7 @@ async function fetchWithTimeout(
 async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  attempts: number = RETRY_ATTEMPTS
+  attempts: number = RETRY_ATTEMPTS,
 ): Promise<Response> {
   for (let i = 0; i < attempts; i++) {
     try {
@@ -71,28 +78,59 @@ async function fetchWithRetry(
         return response;
       }
       if (i < attempts - 1) {
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, i) * 1000),
+        );
       }
       if (i === attempts - 1) return response;
     } catch (e) {
       if (i === attempts - 1) throw e;
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.pow(2, i) * 1000),
+      );
     }
   }
-  throw new Error('Max retries reached');
+  throw new Error("Max retries reached");
 }
 
-export async function fetchData(config: GitHubConfig, token: string): Promise<LeagueData | null> {
+function validateLeagueDataShape(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+
+  const d = data as LeagueData;
+
+  if (!Array.isArray(d.teams) || !Array.isArray(d.players) || !Array.isArray(d.matches)) return false;
+
+  const teamsValid = d.teams.every(t => typeof t.id === 'string' && typeof t.name === 'string');
+  const playersValid = d.players.every(p => typeof p.id === 'string' && typeof p.teamId === 'string');
+  const matchesValid = d.matches.every(m => typeof m.id === 'string' && typeof m.homeTeamId === 'string' && typeof m.awayTeamId === 'string');
+
+  if (!teamsValid || !playersValid || !matchesValid) return false;
+
+  if (d.leagueConfig) {
+    if (typeof d.leagueConfig.name !== 'string' || typeof d.leagueConfig.id !== 'string') return false;
+  }
+
+  if (d.targetMatches !== undefined && typeof d.targetMatches !== 'number') return false;
+
+  return true;
+}
+
+
+export async function fetchData(
+  config: GitHubConfig,
+  token: string,
+): Promise<LeagueData | null> {
   try {
     const apiRes = await fetchWithRetry(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
 
     if (!apiRes.ok) {
-      if (apiRes.status === 404) toast.error('League data not found');
-      else if (apiRes.status === 401 || apiRes.status === 403) toast.error('Access denied');
-      else toast.error('Something went wrong, try again later');
+      if (apiRes.status === 404) toast.error("League data not found");
+      else if (apiRes.status === 401 || apiRes.status === 403)
+        toast.error("Access denied");
+      else toast.error("Something went wrong, try again later");
       return null;
     }
 
@@ -100,139 +138,200 @@ export async function fetchData(config: GitHubConfig, token: string): Promise<Le
     return JSON.parse(base64ToUtf8(content)) as LeagueData;
   } catch (e) {
     console.error(e);
-    toast.error('Could not connect, check your internet connection');
+    toast.error("Could not connect, check your internet connection");
     return null;
   }
 }
 
-export async function updateData(data: LeagueData, config: GitHubConfig): Promise<boolean> {
-  try {
+
+export async function updateData(data: LeagueData, config: GitHubConfig): Promise<UpdateResult> {
+  if (!validateLeagueDataShape(data)) {
+    toast.error('Failed to save — data integrity check failed');
+    return { success: false, error: 'INVALID_DATA' };
+  }
+
+  const attempt = async (): Promise<UpdateResult> => {
     const { data: result, error } = await supabase.functions.invoke('update-json', {
       body: { data, owner: config.owner, repo: config.repo, path: config.path, branch: config.branch },
     });
 
     if (error || result?.error) {
-      console.error(error || result.error);
-      toast.error('Failed to update data on GitHub');
-      return false;
+      throw new Error(error?.message || result?.error || 'Invoke failed');
     }
 
-    toast.success('Data saved to GitHub successfully!');
-    return true;
-  } catch (e) {
-    console.error(e);
-    toast.error('Failed to update data');
-    return false;
+    return { success: true };
+  };
+
+  for (let i = 0; i < RETRY_ATTEMPTS; i++) {
+    try {
+      const result = await attempt();
+      toast.success('Data saved to GitHub successfully!');
+      return result;
+    } catch (e) {
+      const isLast = i === RETRY_ATTEMPTS - 1;
+      if (!isLast) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+        continue;
+      }
+
+      const isNetworkError = e instanceof TypeError && e.message === 'Failed to fetch';
+      console.error(e);
+      toast.error(isNetworkError ? 'Could not connect, check your internet connection' : 'Failed to update data on GitHub');
+      return { success: false, error: isNetworkError ? 'NETWORK_ERROR' : 'INVOKE_ERROR' };
+    }
   }
+
+  // unreachable but TypeScript needs it
+  return { success: false, error: 'INVOKE_ERROR' };
 }
 
-export async function archiveLeague(archiveData: ArchiveData, config: GitHubConfig): Promise<boolean> {
+
+
+
+export async function archiveLeague(
+  archiveData: ArchiveData,
+  config: GitHubConfig,
+): Promise<boolean> {
   try {
-    const { data: result, error } = await supabase.functions.invoke('archive-league', {
-      body: { ...archiveData, owner: config.owner, repo: config.repo, branch: config.branch },
-    });
+    const { data: result, error } = await supabase.functions.invoke(
+      "archive-league",
+      {
+        body: {
+          ...archiveData,
+          owner: config.owner,
+          repo: config.repo,
+          branch: config.branch,
+        },
+      },
+    );
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error('Failed to archive league');
+      toast.error("Failed to archive league");
       return false;
     }
 
-    toast.success('League archived and new league started!');
+    toast.success("League archived and new league started!");
     return true;
   } catch (e) {
     console.error(e);
-    toast.error('Failed to archive league');
+    toast.error("Failed to archive league");
     return false;
   }
 }
 
-export async function uploadImage(base64: string, filename: string, config: GitHubConfig, token: string): Promise<string | null> {
+export async function uploadImage(
+  base64: string,
+  filename: string,
+  config: GitHubConfig,
+  token: string,
+): Promise<string | null> {
   try {
     const path = `public/images/${filename}`;
 
     const getRes = await fetchWithTimeout(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}?ref=${config.branch}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
     const sha = getRes.ok ? (await getRes.json()).sha : undefined;
 
     const putRes = await fetchWithTimeout(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}`,
       {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           message: `Upload image: ${filename}`,
-          content: base64.split(',')[1],
+          content: base64.split(",")[1],
           branch: config.branch,
           ...(sha && { sha }),
         }),
-      }
+      },
     );
 
     if (!putRes.ok) {
-      toast.error('Failed to upload image');
+      toast.error("Failed to upload image");
       return null;
     }
 
     return `/images/${filename}`;
   } catch (e) {
     console.error(e);
-    toast.error('Failed to upload image');
+    toast.error("Failed to upload image");
     return null;
   }
 }
 
-export async function fetchCups(config: GitHubConfig, token: string): Promise<CupsData | null> {
+export async function fetchCups(
+  config: GitHubConfig,
+  token: string,
+): Promise<CupsData | null> {
   try {
     const apiRes = await fetchWithRetry(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/src/data/cups.json?ref=${config.branch}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
-    if (!apiRes.ok) throw new Error('Failed to fetch cups');
+    if (!apiRes.ok) throw new Error("Failed to fetch cups");
     const { content } = await apiRes.json();
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error('Failed to fetch cups');
+    toast.error("Failed to fetch cups");
     return null;
   }
 }
 
-export async function updateCups(data: CupsData, config: GitHubConfig): Promise<boolean> {
+export async function updateCups(
+  data: CupsData,
+  config: GitHubConfig,
+): Promise<boolean> {
   try {
-    const { data: result, error } = await supabase.functions.invoke('update-json', {
-      body: { data, owner: config.owner, repo: config.repo, path: 'src/data/cups.json', branch: config.branch },
-    });
+    const { data: result, error } = await supabase.functions.invoke(
+      "update-json",
+      {
+        body: {
+          data,
+          owner: config.owner,
+          repo: config.repo,
+          path: "src/data/cups.json",
+          branch: config.branch,
+        },
+      },
+    );
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error('Failed to update cups');
+      toast.error("Failed to update cups");
       return false;
     }
 
-    toast.success('Cup saved successfully!');
+    toast.success("Cup saved successfully!");
     return true;
   } catch (e) {
     console.error(e);
-    toast.error('Failed to update cups');
+    toast.error("Failed to update cups");
     return false;
   }
 }
 
-export async function fetchArchiveIndex(config: GitHubConfig, token: string): Promise<CupsData | null> {
+export async function fetchArchiveIndex(
+  config: GitHubConfig,
+  token: string,
+): Promise<CupsData | null> {
   try {
     const apiRes = await fetchWithRetry(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/src/data/archives/index.json?ref=${config.branch}`,
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
-    if (!apiRes.ok) throw new Error('Failed to fetch archive index');
+    if (!apiRes.ok) throw new Error("Failed to fetch archive index");
     const { content } = await apiRes.json();
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error('Failed to fetch archive index');
+    toast.error("Failed to fetch archive index");
     return null;
   }
 }
