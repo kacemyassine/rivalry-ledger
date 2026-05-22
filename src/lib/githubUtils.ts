@@ -40,6 +40,8 @@ export interface CupsData {
   [key: string]: unknown;
 }
 
+import { API_ERRORS as MESSAGES } from "@/lib/errors";
+
 export function base64ToUtf8(str: string): string {
   return decodeURIComponent(escape(atob(str)));
 }
@@ -115,6 +117,8 @@ function validateLeagueDataShape(data: unknown): boolean {
   )
     return false;
 
+  if (d.teams.length === 0) return false;
+
   const teamsValid = d.teams.every(
     (t) => typeof t.id === "string" && typeof t.name === "string",
   );
@@ -155,10 +159,10 @@ export async function fetchData(
     );
 
     if (!apiRes.ok) {
-      if (apiRes.status === 404) toast.error("League data not found");
+      if (apiRes.status === 404) toast.error(MESSAGES.LEAGUE_NOT_FOUND);
       else if (apiRes.status === 401 || apiRes.status === 403)
-        toast.error("Access denied");
-      else toast.error("Something went wrong, try again later");
+        toast.error(MESSAGES.ACCESS_DENIED);
+      else toast.error(MESSAGES.GENERIC_ERROR);
       return null;
     }
 
@@ -166,7 +170,7 @@ export async function fetchData(
     return JSON.parse(base64ToUtf8(content)) as LeagueData;
   } catch (e) {
     console.error(e);
-    toast.error("Could not connect, check your internet connection");
+    toast.error(MESSAGES.CONNECTION_ERROR);
     return null;
   }
 }
@@ -176,7 +180,7 @@ export async function updateData(
   config: GitHubConfig,
 ): Promise<UpdateResult> {
   if (!validateLeagueDataShape(data)) {
-    toast.error("Failed to save — data integrity check failed");
+    toast.error(MESSAGES.SAVE_DATA_INTEGRITY);
     return { success: false, error: "INVALID_DATA" };
   }
 
@@ -204,7 +208,7 @@ export async function updateData(
   for (let i = 0; i < RETRY_ATTEMPTS; i++) {
     try {
       const result = await attempt();
-      toast.success("Data saved to GitHub successfully!");
+      toast.success(MESSAGES.SAVE_SUCCESS);
       return result;
     } catch (e) {
       const isLast = i === RETRY_ATTEMPTS - 1;
@@ -217,12 +221,14 @@ export async function updateData(
 
       const isNetworkError =
         e instanceof TypeError && e.message === "Failed to fetch";
+
       console.error(e);
       toast.error(
         isNetworkError
-          ? "Could not connect, check your internet connection"
-          : "Failed to update data on GitHub",
+          ? MESSAGES.CONNECTION_ERROR
+          : MESSAGES.UPDATE_GITHUB_FAILED,
       );
+
       return {
         success: false,
         error: isNetworkError ? "NETWORK_ERROR" : "INVOKE_ERROR",
@@ -230,7 +236,6 @@ export async function updateData(
     }
   }
 
-  // unreachable but TypeScript needs it
   return { success: false, error: "INVOKE_ERROR" };
 }
 
@@ -253,15 +258,15 @@ export async function archiveLeague(
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error("Failed to archive league");
+      toast.error(MESSAGES.ARCHIVE_FAILED);
       return false;
     }
 
-    toast.success("League archived and new league started!");
+    toast.success(MESSAGES.ARCHIVE_SUCCESS);
     return true;
   } catch (e) {
     console.error(e);
-    toast.error("Failed to archive league");
+    toast.error(MESSAGES.ARCHIVE_FAILED);
     return false;
   }
 }
@@ -279,6 +284,7 @@ export async function uploadImage(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}?ref=${config.branch}`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
+
     const sha = getRes.ok ? (await getRes.json()).sha : undefined;
 
     const putRes = await fetchWithTimeout(
@@ -299,14 +305,14 @@ export async function uploadImage(
     );
 
     if (!putRes.ok) {
-      toast.error("Failed to upload image");
+      toast.error(MESSAGES.IMAGE_UPLOAD_FAILED);
       return null;
     }
 
     return `/images/${filename}`;
   } catch (e) {
     console.error(e);
-    toast.error("Failed to upload image");
+    toast.error(MESSAGES.IMAGE_UPLOAD_FAILED);
     return null;
   }
 }
@@ -320,12 +326,14 @@ export async function fetchCups(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/src/data/cups.json?ref=${config.branch}`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
+
     if (!apiRes.ok) throw new Error("Failed to fetch cups");
+
     const { content } = await apiRes.json();
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error("Failed to fetch cups");
+    toast.error(MESSAGES.CUPS_FETCH_FAILED);
     return null;
   }
 }
@@ -350,15 +358,15 @@ export async function updateCups(
 
     if (error || result?.error) {
       console.error(error || result.error);
-      toast.error("Failed to update cups");
+      toast.error(MESSAGES.CUPS_FETCH_FAILED);
       return false;
     }
 
-    toast.success("Cup saved successfully!");
+    toast.success(MESSAGES.CUP_SAVE_SUCCESS);
     return true;
   } catch (e) {
     console.error(e);
-    toast.error("Failed to update cups");
+    toast.error(MESSAGES.CUPS_FETCH_FAILED);
     return false;
   }
 }
@@ -372,12 +380,14 @@ export async function fetchArchiveIndex(
       `https://api.github.com/repos/${config.owner}/${config.repo}/contents/src/data/archives/index.json?ref=${config.branch}`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
+
     if (!apiRes.ok) throw new Error("Failed to fetch archive index");
+
     const { content } = await apiRes.json();
     return JSON.parse(base64ToUtf8(content)) as CupsData;
   } catch (e) {
     console.error(e);
-    toast.error("Failed to fetch archive index");
+    toast.error(MESSAGES.ARCHIVE_INDEX_FETCH_FAILED);
     return null;
   }
 }
