@@ -4,7 +4,10 @@ import { Team, Player, Match } from "../store/leagueStore";
 
 export type UpdateResult =
   | { success: true }
-  | { success: false; error: 'INVALID_DATA' | 'INVOKE_ERROR' | 'NETWORK_ERROR' };
+  | {
+      success: false;
+      error: "INVALID_DATA" | "INVOKE_ERROR" | "NETWORK_ERROR";
+    };
 
 export interface GitHubConfig {
   owner: string;
@@ -94,27 +97,52 @@ async function fetchWithRetry(
 }
 
 function validateLeagueDataShape(data: unknown): boolean {
-  if (!data || typeof data !== 'object') return false;
+  if (!data || typeof data !== "object") return false;
 
   const d = data as LeagueData;
+  if (!d.leagueConfig) return false;
+  if (
+    typeof d.leagueConfig.name !== "string" ||
+    typeof d.leagueConfig.id !== "string"
+  )
+    return false;
+  if (d.targetMatches === undefined || typeof d.targetMatches !== "number")
+    return false;
+  if (
+    !Array.isArray(d.teams) ||
+    !Array.isArray(d.players) ||
+    !Array.isArray(d.matches)
+  )
+    return false;
 
-  if (!Array.isArray(d.teams) || !Array.isArray(d.players) || !Array.isArray(d.matches)) return false;
-
-  const teamsValid = d.teams.every(t => typeof t.id === 'string' && typeof t.name === 'string');
-  const playersValid = d.players.every(p => typeof p.id === 'string' && typeof p.teamId === 'string');
-  const matchesValid = d.matches.every(m => typeof m.id === 'string' && typeof m.homeTeamId === 'string' && typeof m.awayTeamId === 'string');
+  const teamsValid = d.teams.every(
+    (t) => typeof t.id === "string" && typeof t.name === "string",
+  );
+  const playersValid = d.players.every(
+    (p) => typeof p.id === "string" && typeof p.teamId === "string",
+  );
+  const matchesValid = d.matches.every(
+    (m) =>
+      typeof m.id === "string" &&
+      typeof m.homeTeamId === "string" &&
+      typeof m.awayTeamId === "string",
+  );
 
   if (!teamsValid || !playersValid || !matchesValid) return false;
 
   if (d.leagueConfig) {
-    if (typeof d.leagueConfig.name !== 'string' || typeof d.leagueConfig.id !== 'string') return false;
+    if (
+      typeof d.leagueConfig.name !== "string" ||
+      typeof d.leagueConfig.id !== "string"
+    )
+      return false;
   }
 
-  if (d.targetMatches !== undefined && typeof d.targetMatches !== 'number') return false;
+  if (d.targetMatches !== undefined && typeof d.targetMatches !== "number")
+    return false;
 
   return true;
 }
-
 
 export async function fetchData(
   config: GitHubConfig,
@@ -143,20 +171,31 @@ export async function fetchData(
   }
 }
 
-
-export async function updateData(data: LeagueData, config: GitHubConfig): Promise<UpdateResult> {
+export async function updateData(
+  data: LeagueData,
+  config: GitHubConfig,
+): Promise<UpdateResult> {
   if (!validateLeagueDataShape(data)) {
-    toast.error('Failed to save — data integrity check failed');
-    return { success: false, error: 'INVALID_DATA' };
+    toast.error("Failed to save — data integrity check failed");
+    return { success: false, error: "INVALID_DATA" };
   }
 
   const attempt = async (): Promise<UpdateResult> => {
-    const { data: result, error } = await supabase.functions.invoke('update-json', {
-      body: { data, owner: config.owner, repo: config.repo, path: config.path, branch: config.branch },
-    });
+    const { data: result, error } = await supabase.functions.invoke(
+      "update-json",
+      {
+        body: {
+          data,
+          owner: config.owner,
+          repo: config.repo,
+          path: config.path,
+          branch: config.branch,
+        },
+      },
+    );
 
     if (error || result?.error) {
-      throw new Error(error?.message || result?.error || 'Invoke failed');
+      throw new Error(error?.message || result?.error || "Invoke failed");
     }
 
     return { success: true };
@@ -165,28 +204,35 @@ export async function updateData(data: LeagueData, config: GitHubConfig): Promis
   for (let i = 0; i < RETRY_ATTEMPTS; i++) {
     try {
       const result = await attempt();
-      toast.success('Data saved to GitHub successfully!');
+      toast.success("Data saved to GitHub successfully!");
       return result;
     } catch (e) {
       const isLast = i === RETRY_ATTEMPTS - 1;
       if (!isLast) {
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.pow(2, i) * 1000),
+        );
         continue;
       }
 
-      const isNetworkError = e instanceof TypeError && e.message === 'Failed to fetch';
+      const isNetworkError =
+        e instanceof TypeError && e.message === "Failed to fetch";
       console.error(e);
-      toast.error(isNetworkError ? 'Could not connect, check your internet connection' : 'Failed to update data on GitHub');
-      return { success: false, error: isNetworkError ? 'NETWORK_ERROR' : 'INVOKE_ERROR' };
+      toast.error(
+        isNetworkError
+          ? "Could not connect, check your internet connection"
+          : "Failed to update data on GitHub",
+      );
+      return {
+        success: false,
+        error: isNetworkError ? "NETWORK_ERROR" : "INVOKE_ERROR",
+      };
     }
   }
 
   // unreachable but TypeScript needs it
-  return { success: false, error: 'INVOKE_ERROR' };
+  return { success: false, error: "INVOKE_ERROR" };
 }
-
-
-
 
 export async function archiveLeague(
   archiveData: ArchiveData,
