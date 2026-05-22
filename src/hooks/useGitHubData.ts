@@ -24,12 +24,16 @@ export function useGitHubData() {
     };
   }, []);
 
-  const checkOnline = useCallback(() => {
-    if (!navigator.onLine) {
-      return false;
-    }
+  const checkOnline = useCallback(async () => {
+  if (!navigator.onLine) return false;
+  try {
+    // Use a HEAD request to check connectivity without downloading data
+    await fetch("https://api.github.com", { method: "HEAD", signal: AbortSignal.timeout(3000) });
     return true;
-  }, []);
+  } catch {
+    return false;
+  }
+}, []);
 
   const _fetchData = useCallback(() => {
     if (!checkOnline()) return Promise.resolve(null);
