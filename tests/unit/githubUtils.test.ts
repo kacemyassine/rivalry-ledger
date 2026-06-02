@@ -162,7 +162,7 @@ describe("fetchData", () => {
       const result = await fetchData(config, "token");
       expect(result).toBeNull();
       expect(toast.error as jest.Mock).toHaveBeenCalledWith(
-        API_ERRORS.LEAGUE_NOT_FOUND
+        API_ERRORS.LEAGUE_NOT_FOUND,
       );
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
@@ -172,7 +172,7 @@ describe("fetchData", () => {
       const result = await fetchData(config, "token");
       expect(result).toBeNull();
       expect(toast.error as jest.Mock).toHaveBeenCalledWith(
-        API_ERRORS.ACCESS_DENIED
+        API_ERRORS.ACCESS_DENIED,
       );
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
@@ -182,7 +182,7 @@ describe("fetchData", () => {
       const result = await fetchData(config, "token");
       expect(result).toBeNull();
       expect(toast.error as jest.Mock).toHaveBeenCalledWith(
-        API_ERRORS.ACCESS_DENIED
+        API_ERRORS.ACCESS_DENIED,
       );
       expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
@@ -197,7 +197,7 @@ describe("fetchData", () => {
       const result = await promise;
       expect(result).toBeNull();
       expect(toast.error as jest.Mock).toHaveBeenCalledWith(
-        API_ERRORS.GENERIC_ERROR
+        API_ERRORS.GENERIC_ERROR,
       );
       expect(fetchSpy).toHaveBeenCalledTimes(3);
       jest.useRealTimers();
@@ -211,7 +211,7 @@ describe("fetchData", () => {
       const result = await promise;
       expect(result).toBeNull();
       expect(toast.error as jest.Mock).toHaveBeenCalledWith(
-        API_ERRORS.CONNECTION_ERROR
+        API_ERRORS.CONNECTION_ERROR,
       );
       expect(fetchSpy).toHaveBeenCalledTimes(3);
       jest.useRealTimers();
@@ -242,9 +242,7 @@ describe("fetchData", () => {
         });
         const result = await updateData(mockData, config);
         expect(result).toEqual({ success: true });
-        expect(toastSuccessMock).toHaveBeenCalledWith(
-          API_SUCCESS.SAVE_SUCCESS
-        );
+        expect(toastSuccessMock).toHaveBeenCalledWith(API_SUCCESS.SAVE_SUCCESS);
         expect(invokeMock).toHaveBeenCalledWith("update-json", {
           body: {
             data: mockData,
@@ -267,9 +265,7 @@ describe("fetchData", () => {
         });
         const result = await updateData(mockData, config);
         expect(result).toEqual({ success: true });
-        expect(toastSuccessMock).toHaveBeenCalledWith(
-          API_SUCCESS.SAVE_SUCCESS
-        );
+        expect(toastSuccessMock).toHaveBeenCalledWith(API_SUCCESS.SAVE_SUCCESS);
       });
     });
 
@@ -278,7 +274,7 @@ describe("fetchData", () => {
         const result = await updateData(mockData as LeagueData, config);
         expect(result).toEqual({ success: false, error: "INVALID_DATA" });
         expect(toastErrorMock).toHaveBeenCalledWith(
-          API_ERRORS.SAVE_DATA_INTEGRITY
+          API_ERRORS.SAVE_DATA_INTEGRITY,
         );
         expect(invokeMock).not.toHaveBeenCalled();
       };
@@ -386,7 +382,7 @@ describe("fetchData", () => {
       test("returns { success: false, error: 'NETWORK_ERROR' } when invoke throws TypeError after all retries fail", async () => {
         jest.useFakeTimers();
         invokeMock.mockRejectedValue(new TypeError("Failed to fetch"));
-        const promise =  updateData(getMockLeagueData(), config);
+        const promise = updateData(getMockLeagueData(), config);
         await jest.runAllTimersAsync();
         const result = await promise;
         expect(result).toEqual({ success: false, error: "NETWORK_ERROR" });
@@ -401,7 +397,7 @@ describe("fetchData", () => {
       beforeEach(() => {
         jest.useFakeTimers();
       });
-      afterEach(() => {        
+      afterEach(() => {
         jest.useRealTimers();
       });
       test("returns { success: true } after invoke fails on first attempt and succeeds on second", async () => {
@@ -419,47 +415,70 @@ describe("fetchData", () => {
         const result = await promise;
         expect(result).toEqual({ success: true });
         expect(invokeMock).toHaveBeenCalledTimes(2);
-        
       });
       describe("when file already exists (sha present)", () => {
-  test("returns image path and fires PUT with sha when file already exists", async () => {
-    fetchSpy.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sha: "abc123sha" }),
-    } as Response);
-    fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
+        test("returns image path and fires PUT with sha when file already exists", async () => {
+          fetchSpy.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ sha: "abc123sha" }),
+          } as Response);
+          fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
 
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
+          const result = await uploadImage(
+            "data:image/png;base64,abc123",
+            "filename.png",
+            config,
+            "token",
+          );
 
-    expect(result).toBe("/images/filename.png");
+          expect(result).toBe("/images/filename.png");
 
-    const putBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
-    expect(putBody.sha).toBe("abc123sha");
-  });
-});
+          const putBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
+          expect(putBody.sha).toBe("abc123sha");
+        });
+      });
 
-describe("on failure", () => {
-  test("returns null and calls toast.error when PUT response is not ok", async () => {
-    fetchSpy.mockResolvedValueOnce({ ok: false, status: 404 } as Response);
-    fetchSpy.mockResolvedValueOnce({ ok: false, status: 422 } as Response);
+      describe("on failure", () => {
+        test("returns null and calls toast.error when PUT response is not ok", async () => {
+          fetchSpy.mockResolvedValueOnce({
+            ok: false,
+            status: 404,
+          } as Response);
+          fetchSpy.mockResolvedValueOnce({
+            ok: false,
+            status: 422,
+          } as Response);
 
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
+          const result = await uploadImage(
+            "data:image/png;base64,abc123",
+            "filename.png",
+            config,
+            "token",
+          );
 
-    expect(result).toBeNull();
-    expect(toast.error as jest.Mock).toHaveBeenCalledWith(API_ERRORS.IMAGE_UPLOAD_FAILED);
-  });
+          expect(result).toBeNull();
+          expect(toast.error as jest.Mock).toHaveBeenCalledWith(
+            API_ERRORS.IMAGE_UPLOAD_FAILED,
+          );
+        });
 
-  test("returns null and calls toast.error when fetch throws", async () => {
-    fetchSpy.mockRejectedValueOnce(new Error("Network error"));
+        test("returns null and calls toast.error when fetch throws", async () => {
+          fetchSpy.mockRejectedValueOnce(new Error("Network error"));
 
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
+          const result = await uploadImage(
+            "data:image/png;base64,abc123",
+            "filename.png",
+            config,
+            "token",
+          );
 
-    expect(result).toBeNull();
-    expect(toast.error as jest.Mock).toHaveBeenCalledWith(API_ERRORS.IMAGE_UPLOAD_FAILED);
-  });
-});
+          expect(result).toBeNull();
+          expect(toast.error as jest.Mock).toHaveBeenCalledWith(
+            API_ERRORS.IMAGE_UPLOAD_FAILED,
+          );
+        });
+      });
       test("returns { success: false, error: 'INVOKE_ERROR' } after all 3 attempts fail with invoke error", async () => {
-        
         const mockData: LeagueData = getMockLeagueData();
         invokeMock.mockResolvedValue({
           data: null,
@@ -470,7 +489,6 @@ describe("on failure", () => {
         const result = await promise;
         expect(result).toEqual({ success: false, error: "INVOKE_ERROR" });
         expect(invokeMock).toHaveBeenCalledTimes(3);
-        
       });
       test("calls invoke exactly once on immediate success", async () => {
         const mockData: LeagueData = getMockLeagueData();
@@ -496,61 +514,86 @@ describe("on failure", () => {
     afterAll(() => {
       fetchSpy.mockRestore();
     });
-  });
+
     describe("when file does not exist (no sha)", () => {
-  test("returns image path and fires PUT without sha when file does not exist", async () => {
-    fetchSpy.mockResolvedValueOnce({ ok: false, status: 404 } as Response);
-    fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
+      test("returns image path and fires PUT without sha when file does not exist", async () => {
+        fetchSpy.mockResolvedValueOnce({ ok: false, status: 404 } as Response);
+        fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
 
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
+        const result = await uploadImage(
+          "data:image/png;base64,abc123",
+          "filename.png",
+          config,
+          "token",
+        );
 
-    expect(result).toBe("/images/filename.png");
+        expect(result).toBe("/images/filename.png");
 
-    const putCall = fetchSpy.mock.calls[1];
-    const putBody = JSON.parse(putCall[1].body);
-    expect(putBody).not.toHaveProperty("sha");
-    expect(putBody.content).toBe("abc123");
-    expect(putBody.message).toBe("Upload image: filename.png");
-  });
-});
+        const putCall = fetchSpy.mock.calls[1];
+        const putBody = JSON.parse(putCall[1].body);
+        expect(putBody).not.toHaveProperty("sha");
+        expect(putBody.content).toBe("abc123");
+        expect(putBody.message).toBe("Upload image: filename.png");
+      });
+    });
 
     describe("when file already exists (sha present)", () => {
-  test("returns image path and fires PUT with sha when file already exists", async () => {
-    fetchSpy.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ sha: "abc123sha" }),
-    } as Response);
-    fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
+      test("returns image path and fires PUT with sha when file already exists", async () => {
+        fetchSpy.mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ sha: "abc123sha" }),
+        } as Response);
+        fetchSpy.mockResolvedValueOnce({ ok: true } as Response);
 
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
+        const result = await uploadImage(
+          "data:image/png;base64,abc123",
+          "filename.png",
+          config,
+          "token",
+        );
 
-    expect(result).toBe("/images/filename.png");
+        expect(result).toBe("/images/filename.png");
 
-    const putBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
-    expect(putBody.sha).toBe("abc123sha");
+        const putBody = JSON.parse(fetchSpy.mock.calls[1][1].body);
+        expect(putBody.sha).toBe("abc123sha");
+      });
+    });
+
+    describe("on failure", () => {
+      test("returns null and calls toast.error when PUT response is not ok", async () => {
+        fetchSpy.mockResolvedValueOnce({ ok: false, status: 404 } as Response);
+        fetchSpy.mockResolvedValueOnce({ ok: false, status: 422 } as Response);
+
+        const result = await uploadImage(
+          "data:image/png;base64,abc123",
+          "filename.png",
+          config,
+          "token",
+        );
+
+        expect(result).toBeNull();
+        expect(toast.error as jest.Mock).toHaveBeenCalledWith(
+          API_ERRORS.IMAGE_UPLOAD_FAILED,
+        );
+      });
+
+      test("returns null and calls toast.error when fetch throws", async () => {
+        fetchSpy.mockRejectedValueOnce(new Error("Network error"));
+
+        const result = await uploadImage(
+          "data:image/png;base64,abc123",
+          "filename.png",
+          config,
+          "token",
+        );
+
+        expect(result).toBeNull();
+        expect(toast.error as jest.Mock).toHaveBeenCalledWith(
+          API_ERRORS.IMAGE_UPLOAD_FAILED,
+        );
+      });
+    });
   });
-});
-
-describe("on failure", () => {
-  test("returns null and calls toast.error when PUT response is not ok", async () => {
-    fetchSpy.mockResolvedValueOnce({ ok: false, status: 404 } as Response);
-    fetchSpy.mockResolvedValueOnce({ ok: false, status: 422 } as Response);
-
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
-
-    expect(result).toBeNull();
-    expect(toast.error as jest.Mock).toHaveBeenCalledWith(API_ERRORS.IMAGE_UPLOAD_FAILED);
-  });
-
-  test("returns null and calls toast.error when fetch throws", async () => {
-    fetchSpy.mockRejectedValueOnce(new Error("Network error"));
-
-    const result = await uploadImage("data:image/png;base64,abc123", "filename.png", config, "token");
-
-    expect(result).toBeNull();
-    expect(toast.error as jest.Mock).toHaveBeenCalledWith(API_ERRORS.IMAGE_UPLOAD_FAILED);
-  });
-});;
 
   // archiveLeague is not fully implemented yet — tests will be added once the feature is complete
   describe("archiveLeague", () => {
@@ -576,4 +619,3 @@ describe("on failure", () => {
     describe("on failure", () => {});
   });
 });
-
