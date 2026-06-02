@@ -1,9 +1,11 @@
 import { Match } from "@/store/leagueStore";
+
+// ================================================================================
+// Base data — no matches, all stats zero
+// ================================================================================
+
 export const mockLeagueData = {
-  leagueConfig: {
-    id: "test-league",
-    name: "Test League",
-  },
+  leagueConfig: { id: "test-league", name: "Test League" },
   targetMatches: 10,
   teams: [
     {
@@ -117,6 +119,10 @@ export const mockLeagueData = {
   ],
   matches: [],
 };
+
+// ================================================================================
+// mockMatchesWithoutScorers — 11 matches, no scorer data
+// ================================================================================
 
 export const mockMatchesWithoutScorers: Match[] = [
   {
@@ -241,6 +247,46 @@ export const mockMatchesWithoutScorers: Match[] = [
     date: "2026-03-12",
   },
 ];
+// ================================================================================
+// With matches — team stats reflect mockMatchesWithoutScorers, no scorer data
+// ================================================================================
+
+export const mockLeagueDataWithMatches = {
+  ...mockLeagueData,
+  teams: [
+    {
+      id: "team-1",
+      name: "Harbor United",
+      coach: "Coach A",
+      logo: "",
+      played: 11,
+      won: 6,
+      drawn: 4,
+      lost: 1,
+      goalsFor: 24,
+      goalsAgainst: 13,
+      points: 0,
+    },
+    {
+      id: "team-2",
+      name: "Ocean Dragon",
+      coach: "Coach B",
+      logo: "",
+      played: 11,
+      won: 1,
+      drawn: 4,
+      lost: 6,
+      goalsFor: 13,
+      goalsAgainst: 24,
+      points: 0,
+    },
+  ],
+  matches: mockMatchesWithoutScorers,
+};
+
+// ================================================================================
+// mockMatchesWithScorers — same 11 matches, with scorer data
+// ================================================================================
 
 export const mockMatchesWithScorers: Match[] = [
   {
@@ -413,86 +459,121 @@ export const mockMatchesWithScorers: Match[] = [
   },
 ];
 
-// Updated players — goals reflect mockMatchesWithScorers
-export const mockPlayersWithGoals = [
-  {
-    id: "player-1",
-    name: "Antoine Griezmann",
-    teamId: "team-1",
-    goals: 7,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-2",
-    name: "Kylian Mbappé",
-    teamId: "team-1",
-    goals: 5,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-3",
-    name: "Lionel Messi",
-    teamId: "team-1",
-    goals: 5,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-4",
-    name: "Frank Lampard",
-    teamId: "team-1",
-    goals: 3,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-5",
-    name: "Johan Cruyff",
-    teamId: "team-1",
-    goals: 4,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-6",
-    name: "Ruud Gullit",
-    teamId: "team-2",
-    goals: 5,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-7",
-    name: "Didier Drogba",
-    teamId: "team-2",
-    goals: 3,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-8",
-    name: "Petr Čech",
-    teamId: "team-2",
-    goals: 2,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-9",
-    name: "Désiré Doué",
-    teamId: "team-2",
-    goals: 3,
-    image: "",
-    fullImage: "",
-  },
-  {
-    id: "player-10",
-    name: "Cristiano Ronaldo",
-    teamId: "team-2",
-    goals: 5,
-    image: "",
-    fullImage: "",
-  },
-];
+// ================================================================================
+// With scorers — team stats + player goals reflect mockMatchesWithScorers
+// ================================================================================
+
+export const mockLeagueDataWithScorers = {
+  ...mockLeagueData,
+  teams: [
+    {
+      id: "team-1",
+      name: "Harbor United",
+      coach: "Coach A",
+      logo: "",
+      played: 11,
+      won: 6,
+      drawn: 2,
+      lost: 3,
+      goalsFor: 24,
+      goalsAgainst: 18,
+      points: 0,
+    },
+    {
+      id: "team-2",
+      name: "Ocean Dragon",
+      coach: "Coach B",
+      logo: "",
+      played: 11,
+      won: 3,
+      drawn: 2,
+      lost: 6,
+      goalsFor: 18,
+      goalsAgainst: 24,
+      points: 0,
+    },
+  ],
+  players: [
+    {
+      id: "player-1",
+      name: "Antoine Griezmann",
+      teamId: "team-1",
+      goals: 7,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-2",
+      name: "Kylian Mbappé",
+      teamId: "team-1",
+      goals: 5,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-3",
+      name: "Lionel Messi",
+      teamId: "team-1",
+      goals: 5,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-4",
+      name: "Frank Lampard",
+      teamId: "team-1",
+      goals: 3,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-5",
+      name: "Johan Cruyff",
+      teamId: "team-1",
+      goals: 4,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-6",
+      name: "Ruud Gullit",
+      teamId: "team-2",
+      goals: 5,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-7",
+      name: "Didier Drogba",
+      teamId: "team-2",
+      goals: 3,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-8",
+      name: "Petr Čech",
+      teamId: "team-2",
+      goals: 2,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-9",
+      name: "Désiré Doué",
+      teamId: "team-2",
+      goals: 3,
+      image: "",
+      fullImage: "",
+    },
+    {
+      id: "player-10",
+      name: "Cristiano Ronaldo",
+      teamId: "team-2",
+      goals: 5,
+      image: "",
+      fullImage: "",
+    },
+  ],
+  matches: mockMatchesWithScorers,
+};

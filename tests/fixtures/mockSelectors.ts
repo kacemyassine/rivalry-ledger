@@ -1,5 +1,5 @@
 import { useLeagueStore } from "@/store/leagueStore";
-import { mockLeagueData, mockMatchesWithoutScorers, mockMatchesWithScorers, mockPlayersWithGoals } from './mockLeagueData';
+import { mockLeagueDataWithScorers, mockLeagueDataWithMatches, mockLeagueData } from "./mockLeagueData";
 import { LeagueData } from '@/hooks/useGitHubData';
 
 // ================================================================================
@@ -7,20 +7,9 @@ import { LeagueData } from '@/hooks/useGitHubData';
 // ================================================================================
 
 export const getMockLeagueData = (options?: { withMatches?: boolean; withScorers?: boolean }): LeagueData => {
-  if (!options?.withMatches) return mockLeagueData;
-
-  if (options?.withScorers) {
-    return {
-      ...mockLeagueData,
-      matches: mockMatchesWithScorers,
-      players: mockPlayersWithGoals,
-    };
-  }
-
-  return {
-    ...mockLeagueData,
-    matches: mockMatchesWithoutScorers,
-  };
+  if (options?.withScorers) return mockLeagueDataWithScorers;
+  if (options?.withMatches) return mockLeagueDataWithMatches;
+  return mockLeagueData;
 };
 
 export const getMockTeamById = (data: LeagueData, id: string) =>
