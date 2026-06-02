@@ -4,8 +4,12 @@ export default {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  testMatch: ['**/tests/unit/**/*.test.ts'],
+  testMatch: [
+    '**/tests/unit/**/*.test.ts',
+    '**/tests/component/**/*.test.tsx',
+  ],
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.tsx?$': 'ts-jest',
   },
+  setupFilesAfterEnv: ['@testing-library/jest-dom'],
 };
