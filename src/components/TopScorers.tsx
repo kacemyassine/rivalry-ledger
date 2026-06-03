@@ -12,10 +12,10 @@ interface TopScorersProps {
 }
 
 export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default' }: TopScorersProps) {
-  const { players = [], teams = [], deletePlayer } = useLeagueStore();
+  const { players = [], teams = [], deletePlayer, updatePlayerImage } = useLeagueStore();
   const isRamadan = theme === 'ramadan';
   const [showAll, setShowAll] = useState(false);
-  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string; teamId: string; playerId: string } | null>(null);
 
   const sortedPlayers = [...players].sort((a: any, b: any) => (b.goals || 0) - (a.goals || 0));
   const getTeam = (teamId: string) => teams.find((t: any) => t.id === teamId);
@@ -88,14 +88,27 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
                     isRamadan ? 'border-yellow-400/30' : 'border-border'
                   )}>
                     {player.image ? (
-                    <img
-                      src={player.image}
-                      alt={player.name}
-                      className="w-full h-full object-cover cursor-pointer"
-                      onClick={() => player.fullImage && setLightboxImage({ src: player.fullImage, alt: player.name })}
-                    />
+                      <img
+                        src={player.image}
+                        alt={player.name}
+                        className="w-full h-full object-cover cursor-pointer"
+                        onClick={() => setLightboxImage({
+                          src: player.fullImage || '',
+                          alt: player.name,
+                          teamId: player.teamId,
+                          playerId: player.id,
+                        })}
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div
+                        className="w-full h-full flex items-center justify-center cursor-pointer"
+                        onClick={() => setLightboxImage({
+                          src: '',
+                          alt: player.name,
+                          teamId: player.teamId,
+                          playerId: player.id,
+                        })}
+                      >
                         <User className={cn('w-5 h-5 md:w-6 md:h-6', isRamadan ? 'text-yellow-400/50' : 'text-muted-foreground')} />
                       </div>
                     )}
@@ -179,11 +192,16 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
           </div>
         </div>
       )}
+
       {lightboxImage && (
         <ImageLightbox
           src={lightboxImage.src}
           alt={lightboxImage.alt}
           onClose={() => setLightboxImage(null)}
+          uploadPath={lightboxImage.teamId === 'team1'
+            ? 'images/HarborUnitedPlayers/fullImages'
+            : 'images/OceanDragonPlayers/fullImages'}
+          onUpload={(path) => updatePlayerImage(lightboxImage.playerId, path)}
         />
       )}
     </div>
