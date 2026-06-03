@@ -68,6 +68,7 @@ export interface LeagueState {
   addPlayer: (player: Omit<Player, "id">) => void;
   editPlayer: (id: string, data: Partial<Player>) => void;
   deletePlayer: (id: string) => void;
+  updatePlayerImage: (playerId: string, image: string) => void;
   updateTeamLogo: (teamId: string, logo: string) => void;
   deleteMatch: (matchId: string) => void;
   editMatch: (
@@ -381,6 +382,25 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
     saveState(newState);
     set({ teams: updatedTeams });
   },
+
+  updatePlayerImage: (playerId: string, fullImage: string) => {
+  const state = get();
+
+  // 1. Check if player exists
+  const playerExists = state.players.some((p) => p.id === playerId);
+
+  if (!playerExists) {
+    throw new Error(PLAYER_ERRORS.NOT_FOUND);
+  }
+
+  const updatedPlayers = state.players.map((p) =>
+    p.id === playerId ? { ...p, fullImage } : p,
+  );
+
+  const newState = { ...state, players: updatedPlayers };
+  saveState(newState);
+  set({ players: updatedPlayers });
+},
 
   deleteMatch: (matchId) => {
     const state = get();
