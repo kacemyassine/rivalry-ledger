@@ -3,7 +3,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { AuthService } from "@/lib/authService";
-import { useGitHubData } from "@/hooks/useGitHubData";
 
 jest.mock("react-dom", () => ({
   ...jest.requireActual("react-dom"),
