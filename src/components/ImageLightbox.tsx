@@ -11,6 +11,7 @@ interface ImageLightboxProps {
   onClose: () => void;
   onUpload?: (path: string) => void;
   uploadPath?: string;
+}
 
 
 export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: ImageLightboxProps) {
