@@ -4,6 +4,7 @@ import { User, Trash2, Edit2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ImageLightbox } from '@/components/ImageLightbox';
+import { sortPlayers, getTeam, getScorers, getNonScorers, canDeletePlayer } from '@/lib/scorersUtils';
 
 interface TopScorersProps {
   onEditPlayer?: (playerId: string) => void;
@@ -17,12 +18,10 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
   const [showAll, setShowAll] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string; teamId: string; playerId: string } | null>(null);
 
-  const sortedPlayers = [...players].sort((a: any, b: any) => (b.goals || 0) - (a.goals || 0));
-  const getTeam = (teamId: string) => teams.find((t: any) => t.id === teamId);
-
-  const scorers = sortedPlayers.filter((p: any) => (p.goals || 0) > 0);
-  const nonScorers = sortedPlayers.filter((p: any) => (p.goals || 0) === 0);
-  const visiblePlayers = showAll ? sortedPlayers : scorers;
+  const sorted = sortPlayers(players, teams);
+  const scorers = getScorers(sorted);
+  const nonScorers = getNonScorers(sorted);
+  const visiblePlayers = showAll ? sorted : scorers;
 
   return (
     <div
@@ -48,7 +47,7 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
         {isRamadan && <span className="text-yellow-400">⚽</span>}
       </div>
 
-      {sortedPlayers.length === 0 ? (
+      {sorted.length === 0 ? (
         <p className={cn('text-center py-8 text-sm md:text-base', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
           No players added yet. Add players to track their goals!
         </p>
@@ -56,14 +55,15 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
         <div className="space-y-2 md:space-y-3 overflow-x-auto scroll-container -mx-4 md:mx-0 px-4 md:px-0">
           <div className="min-w-[320px]">
             {visiblePlayers.map((player: any, index: number) => {
-              const team = getTeam(player.teamId);
+              const team = getTeam(player.teamId, teams);
               const isTopThree = index < 3;
               const teamPlayers = players.filter((p: any) => p.teamId === player.teamId);
-              const canDelete = player.goals === 0 && teamPlayers.length > 23;
+              const canDelete = canDeletePlayer(player, teamPlayers);
 
               return (
                 <div
                   key={player.id}
+                  data-testid={`player-row-${index}`}
                   className={cn(
                     'flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-lg transition-all mb-2',
                     isRamadan
