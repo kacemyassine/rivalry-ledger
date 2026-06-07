@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useLeagueStore, Player } from '@/store/leagueStore';
+import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { populatePlayerForm, resetPlayerForm, generateImageFilename } from '@/lib/playerFormUtils';
+import { Player } from '@/store/leagueStore';
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, Upload, X, Loader2, Info } from 'lucide-react';
+import { User, Upload, X, Loader2, Info, AlertCircle } from 'lucide-react';
 
 interface PlayerFormProps {
   open: boolean;
@@ -35,9 +36,9 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
   const [image, setImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const editingPlayer = editingPlayerId ? players?.find((p: Player) => p.id === editingPlayerId) : null;
-  const hasGoals = (editingPlayer?.goals || 0) > 0;
 
   useEffect(() => {
     if (editingPlayer) {
@@ -52,6 +53,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
       setImage(state.image);
     }
     setPendingFile(null);
+    setError(null);
   }, [editingPlayer, open, teams]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,41 +67,62 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    setError(null);
+
+    if (!name.trim()) {
+      setError('Player name is required.');
+      return;
+    }
 
     let finalImage = image;
 
     if (pendingFile) {
       setUploading(true);
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(pendingFile);
-      });
+      try {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(pendingFile);
+        });
 
-      const filename = generateImageFilename(name, pendingFile);
-      const path = await uploadImage(base64, filename);
-      setUploading(false);
+        const filename = generateImageFilename(name, pendingFile);
+        const path = await uploadImage(base64, filename);
 
-      if (!path) return;
-      finalImage = path;
+        if (!path) {
+          setError('Image upload failed. Please try again.');
+          setUploading(false);
+          return;
+        }
+
+        finalImage = path;
+      } catch {
+        setError('Image upload failed. Please try again.');
+        setUploading(false);
+        return;
+      } finally {
+        setUploading(false);
+      }
     }
 
-    const resultState = editingPlayerId && editingPlayer
-      ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals: editingPlayer.goals })
-      : addPlayer({ name, teamId, image: finalImage, goals: 0 });
+    try {
+      const resultState = editingPlayerId && editingPlayer
+        ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals: editingPlayer.goals })
+        : addPlayer({ name, teamId, image: finalImage, goals: 0 });
 
-    const fullState = resultState ?? {
-      players: useLeagueStore.getState().players,
-      teams: useLeagueStore.getState().teams,
-      matches: useLeagueStore.getState().matches,
-    };
+      const fullState = resultState ?? {
+        players: useLeagueStore.getState().players,
+        teams: useLeagueStore.getState().teams,
+        matches: useLeagueStore.getState().matches,
+      };
 
-    if (typeof onSave === 'function') {
-      onSave(fullState);
+      if (typeof onSave === 'function') {
+        onSave(fullState);
+      }
+
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.');
     }
-
-    onOpenChange(false);
   };
 
   return (
@@ -110,6 +133,14 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+          {/* Error message */}
+          {error && (
+            <div data-testid="form-error" className="flex items-center gap-2 text-sm text-red-400 border border-red-400/30 rounded-lg p-3">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              {error}
+            </div>
+          )}
+
           {/* Image */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-border bg-muted group">
@@ -144,7 +175,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             <Input
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => { setName(e.target.value); setError(null); }}
               placeholder="Enter player name"
               className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
             />
@@ -152,9 +183,9 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
           {/* Team */}
           <div className="space-y-2">
-            <Label className="text-yellow-200/80">Team</Label>
-            <Select value={teamId} onValueChange={setTeamId} >
-              <SelectTrigger className={`bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <Label htmlFor="team" className="text-yellow-200/80">Team</Label>
+            <Select value={teamId} onValueChange={setTeamId}>
+              <SelectTrigger id="team" className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-[#0d1133] border-yellow-400/20">
@@ -166,7 +197,12 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
           </div>
 
           {/* Submit */}
-          <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold" disabled={uploading}>
+          <Button
+            type="submit"
+            data-testid="save-button"
+            className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
+            disabled={uploading}
+          >
             {uploading
               ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</>
               : editingPlayerId ? 'Update Player' : 'Add Player'
