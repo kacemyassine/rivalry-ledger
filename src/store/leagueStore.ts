@@ -130,6 +130,10 @@ const validatePlayerName = (name: string) => {
     throw new Error(PLAYER_ERRORS.NAME_INVALID);
   }
 
+  if (!/^[a-zA-ZÀ-ÿ]/.test(trimmed) || !/[a-zA-ZÀ-ÿ]$/.test(trimmed)) {
+    throw new Error(PLAYER_ERRORS.NAME_INVALID_BOUNDARIES);
+  }
+
   if (!PLAYER_NAME_RULES.validPattern.test(trimmed)) {
     throw new Error(PLAYER_ERRORS.NAME_INVALID_CHARS);
   }

@@ -48,6 +48,15 @@ export function runNameValidationTests(action: (name: string) => void) {
     expect(() => action(" c ")).toThrow(PLAYER_ERRORS.NAME_INVALID);
   });
 
+  test.each([
+  ["----", "all hyphens"],
+  ["'name", "starts with apostrophe"],
+  ["name-", "ends with hyphen"],
+  ["-name", "starts with hyphen"],
+])("throws NAME_INVALID_BOUNDARIES if name doesn't start and end with a letter: %s (%s)", (name) => {
+  expect(() => action(name)).toThrow(PLAYER_ERRORS.NAME_INVALID_BOUNDARIES);
+});
+
   // BVA: minimum valid boundary — exactly minLength characters
   test("player name with exactly minimum length characters is allowed", () => {
     expect(() => action("a".repeat(PLAYER_NAME_RULES.minLength))).not.toThrow();
