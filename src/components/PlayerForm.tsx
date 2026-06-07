@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useLeagueStore } from '@/store/leagueStore';
+import { useLeagueStore, Player } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { populatePlayerForm, resetPlayerForm, generateImageFilename } from '@/lib/playerFormUtils';
-import { Player } from '@/store/leagueStore';
 import {
   Dialog,
   DialogContent,
@@ -154,7 +153,7 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
           {/* Team */}
           <div className="space-y-2">
             <Label className="text-yellow-200/80">Team</Label>
-            <Select value={teamId} onValueChange={setTeamId} disabled={hasGoals}>
+            <Select value={teamId} onValueChange={setTeamId} >
               <SelectTrigger className={`bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <SelectValue />
               </SelectTrigger>
@@ -164,12 +163,6 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
                 ))}
               </SelectContent>
             </Select>
-            {hasGoals && (
-              <p className="flex items-center gap-2 text-xs text-yellow-500/80">
-                <Info className="w-3 h-3 shrink-0" />
-                Team cannot be changed because this player has already scored goals.
-              </p>
-            )}
           </div>
 
           {/* Submit */}
