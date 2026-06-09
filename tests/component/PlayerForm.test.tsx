@@ -3,11 +3,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PlayerForm } from "@/components/PlayerForm";
 import { useLeagueStore } from "@/store/leagueStore";
-import { LeagueData, useGitHubData } from "@/hooks/useGitHubData";
+import { useGitHubData } from "@/hooks/useGitHubData";
 import {
   populatePlayerForm,
   resetPlayerForm,
-  generateImageFilename,
 } from "@/lib/playerFormUtils";
 import {
   getMockLeagueData,

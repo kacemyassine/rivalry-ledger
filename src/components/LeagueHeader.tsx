@@ -26,8 +26,8 @@ export function LeagueHeader({
     teamId: string;
   } | null>(null);
 
-  const team1 = teams.find((t) => t.id === "team1");
-  const team2 = teams.find((t) => t.id === "team2");
+  const team1 = teams.find((t) => t.id === "team-1");
+  const team2 = teams.find((t) => t.id === "team-2");
 
   const overallProgress = calculateMatchProgress(matches, targetMatches);
 
@@ -100,7 +100,7 @@ export function LeagueHeader({
           <Trophy
             className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? "text-yellow-400" : "text-gold"}`}
           />
-          <h1
+          <h1 data-testId = "league-title"
             className={`text-2xl sm:text-4xl md:text-6xl font-display font-bold tracking-wider text-center ${
               isRamadan
                 ? "text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600"
@@ -115,7 +115,7 @@ export function LeagueHeader({
         </div>
 
         {/* Subtitle */}
-        <p
+        <p data-testId="league-subtitle"
           className={`text-sm sm:text-lg font-body tracking-wide text-center px-2 ${isRamadan ? "text-yellow-200/70" : "text-muted-foreground"}`}
         >
           {targetMatches} Matches • {teams.length} Teams • 1 Champion
@@ -227,7 +227,7 @@ export function LeagueHeader({
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto">
+        <div data-testId="progress-bar" className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-3">
             <span
               className={`text-sm font-semibold ${isRamadan ? "text-yellow-400" : "text-[hsl(45_85%_55%)]"}`}
