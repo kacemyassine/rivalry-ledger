@@ -59,7 +59,6 @@ describe("LeagueHeader - rendering", () => {
   test("renders league name in uppercase", () => {
     renderLeagueHeader();
     const leagueName = screen.getByTestId("league-title");
-    console.log(data);
     expect(leagueName).toBeInTheDocument();
     expect(leagueName).toHaveTextContent(data.leagueConfig!.name.toUpperCase());
   });
