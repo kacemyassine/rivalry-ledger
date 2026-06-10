@@ -19,6 +19,6 @@ export default {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  setupFilesAfterEnv: ['@testing-library/jest-dom'],
+  setupFilesAfterEnv: ['@testing-library/jest-dom', '<rootDir>/jest.setup.ts'],
 };
 
