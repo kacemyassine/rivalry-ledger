@@ -3,7 +3,7 @@ import { Player, Match } from '@/store/leagueStore';
 interface ScorerEntry {
   playerId: string;
   goals: number;
-  isOwnGoal?: boolean;
+  isOwnGoal: boolean;
 }
 
 interface FormState {
