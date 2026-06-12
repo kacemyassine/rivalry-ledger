@@ -37,7 +37,7 @@ export interface Match {
   awayTeamName: string;
   homeGoals: number;
   awayGoals: number;
-  scorers: { playerId: string; goals: number; isOwnGoal?: boolean }[];
+  scorers: { playerId: string; goals: number; isOwnGoal: boolean }[];
   date: string;
 }
 
@@ -91,6 +91,13 @@ const loadState = () => {
       const parsed = JSON.parse(saved);
       return {
         ...parsed,
+        matches: (parsed.matches || []).map((m: any) => ({
+          ...m,
+          scorers: (m.scorers || []).map((s: any) => ({
+            ...s,
+            isOwnGoal: s.isOwnGoal ?? false,
+          })),
+        })),
         targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
         leagueName: (defaultLeagueData as any).leagueConfig?.name ?? "League",
         leagueId: (defaultLeagueData as any).leagueConfig?.id ?? "league",
@@ -99,7 +106,16 @@ const loadState = () => {
   } catch (e) {
     console.error("Error loading state:", e);
   }
-  return defaultLeagueData;
+  return {
+    ...defaultLeagueData,
+    matches: (defaultLeagueData.matches || []).map((m: any) => ({
+      ...m,
+      scorers: (m.scorers || []).map((s: any) => ({
+        ...s,
+        isOwnGoal: s.isOwnGoal ?? false,
+      })),
+    })),
+  };
 };
 
 const saveState = (state: Partial<LeagueState>) => {
@@ -270,6 +286,11 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
         : p;
     });
 
+    const normalizedScorers = scorers.map(s => ({
+      ...s,
+      isOwnGoal: s.isOwnGoal ?? false,
+    }));
+
     const newMatch: Match = {
       id: `match-${state.matches.length + 1}`,
       homeTeamId: homeTeam.id,
@@ -278,7 +299,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       awayTeamName: awayTeam.name,
       homeGoals,
       awayGoals,
-      scorers,
+      scorers: normalizedScorers,
       date: new Date().toISOString(),
     };
 
@@ -498,6 +519,11 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       }
     }
 
+    const normalizedNewScorers = newScorers.map(s => ({
+      ...s,
+      isOwnGoal: s.isOwnGoal ?? false,
+    }));
+
     const oldHomeWin = oldMatch.homeGoals > oldMatch.awayGoals;
     const oldDraw = oldMatch.homeGoals === oldMatch.awayGoals;
     const newHomeWin = newHomeGoals > newAwayGoals;
@@ -545,7 +571,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       const oldScorer = oldMatch.scorers?.find(
         (s) => s.playerId === p.id && !s.isOwnGoal,
       );
-      const newScorer = newScorers.find(
+      const newScorer = normalizedNewScorers.find(
         (s) => s.playerId === p.id && !s.isOwnGoal,
       );
       const oldGoals = oldScorer ? oldScorer.goals : 0;
@@ -559,7 +585,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
             ...m,
             homeGoals: newHomeGoals,
             awayGoals: newAwayGoals,
-            scorers: newScorers,
+            scorers: normalizedNewScorers,
             date: newDate,
           }
         : m,
@@ -576,10 +602,17 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
 
   resetLeague: () => {
     localStorage.removeItem(STORAGE_KEY);
+    const normalizedMatches = (defaultLeagueData.matches || []).map((m: any) => ({
+      ...m,
+      scorers: (m.scorers || []).map((s: any) => ({
+        ...s,
+        isOwnGoal: s.isOwnGoal ?? false,
+      })),
+    }));
     set({
       teams: defaultLeagueData.teams,
       players: defaultLeagueData.players,
-      matches: defaultLeagueData.matches,
+      matches: normalizedMatches,
       targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
       leagueName: (defaultLeagueData as any).leagueConfig?.name ?? "League",
       leagueId: (defaultLeagueData as any).leagueConfig?.id ?? "league",
