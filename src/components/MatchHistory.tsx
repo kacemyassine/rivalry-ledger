@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Team, useLeagueStore } from '@/store/leagueStore';
+import { Team, useLeagueStore, Match } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
 import { Shield, ChevronDown, X, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Match } from 'date-fns';
+
 
 interface MatchHistoryProps {
   theme?: 'default' | 'ramadan';
@@ -82,6 +82,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                     key={match.id}
                     onClick={() => setSelectedMatch(match)}
                     onContextMenu={(e) => handleContextMenu(e, match)}
+                    data-testid={match.id}
                     className={cn(
                       'flex items-center gap-2 md:gap-4 p-2 md:p-3 rounded-lg transition-colors mb-2 cursor-pointer',
                       isRamadan ? 'bg-yellow-400/5 hover:bg-yellow-400/10' : 'bg-muted/20 hover:bg-muted/30'
