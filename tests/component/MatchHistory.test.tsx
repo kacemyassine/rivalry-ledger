@@ -1,11 +1,5 @@
 import "@testing-library/jest-dom";
-import {
-  render,
-  screen,
-  fireEvent,
-  Match,
-  within,
-} from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { MatchHistory } from "@/components/MatchHistory";
@@ -14,7 +8,6 @@ import {
   getMockLeagueData,
   getMockTeamById,
 } from "tests/fixtures/mockSelectors";
-import { renderMatches } from "react-router-dom";
 
 jest.mock("@/store/leagueStore", () => ({
   useLeagueStore: jest.fn(),
@@ -53,9 +46,8 @@ const renderMatchHistory = (
 };
 
 const getMatchRow = (matchId: string) => screen.getByTestId(matchId);
-
+const displayedMatches = [...data.matches].reverse().slice(0, 10);
 describe("MatchHistory - rendering", () => {
-  const displayedMatches = [...data.matches].reverse().slice(0, 10);
   beforeEach(() => {
     (mockUseLeagueStore as jest.Mock).mockReturnValue(
       mockStoreBase({ matches: data.matches }),
@@ -182,25 +174,156 @@ describe("MatchHistory - pagination", () => {
 });
 
 describe("MatchHistory - match detail popup", () => {
-  test("opens match detail popup when a match row is clicked", () => {});
-  test("renders Match Details heading in popup", () => {});
-  test("renders correct score in popup", () => {});
-  test("renders home and away scorers in popup", () => {});
-  test("closes popup when clicking the backdrop", () => {});
-  test("closes popup when clicking the X button", () => {});
+  const openMatchPopup = async (matchId: string) => {
+    await userEvent.click(getMatchRow(matchId));
+    return screen.getByTestId(`${matchId}-popup`);
+  };
+  test("opens match detail popup when a match row is clicked", async () => {
+    renderMatchHistory();
+    for (const match of displayedMatches) {
+      await openMatchPopup(match.id);
+      expect(screen.getByTestId(`${match.id}-popup`)).toBeInTheDocument();
+    }
+  });
+  test("renders Match Details heading in popup", async () => {
+    renderMatchHistory();
+    for (const match of displayedMatches) {
+      await openMatchPopup(match.id);
+      const matchPopup = screen.getByTestId(`${match.id}-popup`);
+      const { getByText } = within(matchPopup);
+      expect(getByText(/match details/i)).toBeInTheDocument();
+    }
+  });
+  test("renders correct score in popup", async () => {
+    renderMatchHistory();
+    for (const match of displayedMatches) {
+      await openMatchPopup(match.id);
+      const matchPopup = screen.getByTestId(`${match.id}-popup`);
+      const scoreContainer = within(matchPopup).getByTestId("popup-score");
+      expect(scoreContainer).toHaveTextContent(String(match.homeGoals));
+      expect(scoreContainer).toHaveTextContent(String(match.awayGoals));
+    }
+  });
+  test("renders home and away scorers in popup", async () => {
+    renderMatchHistory();
+    for (const match of displayedMatches) {
+      await openMatchPopup(match.id);
+      const matchPopup = screen.getByTestId(`${match.id}-popup`);
+      const homeScorers = match.scorers.filter(
+        (s) =>
+          data.players.find((p) => p.id === s.playerId)?.teamId ===
+          match.homeTeamId,
+      );
+      const awayScorers = match.scorers.filter(
+        (s) =>
+          data.players.find((p) => p.id === s.playerId)?.teamId ===
+          match.awayTeamId,
+      );
+      const homeScorersContainer =
+        within(matchPopup).getByTestId("home-scorers");
+      const awayScorersContainer =
+        within(matchPopup).getByTestId("away-scorers");
+
+      homeScorers.forEach((s) => {
+        const player = data.players.find((p) => p.id === s.playerId)!;
+        expect(homeScorersContainer).toHaveTextContent(player.name);
+        expect(homeScorersContainer).toHaveTextContent(String(s.goals));
+      });
+      awayScorers.forEach((s) => {
+        const player = data.players.find((p) => p.id === s.playerId)!;
+        expect(awayScorersContainer).toHaveTextContent(player.name);
+        expect(awayScorersContainer).toHaveTextContent(String(s.goals));
+      });
+    }
+  });
+  test("closes popup when clicking the backdrop", async () => {
+    renderMatchHistory();
+    await openMatchPopup(displayedMatches[0].id);
+    await userEvent.click(
+      screen.getByTestId(`${displayedMatches[0].id}-backdrop`),
+    );
+    expect(
+      screen.queryByTestId(`${displayedMatches[0].id}-popup`),
+    ).not.toBeInTheDocument();
+  });
+  test("closes popup when clicking the X button", async () => {
+    renderMatchHistory();
+    await openMatchPopup(displayedMatches[0].id);
+    const closeButton = within(
+      screen.getByTestId(`${displayedMatches[0].id}-popup`),
+    ).getByRole("button");
+    await userEvent.click(closeButton);
+    expect(
+      screen.queryByTestId(`${displayedMatches[0].id}-popup`),
+    ).not.toBeInTheDocument();
+  });
 });
 
 describe("MatchHistory - context menu", () => {
-  test("does not render three-dots button when no admin callbacks provided", () => {});
-  test("renders three-dots button when onEditMatch is provided", () => {});
-  test("renders three-dots button when onDeleteMatch is provided", () => {});
-  test("opens context menu when three-dots button is clicked", () => {});
-  test("closes context menu when clicking outside", () => {});
-  test("calls onEditMatch with correct match when Edit is clicked", () => {});
+  test("does not render three-dots button when no admin callbacks provided", () => {
+    renderMatchHistory({ onEditMatch: undefined, onDeleteMatch: undefined });
+    expect(screen.queryByTestId("more-vertical-icon")).not.toBeInTheDocument();
+  });
+  test("renders three-dots button when onEditMatch is provided", () => {
+    renderMatchHistory({ onEditMatch: jest.fn(), onDeleteMatch: undefined });
+    expect(screen.getAllByTestId("more-vertical-icon").length).toBe(10); // 1 for each row , by default 10 rows .
+  });
+  test("renders three-dots button when onDeleteMatch is provided", () => {
+    renderMatchHistory({ onEditMatch: undefined, onDeleteMatch: jest.fn() });
+    expect(screen.getAllByTestId("more-vertical-icon").length).toBe(10); // 1 for each row , by default 10 rows .
+  });
+  test("opens context menu when three-dots button is clicked", async () => {
+    renderMatchHistory();
+    const matchRow = getMatchRow(displayedMatches[0].id);
+    const threeDotsButton = within(matchRow).getByRole("button");
+    await userEvent.click(threeDotsButton);
+    expect(screen.getByTestId("context-menu")).toBeInTheDocument();
+  });
+  test("closes context menu when clicking outside", async () => {
+  renderMatchHistory();
+  const matchRow = getMatchRow(displayedMatches[0].id);
+  const threeDotsButton = within(matchRow).getByRole("button");
+  await userEvent.click(threeDotsButton);
+  expect(screen.getByTestId("context-menu")).toBeInTheDocument();
+  await userEvent.click(screen.getByTestId("context-menu-backdrop"));
+  expect(screen.queryByTestId("context-menu")).not.toBeInTheDocument();
+});
+  test("calls onEditMatch with correct match when Edit is clicked", async () => {
+  const onEditMatch = jest.fn();
+  renderMatchHistory({ onEditMatch });
+  const matchRow = getMatchRow(displayedMatches[0].id);
+  await userEvent.click(within(matchRow).getByRole("button"));
+  await userEvent.click(screen.getByText(/edit match/i));
+  expect(onEditMatch).toHaveBeenCalledWith(displayedMatches[0]);
+});
 });
 
 describe("MatchHistory - delete confirmation", () => {
-  test("opens delete confirmation dialog when Delete is clicked in context menu", () => {});
-  test("closes delete dialog when Cancel is clicked", () => {});
-  test("calls onDeleteMatch with correct matchId when Delete is confirmed", () => {});
+  const openDeleteDialog = async () => {
+    renderMatchHistory();
+    const matchRow = getMatchRow(displayedMatches[0].id);
+    await userEvent.click(within(matchRow).getByRole("button"));
+    await userEvent.click(screen.getByText(/delete match/i));
+  };
+
+  test("opens delete confirmation dialog when Delete is clicked in context menu", async () => {
+    await openDeleteDialog();
+    expect(screen.getByTestId("delete-confirmation-dialog")).toBeInTheDocument();
+  });
+
+  test("closes delete dialog when Cancel is clicked", async () => {
+    await openDeleteDialog();
+    await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
+    expect(screen.queryByTestId("delete-confirmation-dialog")).not.toBeInTheDocument();
+  });
+
+  test("calls onDeleteMatch with correct matchId when Delete is confirmed", async () => {
+    const onDeleteMatch = jest.fn();
+    renderMatchHistory({ onDeleteMatch });
+    const matchRow = getMatchRow(displayedMatches[0].id);
+    await userEvent.click(within(matchRow).getByRole("button"));
+    await userEvent.click(screen.getByText(/delete match/i));
+    await userEvent.click(screen.getByRole("button", { name: /delete/i }));
+    expect(onDeleteMatch).toHaveBeenCalledWith(displayedMatches[0].id);
+  });
 });
