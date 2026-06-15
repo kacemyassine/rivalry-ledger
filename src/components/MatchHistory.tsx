@@ -93,7 +93,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                     </span>
                     <div className="flex-1 flex items-center justify-between min-w-0">
                       {/* Home team */}
-                      <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1">
+                      <div  className="flex items-center gap-1 md:gap-2 min-w-0 flex-1">
                         <div className={cn(
                           'w-6 h-6 md:w-8 md:h-8 rounded-lg overflow-hidden border bg-muted/30 flex items-center justify-center shrink-0',
                           isRamadan ? 'border-yellow-400/20' : 'border-primary/30'
@@ -120,7 +120,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       </div>
 
                      {/* Away team */}
-                      <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
+                      <div  className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span className={cn(
                           'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
                           awayWin ? 'text-green-400' : 'text-white'
@@ -180,8 +180,10 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedMatch(null)}
+          data-testid={`${selectedMatch.id}-backdrop`}
         >
           <div
+            data-testid={`${selectedMatch.id}-popup`}
             className={cn(
               'p-6 max-w-md w-full relative rounded-2xl border',
               isRamadan
@@ -250,7 +252,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 px-2 shrink-0">
+                    <div data-testid="popup-score" className="flex items-center gap-1 px-2 shrink-0">
                       <span className={cn('text-4xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{selectedMatch.homeGoals}</span>
                       <span className={cn('text-lg', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>-</span>
                       <span className={cn('text-4xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{selectedMatch.awayGoals}</span>
@@ -284,7 +286,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
 
                   {/* Scorers */}
                   <div className="flex items-stretch justify-between gap-3">
-                    <div className="flex-1">
+                    <div data-testid="home-scorers" className="flex-1">
                       {homeScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
@@ -303,7 +305,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       })}
                     </div>
                     <div className="w-12" />
-                    <div className="flex-1">
+                    <div data-testid="away-scorers" className="flex-1">
                       {awayScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
@@ -334,8 +336,10 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         <div
           className="fixed inset-0 z-50"
           onClick={handleCloseContextMenu}
+          data-testid="context-menu-backdrop"
         >
           <div
+            data-testid="context-menu"
             className="absolute bg-card border border-border rounded-lg shadow-xl overflow-hidden"
             style={{ top: contextMenu.y, left: Math.min(contextMenu.x, window.innerWidth - 160) }}
             onClick={(e) => e.stopPropagation()}
@@ -371,6 +375,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
           onClick={() => setMatchToDelete(null)}
         >
           <div
+            data-testid="delete-confirmation-dialog"
             className={cn(
               'p-6 max-w-sm w-full rounded-2xl border',
               isRamadan
