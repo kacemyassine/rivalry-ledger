@@ -55,11 +55,13 @@ describe("StandingsTable - Rendering", () => {
 });
 
 describe("StandingsTable - numbers display", () => {
+  const getTeamRow = (team: Team) =>
+  screen.getByRole("row", { name: new RegExp(team.name, "i") });
   test("renders correct played, won, drawn, lost values", () => {
     const teams: Team[] = getMockLeagueData({ withMatches: true }).teams;
     renderStandingsTable(teams);
     teams.forEach((team) => {
-      const row = screen.getByRole("row", { name: new RegExp(team.name, "i") });
+      const row = getTeamRow(team);
       expect(getCellByColumn(row, "P")).toHaveTextContent(team.played.toString());
       expect(getCellByColumn(row, "W")).toHaveTextContent(team.won.toString());
       expect(getCellByColumn(row, "D")).toHaveTextContent(team.drawn.toString());
@@ -71,7 +73,7 @@ describe("StandingsTable - numbers display", () => {
     const teams: Team[] = getMockLeagueData({ withMatches: true }).teams;
     renderStandingsTable(teams);
     teams.forEach((team) => {
-      const row = screen.getByRole("row", { name: new RegExp(team.name, "i") });
+      const row = getTeamRow(team);
       expect(getCellByColumn(row, "GF")).toHaveTextContent(team.goalsFor.toString());
       expect(getCellByColumn(row, "GA")).toHaveTextContent(team.goalsAgainst.toString());
     });
@@ -82,7 +84,7 @@ describe("StandingsTable - numbers display", () => {
   ])("renders correct goal difference with appropriate prefix", ({ goalsFor, goalsAgainst, expected }) => {
     const team: Team = { ...getMockTeamById(getMockLeagueData(), "team-1"), goalsFor, goalsAgainst };
     renderStandingsTable([team]);
-    const row = screen.getByRole("row", { name: new RegExp(team.name, "i") });
+    const row = getTeamRow(team);
     expect(getCellByColumn(row, "GD")).toHaveTextContent(expected);
   });
   test.each([
@@ -92,7 +94,7 @@ describe("StandingsTable - numbers display", () => {
   ])("renders correct goal difference as 0 when equal", ({ goalsFor, goalsAgainst, expected }) => {
     const team: Team = { ...getMockTeamById(getMockLeagueData(), "team-1"), goalsFor, goalsAgainst };
     renderStandingsTable([team]);
-    const row = screen.getByRole("row", { name: new RegExp(team.name, "i") });
+    const row = getTeamRow(team);
     expect(getCellByColumn(row, "GD")).toHaveTextContent(expected);
   });
   test.each([
@@ -102,7 +104,7 @@ describe("StandingsTable - numbers display", () => {
   ])("renders correct points calculated from won and drawn", ({ won, drawn, expected }) => {
     const team: Team = { ...getMockTeamById(getMockLeagueData(), "team-1"), won, drawn };
     renderStandingsTable([team]);
-    const row = screen.getByRole("row", { name: new RegExp(team.name, "i") });
+    const row = getTeamRow(team);
     expect(getCellByColumn(row, "PTS")).toHaveTextContent(expected);
   });
 });
