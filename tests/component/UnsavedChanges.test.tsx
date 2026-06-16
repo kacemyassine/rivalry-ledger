@@ -29,26 +29,33 @@ const renderUnsavedChanges = (props = {}) => {
 afterEach(() => {
   jest.clearAllMocks();
 });
+
+const getUnsavedChangesComponent = (exists: boolean = true) =>
+  exists
+    ? screen.getAllByTestId("alert-icon")[0]
+    : screen.queryByTestId("alert-icon");
 describe("UnsavedChanges - rendering", () => {
   test("renders nothing when hasChanges is false", () => {
     renderUnsavedChanges({ hasChanges: false });
-    expect(screen.queryByTestId("alert-icon")).not.toBeInTheDocument();
+    const component = getUnsavedChangesComponent(false);
+    expect(component).not.toBeInTheDocument();
   });
   test("renders when hasChanges is true", () => {
     renderUnsavedChanges({ hasChanges: true });
-    // Check for the presence of the alert icon to confirm rendering,
-    //  since there are two alert icons in the component,
-    //  we check that at least one is rendered
-    expect(screen.getAllByTestId("alert-icon").length).toBeGreaterThan(0)
-
+    const component = getUnsavedChangesComponent();
+    expect(component).toBeInTheDocument();
   });
   test("renders correct unsaved changes count", () => {
-     const changeLog: string[] = [
-        "Added match: Harbor United 2-1 Ocean Dragon",
-        "Updated player stats for John Doe",
-      ];
+    const changeLog: string[] = [
+      "Added match: Harbor United 2-1 Ocean Dragon",
+      "Updated player stats for John Doe",
+    ];
     renderUnsavedChanges({ changeLog });
-    expect(screen.getAllByText(new RegExp(`${changeLog.length} unsaved changes`, "i")).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(
+        new RegExp(`${changeLog.length} unsaved changes`, "i"),
+      ).length,
+    ).toBeGreaterThan(0);
   });
   test("renders singular label when there is one change", () => {
     renderUnsavedChanges({
@@ -56,22 +63,13 @@ describe("UnsavedChanges - rendering", () => {
     });
     expect(screen.getAllByText(/1 unsaved change/i).length).toBeGreaterThan(0);
   });
-  test("renders plural label when there are multiple changes", () => {
-    renderUnsavedChanges({
-      changeLog: [
-        "Added match: Harbor United 2-1 Ocean Dragon",
-        "Updated player stats for John Doe",
-        "Removed match: Harbor United 2-1 Ocean Dragon",
-      ],
-    });
-    expect(screen.getAllByText(/3 unsaved changes/i).length).toBeGreaterThan(0);
-  });
 });
 
 describe("UnsavedChanges - save button", () => {
+  const getSaveButton = () => screen.getAllByTestId("save-button")[0];
   test("calls onSave when save button is clicked", async () => {
     renderUnsavedChanges();
-    const saveButton = screen.getAllByTestId("save-button")[0];
+    const saveButton = getSaveButton();
     await userEvent.click(saveButton);
     expect(defaultProps.onSave).toHaveBeenCalled();
   });
@@ -81,22 +79,36 @@ describe("UnsavedChanges - save button", () => {
   });
   test("disables save button when saving is true", () => {
     renderUnsavedChanges({ saving: true });
-    const saveButton = screen.getAllByTestId("save-button")[0];
+    const saveButton = getSaveButton();
     expect(saveButton).toBeDisabled();
   });
 });
 
 describe("UnsavedChanges - mobile expand", () => {
+  const getExpandButton = () => screen.getByTestId("expand-button");
+  const getExpandedChangelog = (exists: boolean = true) =>
+    exists
+      ? screen.getByTestId("expanded-changelog-mobile")
+      : screen.queryByTestId("expanded-changelog-mobile");
   test("change log is hidden by default on mobile", () => {
-  renderUnsavedChanges();
-  expect(screen.queryByTestId("expanded-changelog-mobile")).not.toBeInTheDocument();
-});
+    renderUnsavedChanges();
+    expect(getExpandedChangelog(false)).not.toBeInTheDocument();
+  });
 
-test("change log is visible after clicking the expand button", async () => {
-  renderUnsavedChanges();
-  await userEvent.click(screen.getByTestId("expand-button"));
-  expect(screen.getByTestId("expanded-changelog-mobile")).toBeInTheDocument();
-});
+  test("change log is visible after clicking the expand button", async () => {
+    renderUnsavedChanges();
+    const expandButton = getExpandButton();
+    await userEvent.click(expandButton);
+    expect(getExpandedChangelog()).toBeInTheDocument();
+  });
+
+  test("change log is hidden after clicking the expand button twice", async () => {
+    renderUnsavedChanges();
+    const expandButton = getExpandButton();
+    await userEvent.click(expandButton);
+    await userEvent.click(expandButton);
+    expect(getExpandedChangelog(false)).not.toBeInTheDocument();
+  });
 });
 
 // 🔜 Upcoming feature — full undo cycle not yet implemented
