@@ -36,10 +36,22 @@ const mockLocation = useLocation as jest.Mock;
 
 const renderNavbar = () => render(<Navbar />);
 
+const setAuthenticated = (value: boolean) =>
+  (AuthService.isAuthenticated as jest.Mock).mockReturnValue(value);
+
+const setMockNavigation = () => {
+  const navigate = jest.fn();
+  mockNavigate.mockReturnValue(navigate);
+  return navigate;
+};
+
+const setMockLocation = (pathname: string = "/") =>
+  mockLocation.mockReturnValue({ pathname });
+
 beforeEach(() => {
-  mockNavigate.mockReturnValue(jest.fn());
-  mockLocation.mockReturnValue({ pathname: "/" });
-  AuthService.isAuthenticated = jest.fn().mockReturnValue(false);
+  setMockNavigation();
+  setMockLocation();
+  setAuthenticated(false);
 });
 
 afterEach(() => {
@@ -60,11 +72,17 @@ const typePassword = async (password = correctPassword) => {
   await userEvent.type(passwordField, password);
 };
 
+const getNavButton = (name: string | RegExp) =>
+  screen.getAllByRole("button", { name: name })[0];
+
+const getDialog = (exists: boolean = true) =>
+    exists ? screen.getByRole("dialog") : screen.queryByRole("dialog");
+
 describe("Navbar - rendering", () => {
   test("renders all nav links", () => {
     renderNavbar();
     NAV_LABELS.forEach((label) => {
-      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
+      expect(getNavButton(label)).toBeInTheDocument();
     });
   });
   test("renders logo", () => {
@@ -77,7 +95,7 @@ describe("Navbar - rendering", () => {
     expect(screen.getByTestId("lock-icon")).toBeInTheDocument();
   });
   test("renders Unlock icon when authenticated", () => {
-    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(true);
+    setAuthenticated(true);
     renderNavbar();
     expect(screen.getByTestId("unlock-icon")).toBeInTheDocument();
   });
@@ -85,21 +103,17 @@ describe("Navbar - rendering", () => {
 
 describe("Navbar - active state", () => {
   test("applies active state to current route link", () => {
-    mockLocation.mockReturnValue({ pathname: "/" });
     renderNavbar();
-    expect(screen.getAllByRole("button", { name: /home/i })[0]).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    expect(getNavButton(/home/i)).toHaveAttribute("aria-current", "page");
   });
 
   test("does not apply active state to inactive links", () => {
-    mockLocation.mockReturnValue({ pathname: "/" });
     renderNavbar();
     NAV_LABELS.filter((label) => label !== "Home").forEach((label) => {
-      expect(
-        screen.getAllByRole("button", { name: new RegExp(label, "i") })[0],
-      ).not.toHaveAttribute("aria-current", "page");
+      expect(getNavButton(new RegExp(label, "i"))).not.toHaveAttribute(
+        "aria-current",
+        "page",
+      );
     });
   });
 });
@@ -107,18 +121,17 @@ describe("Navbar - active state", () => {
 describe("Navbar - admin access", () => {
   test("opens dialog when admin clicked and unauthenticated", async () => {
     renderNavbar();
-    const adminLink = screen.getByRole("button", { name: /admin/i });
+    const adminLink = getNavButton(/admin/i);
     await userEvent.click(adminLink);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(getDialog()).toBeInTheDocument();
   });
   test("navigates to /admin when admin clicked and authenticated", async () => {
-    const navigate = jest.fn();
-    mockNavigate.mockReturnValue(navigate);
-    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(true);
+    const navigate = setMockNavigation();
+    setAuthenticated(true);
     renderNavbar();
-    const adminLink = screen.getByRole("button", { name: /admin/i });
+    const adminLink = getNavButton(/admin/i);
     await userEvent.click(adminLink);
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(getDialog(false)).not.toBeInTheDocument();
     expect(navigate).toHaveBeenCalledWith("/admin");
   });
 });
@@ -126,49 +139,54 @@ describe("Navbar - admin access", () => {
 describe("Navbar - admin dialog", () => {
   const openDialog = async () => {
     renderNavbar();
-    const adminLink = screen.getByRole("button", { name: /admin/i });
+    const adminLink = getNavButton(/admin/i);
     await userEvent.click(adminLink);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(getDialog()).toBeInTheDocument();
   };
+
+  const setAuthenticateSuccess = () =>
+    (AuthService.authenticate as jest.Mock).mockReturnValue(true);
+
+  const setAuthenticateError = (error: Error) =>
+    (AuthService.authenticate as jest.Mock).mockImplementationOnce(() => {
+      throw error;
+    });
+
+  const PasswordError = () => screen.getByTestId("password-error")
 
   test("shows error on wrong password", async () => {
     await openDialog();
     await typePassword();
     await clickEnter();
-    expect(screen.getByTestId("password-error")).toHaveTextContent(
+    expect(PasswordError()).toHaveTextContent(
       AUTH_ERRORS.INCORRECT_PASSWORD,
     );
   });
 
   test("shows rate limit error after multiple failed attempts (3)", async () => {
     await openDialog();
-    (AuthService.authenticate as jest.Mock).mockImplementationOnce(() => {
-      throw new Error(AUTH_ERRORS.RATE_LIMITED);
-    });
+    setAuthenticateError(new Error(AUTH_ERRORS.RATE_LIMITED));
     await clickEnter();
-    expect(screen.getByTestId("password-error")).toHaveTextContent(
+    expect(PasswordError()).toHaveTextContent(
       AUTH_ERRORS.RATE_LIMITED,
     );
   });
 
   test("shows lockout error when locked out", async () => {
     await openDialog();
-    (AuthService.authenticate as jest.Mock).mockImplementationOnce(() => {
-      throw new Error(AUTH_ERRORS.LOCKED_OUT);
-    });
+    setAuthenticateError(new Error(AUTH_ERRORS.LOCKED_OUT));
     await clickEnter();
-    expect(screen.getByTestId("password-error")).toHaveTextContent(
+    expect(PasswordError()).toHaveTextContent(
       AUTH_ERRORS.LOCKED_OUT,
     );
   });
 
   test("navigates to /admin and closes dialog on correct password", async () => {
-    const navigate = jest.fn();
-    mockNavigate.mockReturnValue(navigate);
-    (AuthService.authenticate as jest.Mock).mockReturnValue(true);
+    const navigate = setMockNavigation();
+    setAuthenticateSuccess();
     await openDialog();
     await clickEnter();
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(getDialog(false)).not.toBeInTheDocument();
     expect(navigate).toHaveBeenCalledWith("/admin");
   });
 });
@@ -177,23 +195,27 @@ describe("Navbar - mobile menu", () => {
   const clickHamburgerMenu = async () => {
     await userEvent.click(screen.getByTestId("mobile-hamburger"));
   };
+
+  const getMobileMenu = (exists: boolean = true) =>
+  exists ? screen.getByTestId("mobile-menu") : screen.queryByTestId("mobile-menu");
+
   test("opens mobile menu on hamburger click", async () => {
     renderNavbar();
     await clickHamburgerMenu();
-    expect(screen.getByTestId("mobile-menu")).toBeInTheDocument();
+    expect(getMobileMenu()).toBeInTheDocument();
   });
   test("closes mobile menu on hamburger click again", async () => {
     renderNavbar();
     await clickHamburgerMenu();
     await clickHamburgerMenu();
-    expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    expect(getMobileMenu(false)).not.toBeInTheDocument();
   });
   test("closes mobile menu on route change", async () => {
-  const { rerender } = renderNavbar();
-  await clickHamburgerMenu();
-  expect(screen.getByTestId("mobile-menu")).toBeInTheDocument();
-  mockLocation.mockReturnValue({ pathname: "/statistics" });
-  rerender(<Navbar />);
-  expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
-});
+    const { rerender } = renderNavbar();
+    await clickHamburgerMenu();
+    expect(getMobileMenu()).toBeInTheDocument();
+    setMockLocation("/statistics");
+    rerender(<Navbar />);
+    expect(getMobileMenu(false)).not.toBeInTheDocument();
+  });
 });
