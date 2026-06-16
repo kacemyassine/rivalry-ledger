@@ -40,10 +40,16 @@ const renderImageLightbox = (
   };
   return render(<ImageLightbox {...defaultProps} {...props} />);
 };
+
+const getTheImage = () => screen.getByAltText("Example Image");
+
+
 describe("ImageLightbox - rendering", () => {
   test("renders image with correct src and alt when src is provided", () => {
     renderImageLightbox();
-    expect(screen.getByAltText("Example Image")).toBeInTheDocument();
+    const image = getTheImage();
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute("src", "https://example.com/image.jpg");
   });
   test("renders close button", () => {
     renderImageLightbox();
@@ -56,26 +62,28 @@ describe("ImageLightbox - rendering", () => {
 });
 
 describe("ImageLightbox - close behavior", () => {
-  test("calls onClose when backdrop is clicked", async() => {
-    const onClose = jest.fn();
+  let onClose: jest.Mock;
+
+  beforeEach(() => {
+    onClose = jest.fn();
+  });
+
+  test("calls onClose when backdrop is clicked", async () => {
     renderImageLightbox({ onClose });
-    await userEvent.click(screen.getByAltText("Example Image").parentElement!);
+    await userEvent.click(getTheImage().parentElement!);
     expect(onClose).toHaveBeenCalled();
   });
-  test("calls onClose when close button is clicked", async() => {
-    const onClose = jest.fn();
+  test("calls onClose when close button is clicked", async () => {
     renderImageLightbox({ onClose });
     await userEvent.click(screen.getByTestId("x-icon"));
     expect(onClose).toHaveBeenCalled();
   });
-  test("does not call onClose when image is clicked", async() => {
-    const onClose = jest.fn();
+  test("does not call onClose when image is clicked", async () => {
     renderImageLightbox({ onClose });
-    await userEvent.click(screen.getByAltText("Example Image"));
+    await userEvent.click(getTheImage());
     expect(onClose).not.toHaveBeenCalled();
   });
-  test("calls onClose when Escape key is pressed", async() => {
-    const onClose = jest.fn();
+  test("calls onClose when Escape key is pressed", async () => {
     renderImageLightbox({ onClose });
     await userEvent.keyboard("{Escape}");
     expect(onClose).toHaveBeenCalled();
@@ -83,19 +91,27 @@ describe("ImageLightbox - close behavior", () => {
 });
 
 describe("ImageLightbox - upload", () => {
+  const mockIsAuthenticated = (value: boolean) => {
+  (AuthService.isAuthenticated as jest.Mock).mockReturnValue(value);
+};
+  const getUploadIcon = (exists = true) =>
+  exists
+    ? screen.getByTestId("upload-icon")
+    : screen.queryByTestId("upload-icon");
+
   test("renders Add Image button when src is empty, admin is authenticated and uploadPath is provided", async () => {
-    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(true);
+    mockIsAuthenticated(true);
     renderImageLightbox({ src: "" });
-    expect(screen.getByTestId("upload-icon")).toBeInTheDocument();
+    expect(getUploadIcon()).toBeInTheDocument();
   });
   test("does not render Add Image button when src is empty but user is not admin", async () => {
-    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(false);
+    mockIsAuthenticated(false);
     renderImageLightbox({ src: "" });
-    expect(screen.queryByTestId("upload-icon")).not.toBeInTheDocument();
+    expect(getUploadIcon(false)).not.toBeInTheDocument();
   });
   test("does not render Add Image button when src is empty, admin is authenticated but uploadPath is missing", async () => {
-    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(true);
+    mockIsAuthenticated(false);
     renderImageLightbox({ src: "", uploadPath: undefined });
-    expect(screen.queryByTestId("upload-icon")).not.toBeInTheDocument();
+    expect(getUploadIcon(false)).not.toBeInTheDocument();
   });
 });
