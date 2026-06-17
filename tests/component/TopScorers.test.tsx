@@ -5,6 +5,7 @@ import { TopScorers } from "@/components/TopScorers";
 import { useLeagueStore } from "@/store/leagueStore";
 import { getMockLeagueData } from "tests/fixtures/mockSelectors";
 import { sortPlayers } from "@/lib/scorersUtils";
+import { LeagueData } from "@/lib/githubUtils";
 
 jest.mock("@/store/leagueStore", () => ({
   useLeagueStore: jest.fn(),
@@ -39,71 +40,79 @@ const renderTopScorers = (
 
 const mockUseLeagueStore = useLeagueStore as unknown as jest.Mock;
 
+let data: LeagueData;
+
+beforeEach(() => {
+  data = getMockLeagueData({ withScorers: true });
+  setMockStore();
+});
+
+const setMockStore = (overrides = {}) =>
+  mockUseLeagueStore.mockReturnValue({
+    ...data,
+    ...overrides,
+  });
+
 afterEach(() => {
   jest.clearAllMocks();
 });
+
+const getPlayersRows = () => screen.getAllByTestId(/player-row/);
+
+const getShowAllButton = (exists: boolean = true) =>
+    exists
+      ? screen.getByRole("button", { name: /show all/i })
+      : screen.queryByRole("button", { name: /show all/i });
+
 describe("TopScorers - rendering", () => {
   test("renders the 'Top Scorers' heading", () => {
-    mockUseLeagueStore.mockReturnValue({
-      ...getMockLeagueData(),
-    });
     renderTopScorers();
     expect(
       screen.getByRole("heading", { name: /top scorers/i }),
     ).toBeInTheDocument();
   });
   test("renders empty state when there are no players", () => {
-    mockUseLeagueStore.mockReturnValue({
-      ...getMockLeagueData(),
-      players: [],
-    });
+    setMockStore({ players: [] });
     renderTopScorers();
     expect(screen.getByText(/no players/i)).toBeInTheDocument();
   });
   test("renders all players with goals by default", () => {
-    const data = getMockLeagueData({ withScorers: true });
     const scorers = data.players.filter((p) => (p.goals || 0) > 0);
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    setMockStore();
     renderTopScorers();
-    expect(screen.getAllByTestId(/player-row/).length).toBe(scorers.length);
+    expect(getPlayersRows().length).toBe(scorers.length);
   });
   test("renders player name and team name", () => {
-    const data = getMockLeagueData({ withScorers: true });
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers();
     const players = data.players.filter((p) => (p.goals || 0) > 0);
     players.forEach((player) => {
-      const row = screen
-        .getAllByTestId(/player-row/)
-        .find((r) => r.textContent?.includes(player.name));
+      const row = getPlayersRows().find((r) =>
+        r.textContent?.includes(player.name),
+      );
       expect(row).toBeDefined();
       const teamName = data.teams.find((t) => t.id === player.teamId)!.name;
       expect(row).toHaveTextContent(teamName);
     });
   });
   test("renders goal count for each player", () => {
-    const data = getMockLeagueData({ withScorers: true });
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers();
     const players = data.players.filter((p) => (p.goals || 0) > 0);
     players.forEach((player) => {
-      const row = screen
-        .getAllByTestId(/player-row/)
-        .find((r) => r.textContent?.includes(player.name));
+      const row = getPlayersRows().find((r) =>
+        r.textContent?.includes(player.name),
+      );
       expect(row).toBeDefined();
       expect(row).toHaveTextContent(`${player.goals}goals`);
     });
   });
   test("renders User icon when player has no image", () => {
-    const data = getMockLeagueData({ withScorers: true });
     // Ensure at least one player has no image
     data.players[0] = { ...data.players[0], image: null };
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    setMockStore();
     renderTopScorers();
     expect(screen.getAllByTestId("user-icon").length).toBeGreaterThan(0);
   });
   test("renders img when player has an image", () => {
-    const data = getMockLeagueData({ withScorers: true });
     const targetPlayer = {
       ...data.players[0],
       name: "Unique Test Player",
@@ -111,7 +120,7 @@ describe("TopScorers - rendering", () => {
       goals: 99,
     };
     data.players[0] = targetPlayer;
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    setMockStore();
     renderTopScorers();
     const playerImg = screen.getByAltText(targetPlayer.name);
     expect(playerImg).toBeInTheDocument();
@@ -126,98 +135,89 @@ describe("TopScorers - sorting & filtering", () => {
   // test("sorts players with same goals and team points by goal difference descending");
   // test("sorts players with same goals alphabetically");
   test("hides non-scorers by default", () => {
-    const data = getMockLeagueData({ withScorers: true });
     const nonScorers = data.players.filter((p) => (p.goals || 0) === 0);
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers();
-    expect(screen.queryAllByTestId(/player-row/).length).toBe(
+    expect(getPlayersRows().length).toBe(
       data.players.length - nonScorers.length,
     );
   });
   test("shows all players after clicking show all", async () => {
-    const data = {
-      ...getMockLeagueData(),
-      players: [
-        { id: "1", name: "Scorer Player", teamId: "team1", goals: 5 },
-        { id: "2", name: "Non-Scorer Player", teamId: "team1", goals: 0 },
-      ],
-    };
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    data.players = [
+      { id: "1", name: "Scorer Player", teamId: "team1", goals: 5, image: "" },
+      {
+        id: "2",
+        name: "Non-Scorer Player",
+        teamId: "team1",
+        goals: 0,
+        image: "",
+      },
+    ];
+    setMockStore();
     renderTopScorers();
-    const showAllButton = screen.getByRole("button", { name: /show all/i });
-    await userEvent.click(showAllButton);
-    expect(screen.queryAllByTestId(/player-row/).length).toBe(
-      data.players.length,
-    );
+    await userEvent.click(getShowAllButton()!);
+    expect(getPlayersRows().length).toBe(data.players.length);
   });
 
   test("hides show all button when all players have goals", () => {
-    const data = getMockLeagueData({ withScorers: true });
     data.players = data.players.map((p) => ({ ...p, goals: p.goals || 1 }));
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    setMockStore();
     renderTopScorers();
     expect(
-      screen.queryByRole("button", { name: /show all/i }),
+      getShowAllButton(false)
     ).not.toBeInTheDocument();
   });
   test("shows show all button when there are non-scorers", async () => {
-    const data = getMockLeagueData({ withScorers: true });
     data.players[0].goals = 0;
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    setMockStore();
     renderTopScorers();
-    const showAllButton = screen.getByRole("button", { name: /show all/i });
-    expect(showAllButton).toBeInTheDocument();
+    expect(getShowAllButton()).toBeInTheDocument();
   });
 });
 
 describe("TopScorers - buttons", () => {
+  const getEditIcon = (exists: boolean = true) =>
+  exists ? screen.getByTestId("edit-icon") : screen.queryByTestId("edit-icon");
+
+const getTrashIcon = (exists: boolean = true) =>
+  exists ? screen.getByTestId("trash-icon") : screen.queryByTestId("trash-icon");
+
+const getEditButtons = () => screen.getAllByTestId("edit-icon");
+
+const getDeleteButtons = () =>
+  screen.getAllByTestId("trash-icon").map((icon) => icon.closest("button")!);
+
   test("hides edit and delete buttons when hideButtons is true (unauthenticated)", () => {
-    const data = getMockLeagueData({ withScorers: true });
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers({ hideButtons: true });
-    expect(screen.queryByTestId("edit-icon")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("trash-icon")).not.toBeInTheDocument();
+    expect(getEditIcon(false)).not.toBeInTheDocument();
+    expect(getTrashIcon(false)).not.toBeInTheDocument();
   });
   test("calls onEditPlayer with correct id when edit is clicked", async () => {
     const onEditPlayer = jest.fn();
-    const data = getMockLeagueData({ withScorers: true });
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers({ hideButtons: false, onEditPlayer });
-    const editButtons = screen.getAllByTestId("edit-icon");
-    await userEvent.click(editButtons[0]);
+    await userEvent.click(getEditButtons()[0]);
     const sorted = sortPlayers(data.players, data.teams);
     const scorers = sorted.filter((p) => (p.goals || 0) > 0);
     expect(onEditPlayer).toHaveBeenCalledWith(scorers[0].id);
   });
   test("delete button is disabled when player has goals", () => {
-    const data = getMockLeagueData({ withScorers: true });
-    mockUseLeagueStore.mockReturnValue({ ...data });
     renderTopScorers({ hideButtons: false });
-    const deleteButtons = screen
-      .getAllByTestId("trash-icon")
-      .map((icon) => icon.closest("button")!);
-    deleteButtons.forEach((btn) => {
+    getDeleteButtons().forEach((btn) => {
       expect(btn).toBeDisabled();
     });
   });
 
   test("delete button is disabled when team has 23 or fewer players", async () => {
-    const data = {
-      ...getMockLeagueData(),
-      players: Array.from({ length: 23 }, (_, i) => ({
-        id: `player-${i}`,
-        name: `Player ${i}`,
-        teamId: "team-1",
-        goals: 0,
-      })),
-    };
-    mockUseLeagueStore.mockReturnValue({ ...data });
+    data.players = Array.from({ length: 23 }, (_, i) => ({
+      id: `player-${i}`,
+      name: `Player ${i}`,
+      teamId: "team-1",
+      goals: 0,
+      image: "",
+    }));
+    setMockStore();
     renderTopScorers({ hideButtons: false });
-    await userEvent.click(screen.getByRole("button", { name: /show all/i }));
-    const deleteButtons = screen
-      .getAllByTestId("trash-icon")
-      .map((icon) => icon.closest("button")!);
-    deleteButtons.forEach((btn) => {
+    await userEvent.click(getShowAllButton()!);
+    getDeleteButtons().forEach((btn) => {
       expect(btn).toBeDisabled();
     });
   });
