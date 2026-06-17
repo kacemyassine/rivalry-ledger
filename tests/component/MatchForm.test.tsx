@@ -55,6 +55,9 @@ const mockGetState = (overrides = {}) => {
     });
 };
 
+const setMockStore = (overrides = {}) =>
+  mockUseLeagueStore.mockReturnValue(mockStoreBase(overrides));
+
 // ─── Component helpers ──────────────────────────────────────────────────────
 
 const defaultProps = {
@@ -99,21 +102,37 @@ const removeScorer = async (playerId: string) => {
   await userEvent.click(within(row).getByRole("button"));
 };
 
+const getAddScorerButton = () =>
+  screen.getByRole("button", { name: /add scorer/i });
+const getRecordMatchButton = () =>
+  screen.getByRole("button", { name: /record match/i });
+const getUpdateMatchButton = () =>
+  screen.getByRole("button", { name: /update match/i });
+
 afterEach(() => jest.clearAllMocks());
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("MatchForm - rendering", () => {
-  beforeEach(() => mockUseLeagueStore.mockReturnValue(mockStoreBase()));
+  beforeEach(() => setMockStore());
+
+  const getDialog = () => screen.getByRole("dialog");
+
+  const getGoalInputs = () => screen.getAllByRole("spinbutton");
+
+  const getMatchDateField = (exists: boolean = true) =>
+  exists ? screen.getByLabelText("Match Date") : screen.queryByLabelText("Match Date");
+
+
 
   test("renders Record Match title in add mode", () => {
     renderMatchForm();
-    expect(screen.getByRole("dialog")).toHaveTextContent(/record match/i);
+    expect(getDialog()).toHaveTextContent(/record match/i);
   });
 
   test("renders Edit Match title in edit mode", () => {
     renderMatchForm({ editingMatch: data.matches[0] });
-    expect(screen.getByRole("dialog")).toHaveTextContent(/edit match/i);
+    expect(getDialog()).toHaveTextContent(/edit match/i);
   });
 
   test("renders home and away team names", () => {
@@ -130,48 +149,44 @@ describe("MatchForm - rendering", () => {
 
   test("renders home and away goal inputs", () => {
     renderMatchForm();
-    expect(screen.getAllByRole("spinbutton")).toHaveLength(2);
+    expect(getGoalInputs()).toHaveLength(2);
   });
 
   test("does not render date field in add mode", () => {
     renderMatchForm();
-    expect(screen.queryByLabelText("Match Date")).not.toBeInTheDocument();
+    expect(getMatchDateField(false)).not.toBeInTheDocument();
   });
 
   test("renders date field in edit mode", () => {
     renderMatchForm({ editingMatch: data.matches[0] });
-    expect(screen.getByLabelText("Match Date")).toBeInTheDocument();
+    expect(getMatchDateField()).toBeInTheDocument();
   });
 
   test("renders Add Scorer button", () => {
     renderMatchForm();
-    expect(
-      screen.getByRole("button", { name: /add scorer/i }),
-    ).toBeInTheDocument();
+    expect(getAddScorerButton()).toBeInTheDocument();
   });
 
   test("renders Record Match submit button in add mode", () => {
     renderMatchForm();
-    expect(
-      screen.getByRole("button", { name: /record match/i }),
-    ).toBeInTheDocument();
+    expect(getRecordMatchButton()).toBeInTheDocument();
   });
 
   test("renders Update Match submit button in edit mode", () => {
     renderMatchForm({ editingMatch: data.matches[0] });
-    expect(
-      screen.getByRole("button", { name: /update match/i }),
-    ).toBeInTheDocument();
+    expect(getUpdateMatchButton()).toBeInTheDocument();
   });
 });
 
 describe("MatchForm - scorer management", () => {
-  beforeEach(() => mockUseLeagueStore.mockReturnValue(mockStoreBase()));
+  beforeEach(() => setMockStore());
+
+  const getScorerCheckboxes = () => screen.getAllByRole("checkbox");
 
   test("adds a scorer row when Add Scorer button clicked", async () => {
     renderMatchForm();
     await addScorer("player-1", "1");
-    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+    expect(getScorerCheckboxes()).toHaveLength(1);
   });
 
   test("adds multiple scorer rows when Add Scorer clicked multiple times", async () => {
@@ -179,7 +194,7 @@ describe("MatchForm - scorer management", () => {
     await addScorer("player-1", "1");
     await addScorer("player-2", "1");
     await addScorer("player-3", "1");
-    expect(screen.getAllByRole("checkbox")).toHaveLength(3);
+    expect(getScorerCheckboxes()).toHaveLength(3);
   });
 
   test("removes a scorer row when Minus button clicked", async () => {
@@ -187,27 +202,27 @@ describe("MatchForm - scorer management", () => {
     await addScorer("player-1", "1");
     await addScorer("player-2", "1");
     await removeScorer("player-2");
-    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+    expect(getScorerCheckboxes()).toHaveLength(1);
     expect(screen.queryByTestId("scorer-row-player-2")).not.toBeInTheDocument();
   });
 
   test("shows toast error when adding scorer with no players", async () => {
-    mockUseLeagueStore.mockReturnValue(mockStoreBase({ players: [] }));
+    setMockStore({ players: [] });
     renderMatchForm();
-    await userEvent.click(screen.getByRole("button", { name: /add scorer/i }));
+    await userEvent.click(getAddScorerButton());
     expect(toast.error).toHaveBeenCalled();
   });
 });
 
 describe("MatchForm - form submission", () => {
   beforeEach(() => {
-    mockUseLeagueStore.mockReturnValue(mockStoreBase());
+    setMockStore();
     mockGetState();
   });
 
   test("calls addMatch with correct data on submit in add mode", async () => {
     const addMatch = jest.fn();
-    mockUseLeagueStore.mockReturnValue(mockStoreBase({ addMatch }));
+    setMockStore({ addMatch });
     mockGetState({ addMatch });
     renderMatchForm();
     await addTestMatch();
@@ -216,12 +231,12 @@ describe("MatchForm - form submission", () => {
 
   test("calls editMatch with correct data on submit in edit mode", async () => {
     const editMatch = jest.fn();
-    mockUseLeagueStore.mockReturnValue(mockStoreBase({ editMatch }));
+    setMockStore({ editMatch });
     mockGetState({ editMatch });
     const match = data.matches.find((m) => m.id === "match-1")!;
     renderMatchForm({ editingMatch: match });
     await userEvent.click(
-      screen.getByRole("button", { name: /update match/i }),
+      getUpdateMatchButton()
     );
     expect(editMatch).toHaveBeenCalledWith(
       match.id,
@@ -235,7 +250,7 @@ describe("MatchForm - form submission", () => {
   test("calls onOpenChange with false after successful submit", async () => {
     const onOpenChange = jest.fn();
     const addMatch = jest.fn();
-    mockUseLeagueStore.mockReturnValue(mockStoreBase({ addMatch }));
+    setMockStore({ addMatch });
     mockGetState({ addMatch });
     renderMatchForm({ onOpenChange });
     await addTestMatch();
@@ -245,7 +260,7 @@ describe("MatchForm - form submission", () => {
   test("calls onSave after successful add", async () => {
     const onSave = jest.fn();
     const addMatch = jest.fn();
-    mockUseLeagueStore.mockReturnValue(mockStoreBase({ addMatch }));
+    setMockStore({ addMatch });
     mockGetState({ addMatch });
     renderMatchForm({ onSave });
     await addTestMatch();
@@ -256,7 +271,7 @@ describe("MatchForm - form submission", () => {
     renderMatchForm();
     await addScorer("player-1", "1");
     await userEvent.click(
-      screen.getByRole("button", { name: /record match/i }),
+      getRecordMatchButton()
     );
     expect(toast.error).toHaveBeenCalled();
   });
