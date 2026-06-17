@@ -4,10 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { PlayerForm } from "@/components/PlayerForm";
 import { useLeagueStore } from "@/store/leagueStore";
 import { useGitHubData } from "@/hooks/useGitHubData";
-import {
-  populatePlayerForm,
-  resetPlayerForm,
-} from "@/lib/playerFormUtils";
+import { populatePlayerForm, resetPlayerForm } from "@/lib/playerFormUtils";
 import {
   getMockLeagueData,
   getMockPlayerById,
@@ -57,97 +54,133 @@ const renderPlayerForm = (
   return render(<PlayerForm {...defaultProps} {...props} />);
 };
 
+const data = getMockLeagueData();
+
+const mockStoreBase = (overrides = {}) => ({
+  ...data,
+  addPlayer: jest.fn(),
+  editPlayer: jest.fn(),
+  ...overrides,
+});
+
+const mockGetState = () => {
+  (useLeagueStore as unknown as { getState: jest.Mock }).getState = jest
+    .fn()
+    .mockReturnValue({
+      players: data.players,
+      teams: data.teams,
+      matches: data.matches,
+    });
+};
+
+const setMockStore = (overrides = {}) =>
+  mockUseLeagueStore.mockReturnValue(mockStoreBase(overrides));
+
+const setMockGitHub = () =>
+  mockUseGitHubData.mockReturnValue({ uploadImage: jest.fn() });
+
+const setMockPopulatePlayerForm = (overrides = {}) =>
+  (populatePlayerForm as jest.Mock).mockReturnValue({
+    name: "Test Player",
+    teamId: "team-1",
+    image: null,
+    ...overrides,
+  });
+
+const setMockResetPlayerForm = () =>
+  (resetPlayerForm as jest.Mock).mockReturnValue({
+    name: "",
+    teamId: "team-1",
+    image: null,
+  });
+
+const playerId = getMockPlayerById(data, "player-1").id;
+
+const getAddPlayerButton = () =>
+  screen.getByRole("button", { name: /add player/i });
+const getUpdatePlayerButton = () =>
+  screen.getByRole("button", { name: /update player/i });
+const getPlayerNameField = () => screen.getByLabelText(/player name/i);
+
+const submitPlayerForm = async (
+  name: string = "",
+  mode: "add" | "update" = "add",
+) => {
+  if (name) await userEvent.type(getPlayerNameField(), name);
+  await userEvent.click(
+    mode === "add" ? getAddPlayerButton() : getUpdatePlayerButton(),
+  );
+};
+
 afterEach(() => {
   jest.clearAllMocks();
 });
 describe("PlayerForm - rendering", () => {
-  const data = getMockLeagueData();
+  const getFormTitle = (text: RegExp) => screen.getByText(text);
+  const getPlayerImage = (exists: boolean = true) =>
+    exists ? screen.getByAltText("Player") : screen.queryByAltText("Player");
+
   beforeEach(() => {
-    mockUseLeagueStore.mockReturnValue({
-      ...data,
-      addPlayer: jest.fn(),
-      editPlayer: jest.fn(),
-    });
-    mockUseGitHubData.mockReturnValue({
-      uploadImage: jest.fn(),
-    });
-    (resetPlayerForm as jest.Mock).mockReturnValue({
-      name: "",
-      teamId: "team-1",
-      image: null,
-    });
-    (populatePlayerForm as jest.Mock).mockReturnValue({
-      name: "Test Player",
-      teamId: "team-1",
-      image: null,
-    });
+    setMockStore();
+    setMockGitHub();
+    setMockPopulatePlayerForm();
+    setMockResetPlayerForm();
   });
+
   test("renders 'Add New Player' title when not editing", () => {
     renderPlayerForm({ editingPlayerId: null });
-    expect(screen.getByText(/add new player/i)).toBeInTheDocument();
+    expect(getFormTitle(/add new player/i)).toBeInTheDocument();
   });
   test("renders 'Edit Player' title when editing", () => {
     renderPlayerForm({
       editingPlayerId: getMockPlayerByTeamId(data, "team-1").id,
     });
-    expect(screen.getByText(/edit player/i));
+    expect(getFormTitle(/edit player/i)).toBeInTheDocument();
   });
   test("renders User icon when adding a new player (no image)", () => {
     renderPlayerForm({ editingPlayerId: null });
-    const image = screen.queryByAltText("Player");
-    expect(image).not.toBeInTheDocument();
+    expect(getPlayerImage(false)).not.toBeInTheDocument();
   });
   test("renders User icon when editing a player with no image", () => {
     const player = { ...getMockPlayerById(data, "player-1"), image: null };
     renderPlayerForm({ editingPlayerId: player.id });
-    const image = screen.queryByAltText("Player");
-    expect(image).not.toBeInTheDocument();
+    expect(getPlayerImage(false)).not.toBeInTheDocument();
   });
   test("renders player image when editing a player with an image", () => {
-    const player = {
-      ...getMockPlayerById(data, "player-1"),
-      image: "images/player-Image.png",
-    };
-    (populatePlayerForm as jest.Mock).mockReturnValue({
-      name: player.name,
-      teamId: player.teamId,
-      image: "images/player-Image.png",
+    setMockPopulatePlayerForm({ image: "images/player-Image.png" });
+    renderPlayerForm({
+      editingPlayerId: getMockPlayerById(data, "player-1").id,
     });
-    renderPlayerForm({ editingPlayerId: player.id });
-    const image = screen.getByAltText("Player");
+    const image = getPlayerImage();
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute("src", "images/player-Image.png");
   });
   test("renders 'Add Player' submit button when not editing", () => {
     renderPlayerForm({ editingPlayerId: null });
-    const addButton = screen.getByText(/add player/i);
-    expect(addButton).toBeInTheDocument();
+    expect(getAddPlayerButton()).toBeInTheDocument();
   });
   test("renders 'Update Player' submit button when editing", () => {
-    const playerId = getMockPlayerById(data, "player-1").id;
     renderPlayerForm({ editingPlayerId: playerId });
-    const updateButton = screen.getByText(/update player/i);
-    expect(updateButton).toBeInTheDocument();
+    expect(getUpdatePlayerButton()).toBeInTheDocument();
   });
 
   test("renders info message when editing a player", () => {
-    const playerId = getMockPlayerById(data, "player-1").id;
     renderPlayerForm({ editingPlayerId: playerId });
     expect(screen.getByTestId("info-icon")).toBeInTheDocument();
   });
 });
 
 describe("PlayerForm - form behavior", () => {
-  const data = getMockLeagueData();
+  const getPlayerTeamField = () => screen.getByRole("combobox");
+  const getFormError = (exists: boolean = true) =>
+    exists
+      ? screen.getByTestId("form-error")
+      : screen.queryByTestId("form-error");
+  const playerTeam = getMockTeamById(data, "team-1").name;
   test("populates form fields when editing a player", () => {
-    const playerId = getMockPlayerById(data, "player-1").id;
     renderPlayerForm({ editingPlayerId: playerId });
-    const playerNameField = screen.getByLabelText(/player name/i);
-    const PlayerTeamField = screen.getByRole("combobox");
-    expect(playerNameField).toHaveValue("Test Player");
-    expect(PlayerTeamField).toHaveTextContent(
-      getMockTeamById(data, "team-1").name,
-    );
+    expect(getPlayerNameField()).toHaveValue("Test Player");
+    expect(getPlayerTeamField()).toHaveTextContent(playerTeam);
   });
   test("resets form fields when adding a new player", () => {
     renderPlayerForm();
@@ -155,159 +188,98 @@ describe("PlayerForm - form behavior", () => {
     const PlayerTeamField = screen.getByLabelText(/team/i);
     expect(playerNameField).toHaveValue("");
     // displaying first team name by default since its the team name with index 0
-    expect(PlayerTeamField).toHaveTextContent(
-      getMockTeamById(data, "team-1").name,
-    );
+    expect(PlayerTeamField).toHaveTextContent(playerTeam);
   });
   test.todo("submit button is disabled when uploading");
   test("does not submit when name is empty", async () => {
     const addPlayer = jest.fn();
-    mockUseLeagueStore.mockReturnValue({
-      ...data,
-      addPlayer,
-      editPlayer: jest.fn(),
-    });
+    setMockStore({ addPlayer });
     renderPlayerForm();
-    await userEvent.click(screen.getByRole("button", { name: /add player/i }));
+    await submitPlayerForm("", "add");
     expect(addPlayer).not.toHaveBeenCalled();
   });
 
   test("displays error when player name is empty", async () => {
     renderPlayerForm();
-    await userEvent.click(screen.getByLabelText(/player name/i));
-    await userEvent.click(screen.getByRole("button", { name: /add player/i }));
-    expect(screen.getByTestId("form-error")).toBeInTheDocument();
-    expect(screen.getByTestId("form-error")).toHaveTextContent(
-      /player name is required/i,
-    );
+    await submitPlayerForm("", "add");
+    expect(getFormError()).toBeInTheDocument();
+    expect(getFormError()).toHaveTextContent(/player name is required/i);
   });
   test("displays error when addPlayer throws", async () => {
-  const addPlayer = jest.fn().mockImplementation(() => {
-    throw new Error("Player already exists");
+    const addPlayer = jest.fn().mockImplementation(() => {
+      throw new Error("Player already exists");
+    });
+    setMockStore({ addPlayer });
+    renderPlayerForm();
+    await submitPlayerForm("John Doe", "add");
+    expect(getFormError()).toHaveTextContent("Player already exists");
   });
-  mockUseLeagueStore.mockReturnValue({
-    ...data,
-    addPlayer,
-    editPlayer: jest.fn(),
-  });
-  renderPlayerForm();
-  await userEvent.type(screen.getByLabelText(/player name/i), "John Doe");
-  await userEvent.click(screen.getByRole("button", { name: /add player/i }));
-  expect(screen.getByTestId("form-error")).toHaveTextContent("Player already exists");
-});
 
-test("displays error when editPlayer throws", async () => {
-  const editPlayer = jest.fn().mockImplementation(() => {
-    throw new Error("Player not found");
+  test("displays error when editPlayer throws", async () => {
+    const editPlayer = jest.fn().mockImplementation(() => {
+      throw new Error("Player not found");
+    });
+    setMockStore({ editPlayer });
+    renderPlayerForm({ editingPlayerId: playerId });
+    const playerNameField = getPlayerNameField();
+    await userEvent.clear(playerNameField);
+    await submitPlayerForm("New Name", "update");
+    expect(getFormError()).toHaveTextContent("Player not found");
   });
-  mockUseLeagueStore.mockReturnValue({
-    ...data,
-    addPlayer: jest.fn(),
-    editPlayer,
-  });
-  const playerId = getMockPlayerById(data, "player-1").id;
-  renderPlayerForm({ editingPlayerId: playerId });
-  await userEvent.clear(screen.getByLabelText(/player name/i));
-  await userEvent.type(screen.getByLabelText(/player name/i), "New Name");
-  await userEvent.click(screen.getByRole("button", { name: /update player/i }));
-  expect(screen.getByTestId("form-error")).toHaveTextContent("Player not found");
-});
 
-test("clears error when user starts typing", async () => {
-  const addPlayer = jest.fn().mockImplementation(() => {
-    throw new Error("Player already exists");
+  test("clears error when user starts typing", async () => {
+    const addPlayer = jest.fn().mockImplementation(() => {
+      throw new Error("Player already exists");
+    });
+    setMockStore({ addPlayer });
+    renderPlayerForm();
+    const playerNameField = getPlayerNameField();
+    await submitPlayerForm("John Doe", "add");
+    expect(getFormError()).toBeInTheDocument();
+    await userEvent.type(playerNameField, "x");
+    expect(getFormError(false)).not.toBeInTheDocument();
   });
-  mockUseLeagueStore.mockReturnValue({
-    ...data,
-    addPlayer,
-    editPlayer: jest.fn(),
-  });
-  renderPlayerForm();
-  await userEvent.type(screen.getByLabelText(/player name/i), "John Doe");
-  await userEvent.click(screen.getByRole("button", { name: /add player/i }));
-  expect(screen.getByTestId("form-error")).toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText(/player name/i), "x");
-  expect(screen.queryByTestId("form-error")).not.toBeInTheDocument();
-});
 });
 
 describe("PlayerForm - actions", () => {
-  const data = getMockLeagueData();
-  beforeAll(() => {
-  Object.defineProperty(useLeagueStore, 'getState', {
-    value: jest.fn().mockReturnValue({
-      players: data.players,
-      teams: data.teams,
-      matches: data.matches,
-    }),
-    writable: true,
+  beforeEach(() => {
+    mockGetState();
   });
-});
   afterEach(() => {
     jest.clearAllMocks();
-  })
+  });
   test("calls addPlayer when submitting a new player", async () => {
     const addPlayer = jest.fn();
-    mockUseLeagueStore.mockReturnValue({
-      ...data,
-      addPlayer,
-      editPlayer: jest.fn(),
-    })
+    setMockStore({ addPlayer });
     renderPlayerForm();
-    await userEvent.type(screen.getByLabelText(/player name/i), "John Doe");
-    await userEvent.click(screen.getByRole("button", { name: /add player/i }));
+    await submitPlayerForm("John Doe", "add");
     expect(addPlayer).toHaveBeenCalled();
   });
   test("calls editPlayer when submitting an edited player", async () => {
     const editPlayer = jest.fn();
-    const playerId = getMockPlayerById(data, "player-1").id
-    mockUseLeagueStore.mockReturnValue({
-      ...data,
-      addPlayer: jest.fn(),
-      editPlayer,
-    })
-    renderPlayerForm({editingPlayerId: playerId})
-    await userEvent.type(screen.getByLabelText(/player name/i), "New Name");
-    await userEvent.click(screen.getByRole("button", { name: /update player/i }));
+    setMockStore({ editPlayer });
+    renderPlayerForm({ editingPlayerId: playerId });
+    await submitPlayerForm("New Name", "update");
     expect(editPlayer).toHaveBeenCalled();
   });
   test("calls onOpenChange with false after successful submit (when adding)", async () => {
-  const onOpenChange = jest.fn();
-  jest.spyOn(useLeagueStore, 'getState').mockReturnValue({
-  players: data.players,
-  teams: data.teams,
-  matches: data.matches,
-} as any);
-  renderPlayerForm({ onOpenChange });
-  await userEvent.type(screen.getByLabelText(/player name/i), "John Doe");
-  await userEvent.click(screen.getByRole("button", { name: /add player/i }));
-  expect(onOpenChange).toHaveBeenCalledWith(false);
-});
-
-test("calls onOpenChange with false after successful submit (when editing)", async () => {
-  const onOpenChange = jest.fn();
-  const playerId = getMockPlayerById(data, "player-1").id;
-  mockUseLeagueStore.mockReturnValue({
-    ...data,
-    addPlayer: jest.fn(),
-    editPlayer: jest.fn(),
+    const onOpenChange = jest.fn();
+    renderPlayerForm({ onOpenChange });
+    await submitPlayerForm("John Doe", "add");
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
-  renderPlayerForm({ editingPlayerId: playerId, onOpenChange });
-  await userEvent.type(screen.getByLabelText(/player name/i), "New Name");
-  await userEvent.click(screen.getByRole("button", { name: /update player/i }));
-  expect(onOpenChange).toHaveBeenCalledWith(false);
-});
 
-test("calls onSave with updated state after submit", async () => {
-  const onSave = jest.fn();
-  mockUseLeagueStore.mockReturnValue({
-    ...data,
-    addPlayer: jest.fn(),
-    editPlayer: jest.fn(),
+  test("calls onOpenChange with false after successful submit (when editing)", async () => {
+    const onOpenChange = jest.fn();
+    renderPlayerForm({ editingPlayerId: playerId, onOpenChange });
+    await submitPlayerForm("New Name", "update");
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
-  renderPlayerForm({ onSave });
-  await userEvent.type(screen.getByLabelText(/player name/i), "John Doe");
-  await userEvent.click(screen.getByRole("button", { name: /add player/i }));
-  expect(onSave).toHaveBeenCalled();
-});
+
+  test("calls onSave with updated state after submit", async () => {
+    const onSave = jest.fn();
+    renderPlayerForm({ onSave });
+    await submitPlayerForm("John Doe", "add");
+    expect(onSave).toHaveBeenCalled();
+  });
 });
