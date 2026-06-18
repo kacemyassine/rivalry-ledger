@@ -112,20 +112,25 @@ const submitPlayerForm = async (
   );
 };
 
+// Default mock setup for every test in this file. Individual tests can
+// still call setMockStore(...) / setMockPopulatePlayerForm(...) etc.
+// themselves to override, but no describe block should depend on another
+// block's beforeEach having already run earlier in file order.
+beforeEach(() => {
+  setMockStore();
+  setMockGitHub();
+  setMockPopulatePlayerForm();
+  setMockResetPlayerForm();
+});
+
 afterEach(() => {
   jest.clearAllMocks();
 });
+
 describe("PlayerForm - rendering", () => {
   const getFormTitle = (text: RegExp) => screen.getByText(text);
   const getPlayerImage = (exists: boolean = true) =>
     exists ? screen.getByAltText("Player") : screen.queryByAltText("Player");
-
-  beforeEach(() => {
-    setMockStore();
-    setMockGitHub();
-    setMockPopulatePlayerForm();
-    setMockResetPlayerForm();
-  });
 
   test("renders 'Add New Player' title when not editing", () => {
     renderPlayerForm({ editingPlayerId: null });
@@ -244,9 +249,6 @@ describe("PlayerForm - form behavior", () => {
 describe("PlayerForm - actions", () => {
   beforeEach(() => {
     mockGetState();
-  });
-  afterEach(() => {
-    jest.clearAllMocks();
   });
   test("calls addPlayer when submitting a new player", async () => {
     const addPlayer = jest.fn();

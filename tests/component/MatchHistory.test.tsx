@@ -57,12 +57,19 @@ const getThreeDotsButton = (matchId: string) =>
 const getMatchRow = (matchId: string) => screen.getByTestId(matchId);
 const displayedMatches = [...data.matches].reverse().slice(0, 10);
 const lastPlayedMatchId = displayedMatches[0].id;
+
+// Default store state for every test in this file. Individual tests can
+// still call setMockStore(...) themselves to override (e.g. the empty-state
+// test below), but no describe block should depend on another block's
+// beforeEach having already run earlier in file order.
+beforeEach(() => {
+  setMockStore({ matches: data.matches });
+});
+
 describe("MatchHistory - rendering", () => {
   const getRecentMatchesTitle = () => screen.getByText(/recent matches/i);
   const getEmptyStateMessage = () => screen.getByText(/no matches played yet/i);
-  beforeEach(() => {
-    setMockStore({ matches: data.matches });
-  });
+
   test("renders 'Recent Matches' title by default", () => {
     renderMatchHistory();
     expect(getRecentMatchesTitle()).toBeInTheDocument();
@@ -146,9 +153,7 @@ describe("MatchHistory - pagination", () => {
       ? screen.getByRole("button", { name: /show less/i })
       : screen.queryByRole("button", { name: /show less/i });
   const getAllMatchesTitle = () => screen.getByText(/all matches/i);
-  beforeEach(() => {
-    setMockStore({ matches: data.matches });
-  });
+
   test("renders Show All button when more than 10 matches exist", () => {
     renderMatchHistory(); // 11 matches exist.
     expect(getShowAllButton()).toBeInTheDocument();
