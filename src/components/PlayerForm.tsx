@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react';
-import { useLeagueStore } from '@/store/leagueStore';
-import { useGitHubData } from '@/hooks/useGitHubData';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react";
+import { useLeagueStore } from "@/store/leagueStore";
+import { useGitHubData } from "@/hooks/useGitHubData";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  populatePlayerForm,
+  resetPlayerForm,
+  generateImageFilename,
+} from "@/lib/playerFormUtils";
+import { Player } from "@/store/leagueStore";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { User, Upload, X, Loader2, Info } from 'lucide-react';
+} from "@/components/ui/select";
+import { User, Upload, X, Loader2, Info, AlertCircle } from "lucide-react";
 
 interface PlayerFormProps {
   open: boolean;
@@ -26,29 +32,39 @@ interface PlayerFormProps {
   onSave?: (updatedData: any) => void;
 }
 
-export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: PlayerFormProps) {
+export function PlayerForm({
+  open,
+  onOpenChange,
+  editingPlayerId,
+  onSave,
+}: PlayerFormProps) {
   const { players, teams, addPlayer, editPlayer } = useLeagueStore();
   const { uploadImage } = useGitHubData();
-  const [name, setName] = useState('');
-  const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || 'team1');
+  const [name, setName] = useState("");
+  const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || "");
   const [image, setImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const editingPlayer = editingPlayerId ? players?.find((p: any) => p.id === editingPlayerId) : null;
-  const hasGoals = (editingPlayer?.goals || 0) > 0;
+  const editingPlayer = editingPlayerId
+    ? players?.find((p: Player) => p.id === editingPlayerId)
+    : null;
 
   useEffect(() => {
     if (editingPlayer) {
-      setName(editingPlayer.name);
-      setTeamId(editingPlayer.teamId);
-      setImage(editingPlayer.image || null);
+      const state = populatePlayerForm(editingPlayer, teams);
+      setName(state.name);
+      setTeamId(state.teamId);
+      setImage(state.image);
     } else {
-      setName('');
-      setTeamId(teams?.[0]?.id || 'team1');
-      setImage(null);
+      const state = resetPlayerForm(teams);
+      setName(state.name);
+      setTeamId(state.teamId);
+      setImage(state.image);
     }
     setPendingFile(null);
+    setError(null);
   }, [editingPlayer, open, teams]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,48 +78,79 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    setError(null);
+
+    if (!name.trim()) {
+      setError("Player name is required.");
+      return;
+    }
 
     let finalImage = image;
 
     if (pendingFile) {
       setUploading(true);
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(pendingFile);
-      });
+      try {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(pendingFile);
+        });
 
-      const filename = `${name.trim().replace(/\s+/g, '-').toLowerCase()}.${pendingFile.name.split('.').pop()}`;
-      const path = await uploadImage(base64, filename);
-      setUploading(false);
+        const filename = generateImageFilename(name, pendingFile);
+        const path = await uploadImage(base64, filename);
 
-      if (!path) return;
-      finalImage = path;
+        if (!path) {
+          setError("Image upload failed. Please try again.");
+          setUploading(false);
+          return;
+        }
+
+        finalImage = path;
+      } catch {
+        setError("Image upload failed. Please try again.");
+        setUploading(false);
+        return;
+      } finally {
+        setUploading(false);
+      }
     }
 
-    const resultState = editingPlayerId && editingPlayer
-      ? editPlayer(editingPlayerId, { name, teamId, image: finalImage, goals: editingPlayer.goals })
-      : addPlayer({ name, teamId, image: finalImage, goals: 0 });
+    try {
+      const resultState =
+        editingPlayerId && editingPlayer
+          ? editPlayer(editingPlayerId, {
+              name,
+              teamId,
+              image: finalImage,
+            })
+          : addPlayer({ name, teamId, image: finalImage, goals: 0 });
 
-    const fullState = resultState ?? {
-      players: useLeagueStore.getState().players,
-      teams: useLeagueStore.getState().teams,
-      matches: useLeagueStore.getState().matches,
-    };
+      const fullState = resultState ?? {
+        players: useLeagueStore.getState().players,
+        teams: useLeagueStore.getState().teams,
+        matches: useLeagueStore.getState().matches,
+      };
 
-    if (typeof onSave === 'function') {
-      onSave(fullState);
+      if (typeof onSave === "function") {
+        onSave(fullState);
+      }
+
+      onOpenChange(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     }
-
-    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md w-[calc(100%-2rem)] mx-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md w-[calc(100%-2rem)] mx-auto"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
-          <DialogTitle className="text-yellow-400">{editingPlayerId ? 'Edit Player' : 'Add New Player'}</DialogTitle>
+          <DialogTitle className="text-yellow-400">
+            {editingPlayerId ? "Edit Player" : "Add New Player"}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
@@ -112,10 +159,17 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
             <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-border bg-muted group">
               {image ? (
                 <>
-                  <img src={image} alt="Player" className="w-full h-full object-cover" />
+                  <img
+                    src={image}
+                    alt="Player"
+                    className="w-full h-full object-cover"
+                  />
                   <button
                     type="button"
-                    onClick={() => { setImage(null); setPendingFile(null); }}
+                    onClick={() => {
+                      setImage(null);
+                      setPendingFile(null);
+                    }}
                     className="absolute inset-0 bg-background/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X className="w-6 h-6 text-destructive" />
@@ -128,7 +182,12 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
               )}
             </div>
             <label className="cursor-pointer">
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
               <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200">
                 <Upload className="w-4 h-4" /> Upload Photo
               </span>
@@ -137,50 +196,77 @@ export function PlayerForm({ open, onOpenChange, editingPlayerId, onSave }: Play
 
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-yellow-200/80">Player Name</Label>
+            <Label htmlFor="name" className="text-yellow-200/80">
+              Player Name
+            </Label>
             <Input
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setError(null);
+              }}
               placeholder="Enter player name"
               className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
             />
+            {error && (
+              <div
+                data-testid="form-error"
+                className="flex items-center gap-2 text-sm text-red-400"
+              >
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {error}
+              </div>
+            )}
           </div>
 
           {/* Team */}
           <div className="space-y-2">
-            <Label className="text-yellow-200/80">Team</Label>
-            <Select value={teamId} onValueChange={setTeamId} disabled={hasGoals}>
-              <SelectTrigger className={`bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 ${hasGoals ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            <Label htmlFor="team" className="text-yellow-200/80">
+              Team
+            </Label>
+            <Select value={teamId} onValueChange={setTeamId}>
+              <SelectTrigger
+                id="team"
+                className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-[#0d1133] border-yellow-400/20">
                 {teams?.map((team: any) => (
-                  <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {hasGoals && (
-              <p className="flex items-center gap-2 text-xs text-yellow-500/80">
-                <Info className="w-3 h-3 shrink-0" />
-                Team cannot be changed because this player has already scored goals.
-              </p>
-            )}
           </div>
 
           {/* Submit */}
-          <Button type="submit" className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold" disabled={uploading}>
-            {uploading
-              ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...</>
-              : editingPlayerId ? 'Update Player' : 'Add Player'
-            }
+          <Button
+            type="submit"
+            data-testid="save-button"
+            className="w-full bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
+            disabled={uploading}
+          >
+            {uploading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Uploading...
+              </>
+            ) : editingPlayerId ? (
+              "Update Player"
+            ) : (
+              "Add Player"
+            )}
           </Button>
 
           {/* Info message */}
           {editingPlayerId && (
             <p className="flex items-start gap-2 text-xs text-muted-foreground border border-border rounded-lg p-3">
               <Info className="w-3 h-3 shrink-0 mt-0.5" />
-              Player goals are updated automatically when you record a match. To correct a wrong goal, edit the match result or delete the match from the match history.
+              Player goals are updated automatically when you record a match. To
+              correct a wrong goal, edit the match result or delete the match
+              from the match history.
             </p>
           )}
         </form>

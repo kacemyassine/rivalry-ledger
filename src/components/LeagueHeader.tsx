@@ -1,71 +1,85 @@
-import { Trophy, Shield, Camera } from 'lucide-react';
-import { useLeagueStore } from '@/store/leagueStore';
-import { useRef, useState } from 'react';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useGitHubData } from '@/hooks/useGitHubData';
-import { ImageLightbox } from '@/components/ImageLightbox';
-
-
+import { Trophy, Shield, Camera } from "lucide-react";
+import { useLeagueStore } from "@/store/leagueStore";
+import { useRef, useState } from "react";
+import { useGitHubData } from "@/hooks/useGitHubData";
+import { ImageLightbox } from "@/components/ImageLightbox";
+import { calculateMatchProgress } from "@/lib/leagueHeaderUtils";
 
 interface LeagueHeaderProps {
-  theme?: 'default' | 'ramadan';
+  theme?: "default" | "ramadan";
   allowLogoUpload?: boolean;
   onLogoChange?: (teamId: string) => void;
 }
 
-export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLogoChange }: LeagueHeaderProps) {
-  const { teams, matches, targetMatches, leagueName, updateTeamLogo } = useLeagueStore();
+export function LeagueHeader({
+  theme = "default",
+  allowLogoUpload = false,
+  onLogoChange,
+}: LeagueHeaderProps) {
+  const { teams, matches, targetMatches, leagueName, updateTeamLogo } =
+    useLeagueStore();
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
   const { uploadImage } = useGitHubData();
-  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<{
+    src: string;
+    alt: string;
+    teamId: string;
+  } | null>(null);
 
-  const team1 = teams.find(t => t.id === 'team1');
-  const team2 = teams.find(t => t.id === 'team2');
+  const team1 = teams.find((t) => t.id === "team-1");
+  const team2 = teams.find((t) => t.id === "team-2");
 
-  const matchProgress = Math.min((matches.length / targetMatches) * 100, 100);
-  const overallProgress = Math.round(matchProgress);
+  const overallProgress = calculateMatchProgress(matches, targetMatches);
 
-  const isRamadan = theme === 'ramadan';
+  const isRamadan = theme === "ramadan";
 
   const handleLogoClick = (teamId: string, logo: string, name: string) => {
     if (allowLogoUpload) {
       fileInputRefs.current[teamId]?.click();
     } else {
-      if (logo) setLightboxImage({ src: logo, alt: name });
+      if (logo) setLightboxImage({ src: logo, alt: name, teamId });
     }
   };
 
   const handleLogoUpload = async (teamId: string, file: File) => {
-  // Show base64 preview immediately
-  const reader = new FileReader();
-  reader.onloadend = () => updateTeamLogo(teamId, reader.result as string);
-  reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onloadend = () => updateTeamLogo(teamId, reader.result as string);
+    reader.readAsDataURL(file);
 
-  // Upload to GitHub and store the path
-  const base64 = await new Promise<string>((resolve) => {
-    const r = new FileReader();
-    r.onloadend = () => resolve(r.result as string);
-    r.readAsDataURL(file);
-  });
+    const base64 = await new Promise<string>((resolve) => {
+      const r = new FileReader();
+      r.onloadend = () => resolve(r.result as string);
+      r.readAsDataURL(file);
+    });
 
-  const filename = `${teamId}-${Date.now()}.${file.name.split('.').pop()}`;
-  const path = await uploadImage(base64, filename);
+    const filename = `${teamId}-${Date.now()}.${file.name.split(".").pop()}`;
+    const path = await uploadImage(base64, filename);
 
-  if (path) updateTeamLogo(teamId, path);
-    updateTeamLogo(teamId, path);
+    if (path) updateTeamLogo(teamId, path);
     onLogoChange?.(teamId);
-};
+  };
 
   return (
     <header className="relative py-12 text-center">
-
       {/* Decorative bubbles — default only */}
       {!isRamadan && (
         <>
-          <div className="bubble w-4 h-4 top-10 left-[10%]" style={{ animationDelay: '0s' }} />
-          <div className="bubble w-6 h-6 top-20 left-[20%]" style={{ animationDelay: '1s' }} />
-          <div className="bubble w-3 h-3 top-8 right-[15%]" style={{ animationDelay: '2s' }} />
-          <div className="bubble w-5 h-5 top-16 right-[25%]" style={{ animationDelay: '0.5s' }} />
+          <div
+            className="bubble w-4 h-4 top-10 left-[10%]"
+            style={{ animationDelay: "0s" }}
+          />
+          <div
+            className="bubble w-6 h-6 top-20 left-[20%]"
+            style={{ animationDelay: "1s" }}
+          />
+          <div
+            className="bubble w-3 h-3 top-8 right-[15%]"
+            style={{ animationDelay: "2s" }}
+          />
+          <div
+            className="bubble w-5 h-5 top-16 right-[25%]"
+            style={{ animationDelay: "0.5s" }}
+          />
         </>
       )}
 
@@ -81,38 +95,52 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
       )}
 
       <div className="relative z-10 animate-fade-in">
-
         {/* Title */}
         <div className="flex items-center justify-center gap-2 sm:gap-4 mb-4 px-2">
-          <Trophy className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? 'text-yellow-400' : 'text-gold'}`} />
-          <h1 className={`text-2xl sm:text-4xl md:text-6xl font-display font-bold tracking-wider text-center ${
-            isRamadan
-              ? 'text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600'
-              : 'text-gradient-gold'
-          }`}>
+          <Trophy
+            className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? "text-yellow-400" : "text-gold"}`}
+          />
+          <h1 data-testId = "league-title"
+            className={`text-2xl sm:text-4xl md:text-6xl font-display font-bold tracking-wider text-center ${
+              isRamadan
+                ? "text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600"
+                : "text-gradient-gold"
+            }`}
+          >
             {leagueName.toUpperCase()}
           </h1>
-          <Trophy className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? 'text-yellow-400' : 'text-gold'}`} />
+          <Trophy
+            className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? "text-yellow-400" : "text-gold"}`}
+          />
         </div>
 
         {/* Subtitle */}
-        <p className={`text-sm sm:text-lg font-body tracking-wide text-center px-2 ${isRamadan ? 'text-yellow-200/70' : 'text-muted-foreground'}`}>
+        <p data-testId="league-subtitle"
+          className={`text-sm sm:text-lg font-body tracking-wide text-center px-2 ${isRamadan ? "text-yellow-200/70" : "text-muted-foreground"}`}
+        >
           {targetMatches} Matches • {teams.length} Teams • 1 Champion
         </p>
 
         {/* Teams */}
         <div className="mt-6 flex justify-center gap-12">
-
           {/* Team 1 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : team1?.logo ? 'cursor-pointer' : ''} ${isRamadan ? 'border-yellow-400/50' : 'border-primary/50'}`}
-              onClick={() => handleLogoClick('team1', team1?.logo || '', team1?.name || '')}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? "cursor-pointer group" : team1?.logo ? "cursor-pointer" : ""} ${isRamadan ? "border-yellow-400/50" : "border-primary/50"}`}
+              onClick={() =>
+                handleLogoClick("team1", team1?.logo || "", team1?.name || "")
+              }
             >
               {team1?.logo ? (
-                <img src={team1.logo} alt={team1?.name} className="w-full h-full object-cover" />
+                <img
+                  src={team1.logo}
+                  alt={team1?.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <Shield className={`w-8 h-8 ${isRamadan ? 'text-yellow-400/50' : 'text-primary/50'}`} />
+                <Shield
+                  className={`w-8 h-8 ${isRamadan ? "text-yellow-400/50" : "text-primary/50"}`}
+                />
               )}
               {allowLogoUpload && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -124,27 +152,48 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
               <input
                 type="file"
                 accept="image/*"
-                ref={(el) => (fileInputRefs.current['team1'] = el)}
+                ref={(el) => (fileInputRefs.current["team1"] = el)}
                 className="hidden"
-                onChange={(e) => { const file = e.target.files?.[0]; if (file) handleLogoUpload('team1', file); }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleLogoUpload("team1", file);
+                }}
               />
             )}
-            <p className={`text-sm uppercase tracking-wider ${isRamadan ? 'text-yellow-200/60' : 'text-muted-foreground'}`}>{team1?.name}</p>
-            <p className={`font-medium ${isRamadan ? 'text-yellow-400' : 'text-primary'}`}>Coach {team1?.coach}</p>
+            <p
+              className={`text-sm uppercase tracking-wider ${isRamadan ? "text-yellow-200/60" : "text-muted-foreground"}`}
+            >
+              {team1?.name}
+            </p>
+            <p
+              className={`font-medium ${isRamadan ? "text-yellow-400" : "text-primary"}`}
+            >
+              Coach {team1?.coach}
+            </p>
           </div>
 
-          <div className={`w-px ${isRamadan ? 'bg-yellow-400/30' : 'bg-border'}`} />
+          <div
+            className={`w-px ${isRamadan ? "bg-yellow-400/30" : "bg-border"}`}
+          />
 
           {/* Team 2 */}
           <div className="text-center flex flex-col items-center gap-2">
             <div
-              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? 'cursor-pointer group' : team2?.logo ? 'cursor-pointer' : ''} ${isRamadan ? 'border-yellow-400/30' : 'border-secondary/50'}`}
-              onClick={() => handleLogoClick('team2', team2?.logo || '', team2?.name || '')}
+              className={`relative w-16 h-16 rounded-xl overflow-hidden border-2 bg-muted/30 flex items-center justify-center ${allowLogoUpload ? "cursor-pointer group" : team2?.logo ? "cursor-pointer" : ""} ${isRamadan ? "border-yellow-400/30" : "border-secondary/50"}`}
+              onClick={() =>
+                handleLogoClick("team2", team2?.logo || "", team2?.name || "")
+              }
             >
               {team2?.logo ? (
-                <img src={team2.logo} alt={team2?.name} className="w-full h-full object-cover" />
+                <img
+                  src={team2.logo}
+                  alt={team2?.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <Shield className={`w-8 h-8 ${isRamadan ? 'text-yellow-400/30' : 'text-secondary/50'}`} />
+                <Shield
+                  className={`w-8 h-8 ${isRamadan ? "text-yellow-400/30" : "text-secondary/50"}`}
+                />
               )}
               {allowLogoUpload && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -156,52 +205,77 @@ export function LeagueHeader({ theme = 'default', allowLogoUpload = false, onLog
               <input
                 type="file"
                 accept="image/*"
-                ref={(el) => (fileInputRefs.current['team2'] = el)}
+                ref={(el) => (fileInputRefs.current["team2"] = el)}
                 className="hidden"
-                onChange={(e) => { const file = e.target.files?.[0]; if (file) handleLogoUpload('team2', file); }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleLogoUpload("team2", file);
+                }}
               />
             )}
-            <p className={`text-sm uppercase tracking-wider ${isRamadan ? 'text-yellow-200/60' : 'text-muted-foreground'}`}>{team2?.name}</p>
-            <p className={`font-medium ${isRamadan ? 'text-yellow-300' : 'text-secondary'}`}>Coach {team2?.coach}</p>
+            <p
+              className={`text-sm uppercase tracking-wider ${isRamadan ? "text-yellow-200/60" : "text-muted-foreground"}`}
+            >
+              {team2?.name}
+            </p>
+            <p
+              className={`font-medium ${isRamadan ? "text-yellow-300" : "text-secondary"}`}
+            >
+              Coach {team2?.coach}
+            </p>
           </div>
-
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto">
+        <div data-testId="progress-bar" className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-3">
-            <span className={`text-sm font-semibold ${isRamadan ? 'text-yellow-400' : 'text-[hsl(45_85%_55%)]'}`}>📊 League Progress</span>
-            <span className={`text-sm font-bold ${isRamadan ? 'text-yellow-300' : 'text-[hsl(180_80%_50%)]'}`}>{overallProgress}%</span>
+            <span
+              className={`text-sm font-semibold ${isRamadan ? "text-yellow-400" : "text-[hsl(45_85%_55%)]"}`}
+            >
+              📊 League Progress
+            </span>
+            <span
+              className={`text-sm font-bold ${isRamadan ? "text-yellow-300" : "text-[hsl(180_80%_50%)]"}`}
+            >
+              {overallProgress}%
+            </span>
           </div>
-          <div className={`relative h-3 rounded-full overflow-hidden border shadow-lg ${isRamadan ? 'bg-[#0a0e2a] border-yellow-400/20' : 'bg-[hsl(210_45%_12%)] border-[hsl(200_40%_25%)]'}`}>
+          <div
+            className={`relative h-3 rounded-full overflow-hidden border shadow-lg ${isRamadan ? "bg-[#0a0e2a] border-yellow-400/20" : "bg-[hsl(210_45%_12%)] border-[hsl(200_40%_25%)]"}`}
+          >
             <div
               className={`h-full transition-all duration-1000 ease-out rounded-full ${
                 isRamadan
-                  ? 'bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-200 shadow-[0_0_10px_rgba(234,179,8,0.6)]'
-                  : 'bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(120_80%_50%)] shadow-[0_0_10px_hsl(180_80%_50%)]'
+                  ? "bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-200 shadow-[0_0_10px_rgba(234,179,8,0.6)]"
+                  : "bg-gradient-to-r from-[hsl(180_80%_50%)] via-[hsl(45_85%_55%)] to-[hsl(120_80%_50%)] shadow-[0_0_10px_hsl(180_80%_50%)]"
               }`}
               style={{ width: `${overallProgress}%` }}
             />
           </div>
-          <div className={`flex justify-between text-xs mt-2 ${isRamadan ? 'text-yellow-200/50' : 'text-[hsl(180_20%_65%)]'}`}>
-            <span>🎯 {matches.length} / {targetMatches} matches</span>
+          <div
+            className={`flex justify-between text-xs mt-2 ${isRamadan ? "text-yellow-200/50" : "text-[hsl(180_20%_65%)]"}`}
+          >
+            <span>
+              🎯 {matches.length} / {targetMatches} matches
+            </span>
             <span>👥 {teams.length} / 2 teams</span>
             <span>
               {matches.length === 0
-                ? '⏳ Beginning Soon'
+                ? "⏳ Beginning Soon"
                 : matches.length >= targetMatches
-                ? '🏆 Finished'
-                : '⚽ In Progress'}
+                  ? "🏆 Finished"
+                  : "⚽ In Progress"}
             </span>
           </div>
         </div>
-
       </div>
       {lightboxImage && (
         <ImageLightbox
           src={lightboxImage.src}
           alt={lightboxImage.alt}
           onClose={() => setLightboxImage(null)}
+          uploadPath="images/TeamsLogos"
+          onUpload={(path) => updateTeamLogo(lightboxImage.teamId, path)}
         />
       )}
     </header>

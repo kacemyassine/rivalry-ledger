@@ -1,202 +1,116 @@
-import { useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useCallback, useRef, useEffect } from 'react';
+import { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, fetchCups, updateCups, CupsData } from '@/lib/githubUtils';
+import type { LeagueData, GitHubConfig } from '@/lib/githubUtils';
 
-const GITHUB_CONFIG = {
+const GITHUB_CONFIG: GitHubConfig = {
   owner: 'kacemyassine',
-  repo: 'atlantis-showdown',
+  repo: 'rivalry-ledger',
   path: 'src/data/defaultLeagueData.json',
   branch: 'main',
 };
 
-export interface LeagueData {
-  leagueConfig?: {
-    name: string;
-    id: string;
-  };
-  teams: any[];
-  players: any[];
-  matches: any[];
-  targetMatches?: number;
-}
+const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
-function base64ToUtf8(str: string) {
-  return decodeURIComponent(escape(atob(str)));
-}
+export type { LeagueData };
 
 export function useGitHubData() {
-  const fetchData = useCallback(async (): Promise<LeagueData | null> => {
-    try {
-      const apiRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      if (!apiRes.ok) throw new Error('Failed to fetch');
-      const { content } = await apiRes.json();
-      return JSON.parse(base64ToUtf8(content)) as LeagueData;
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to fetch league data');
-      return null;
-    }
+  const isWriting = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    abortControllerRef.current = new AbortController();
+    return () => {
+      abortControllerRef.current?.abort();
+    };
   }, []);
 
-  const fetchArchiveIndex = useCallback(async () => {
-    try {
-      const apiRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/archives/index.json?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      if (!apiRes.ok) throw new Error('Failed to fetch archive index');
-      const { content } = await apiRes.json();
-      return JSON.parse(base64ToUtf8(content));
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to fetch archive index');
-      return null;
-    }
-  }, []);
-
-  const updateData = useCallback(
-    async (data: LeagueData, autoRefresh?: () => void): Promise<boolean> => {
-      try {
-        const { data: result, error } = await supabase.functions.invoke('update-json', {
-          body: { data, owner: GITHUB_CONFIG.owner, repo: GITHUB_CONFIG.repo, path: GITHUB_CONFIG.path, branch: GITHUB_CONFIG.branch },
-        });
-
-        if (error || result?.error) {
-          console.error(error || result.error);
-          toast.error('Failed to update data on GitHub');
-          return false;
-        }
-
-        toast.success('Data saved to GitHub successfully!');
-        if (autoRefresh) autoRefresh();
-        return true;
-      } catch (e) {
-        console.error(e);
-        toast.error('Failed to update data');
-        return false;
-      }
-    },
-    []
-  );
-
-  const archiveLeague = useCallback(
-    async (archiveData: {
-      currentData: LeagueData;
-      newLeagueConfig: { name: string; id: string };
-      newTargetMatches: number;
-      keepPlayers: boolean;
-      imageName: string;
-      winner: string;
-    }): Promise<boolean> => {
-      try {
-        const { data: result, error } = await supabase.functions.invoke('archive-league', {
-          body: {
-            ...archiveData,
-            owner: GITHUB_CONFIG.owner,
-            repo: GITHUB_CONFIG.repo,
-            branch: GITHUB_CONFIG.branch,
-          },
-        });
-
-        if (error || result?.error) {
-          console.error(error || result.error);
-          toast.error('Failed to archive league');
-          return false;
-        }
-
-        toast.success('League archived and new league started!');
-        return true;
-      } catch (e) {
-        console.error(e);
-        toast.error('Failed to archive league');
-        return false;
-      }
-    },
-    []
-  );
-
-  const uploadImage = useCallback(async (base64: string, filename: string): Promise<string | null> => {
-    try {
-      const path = `public/images/${filename}`;
-
-      const getRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}?ref=${GITHUB_CONFIG.branch}`,
-        { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-      );
-      const sha = getRes.ok ? (await getRes.json()).sha : undefined;
-
-      const putRes = await fetch(
-        `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${path}`,
-        {
-          method: 'PUT',
-          headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: `Upload image: ${filename}`,
-            content: base64.split(',')[1],
-            branch: GITHUB_CONFIG.branch,
-            ...(sha && { sha }),
-          }),
-        }
-      );
-
-      if (!putRes.ok) {
-        toast.error('Failed to upload image');
-        return null;
-      }
-
-      return `/images/${filename}`;
-    } catch (e) {
-      console.error(e);
-      toast.error('Failed to upload image');
-      return null;
-    }
-  }, []);
-
-  const fetchCups = useCallback(async () => {
+  const checkOnline = useCallback(async () => {
+  if (!navigator.onLine) return false;
   try {
-    const apiRes = await fetch(
-      `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/src/data/cups.json?ref=${GITHUB_CONFIG.branch}`,
-      { headers: { Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}` } }
-    );
-    if (!apiRes.ok) throw new Error('Failed to fetch cups');
-    const { content } = await apiRes.json();
-    return JSON.parse(base64ToUtf8(content));
-  } catch (e) {
-    console.error(e);
-    toast.error('Failed to fetch cups');
-    return null;
-  }
-}, []);
-
-const updateCups = useCallback(async (data: any): Promise<boolean> => {
-  try {
-    const { data: result, error } = await supabase.functions.invoke('update-json', {
-      body: {
-        data,
-        owner: GITHUB_CONFIG.owner,
-        repo: GITHUB_CONFIG.repo,
-        path: 'src/data/cups.json',
-        branch: GITHUB_CONFIG.branch,
-      },
-    });
-
-    if (error || result?.error) {
-      console.error(error || result.error);
-      toast.error('Failed to update cups');
-      return false;
-    }
-
-    toast.success('Cup saved successfully!');
+    // Use a HEAD request to check connectivity without downloading data
+    await fetch("https://api.github.com", { method: "HEAD", signal: AbortSignal.timeout(3000) });
     return true;
-  } catch (e) {
-    console.error(e);
-    toast.error('Failed to update cups');
+  } catch {
     return false;
   }
 }, []);
 
-  return { fetchData, updateData, archiveLeague, uploadImage, fetchArchiveIndex, fetchCups, updateCups, config: GITHUB_CONFIG };
+  const _fetchData = useCallback(() => {
+    if (!checkOnline()) return Promise.resolve(null);
+    return fetchData(GITHUB_CONFIG, TOKEN);
+  }, [checkOnline]);
+
+  const _updateData = useCallback((data: LeagueData, autoRefresh?: () => void) => {
+    if (!checkOnline()) return Promise.resolve(false);
+    if (isWriting.current) return Promise.resolve(false);
+    isWriting.current = true;
+    return updateData(data, GITHUB_CONFIG).then(result => {
+      isWriting.current = false;
+      if (result && autoRefresh) autoRefresh();
+      return result;
+    }).catch(e => {
+      isWriting.current = false;
+      throw e;
+    });
+  }, [checkOnline]);
+
+  const _archiveLeague = useCallback((archiveData: Parameters<typeof archiveLeague>[0]) => {
+    if (!checkOnline()) return Promise.resolve(false);
+    if (isWriting.current) return Promise.resolve(false);
+    isWriting.current = true;
+    return archiveLeague(archiveData, GITHUB_CONFIG).then(result => {
+      isWriting.current = false;
+      return result;
+    }).catch(e => {
+      isWriting.current = false;
+      throw e;
+    });
+  }, [checkOnline]);
+
+  const _uploadImage = useCallback((base64: string, filename: string) => {
+    if (!checkOnline()) return Promise.resolve(null);
+    if (isWriting.current) return Promise.resolve(null);
+    isWriting.current = true;
+    return uploadImage(base64, filename, GITHUB_CONFIG, TOKEN).then(result => {
+      isWriting.current = false;
+      return result;
+    }).catch(e => {
+      isWriting.current = false;
+      throw e;
+    });
+  }, [checkOnline]);
+
+  const _fetchArchiveIndex = useCallback(() => {
+    if (!checkOnline()) return Promise.resolve(null);
+    return fetchArchiveIndex(GITHUB_CONFIG, TOKEN);
+  }, [checkOnline]);
+
+  const _fetchCups = useCallback(() => {
+    if (!checkOnline()) return Promise.resolve(null);
+    return fetchCups(GITHUB_CONFIG, TOKEN);
+  }, [checkOnline]);
+
+  const _updateCups = useCallback((data: CupsData) => {
+    if (!checkOnline()) return Promise.resolve(false);
+    if (isWriting.current) return Promise.resolve(false);
+    isWriting.current = true;
+    return updateCups(data, GITHUB_CONFIG).then(result => {
+      isWriting.current = false;
+      return result;
+    }).catch(e => {
+      isWriting.current = false;
+      throw e;
+    });
+  }, [checkOnline]);
+
+  return {
+    fetchData: _fetchData,
+    updateData: _updateData,
+    archiveLeague: _archiveLeague,
+    uploadImage: _uploadImage,
+    fetchArchiveIndex: _fetchArchiveIndex,
+    fetchCups: _fetchCups,
+    updateCups: _updateCups,
+    config: GITHUB_CONFIG,
+  };
 }

@@ -1,24 +1,25 @@
 import { useState } from 'react';
-import { useLeagueStore } from '@/store/leagueStore';
+import { Team, useLeagueStore, Match } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
 import { Shield, ChevronDown, X, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+
 interface MatchHistoryProps {
   theme?: 'default' | 'ramadan';
-  onEditMatch?: (match: any) => void;
+  onEditMatch?: (match: Match) => void;
   onDeleteMatch?: (matchId: string) => void;
 }
 
 export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: MatchHistoryProps) {
   const { matches, teams, players } = useLeagueStore();
   const [showAll, setShowAll] = useState(false);
-  const [selectedMatch, setSelectedMatch] = useState<any>(null);
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; match: any } | null>(null);
-  const [matchToDelete, setMatchToDelete] = useState<any>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; match: Match } | null>(null);
+  const [matchToDelete, setMatchToDelete] = useState<Match | null>(null);
   const isRamadan = theme === 'ramadan';
 
-  const handleContextMenu = (e: React.MouseEvent, match: any) => {
+  const handleContextMenu = (e: React.MouseEvent, match: Match) => {
     if (!onEditMatch && !onDeleteMatch) return;
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, match });
@@ -69,9 +70,9 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         ) : (
           <div className="space-y-2 md:space-y-3 overflow-x-auto scroll-container -mx-4 md:mx-0 px-4 md:px-0">
             <div className="min-w-[320px]">
-              {displayedMatches.map((match: any, index: number) => {
-                const homeTeam = teams.find((t: any) => t.id === match.homeTeamId);
-                const awayTeam = teams.find((t: any) => t.id === match.awayTeamId);
+              {displayedMatches.map((match: Match, index: number) => {
+                const homeTeam = teams.find((t: Team) => t.id === match.homeTeamId);
+                const awayTeam = teams.find((t: Team) => t.id === match.awayTeamId);
                 const homeWin = match.homeGoals > match.awayGoals;
                 const awayWin = match.awayGoals > match.homeGoals;
                 const matchNum = matches.length - index;
@@ -81,6 +82,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                     key={match.id}
                     onClick={() => setSelectedMatch(match)}
                     onContextMenu={(e) => handleContextMenu(e, match)}
+                    data-testid={match.id}
                     className={cn(
                       'flex items-center gap-2 md:gap-4 p-2 md:p-3 rounded-lg transition-colors mb-2 cursor-pointer',
                       isRamadan ? 'bg-yellow-400/5 hover:bg-yellow-400/10' : 'bg-muted/20 hover:bg-muted/30'
@@ -91,7 +93,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                     </span>
                     <div className="flex-1 flex items-center justify-between min-w-0">
                       {/* Home team */}
-                      <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1">
+                      <div  className="flex items-center gap-1 md:gap-2 min-w-0 flex-1">
                         <div className={cn(
                           'w-6 h-6 md:w-8 md:h-8 rounded-lg overflow-hidden border bg-muted/30 flex items-center justify-center shrink-0',
                           isRamadan ? 'border-yellow-400/20' : 'border-primary/30'
@@ -118,7 +120,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       </div>
 
                      {/* Away team */}
-                      <div className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
+                      <div  className="flex items-center gap-1 md:gap-2 min-w-0 flex-1 justify-end">
                         <span className={cn(
                           'font-medium text-xs md:text-sm text-right truncate whitespace-nowrap',
                           awayWin ? 'text-green-400' : 'text-white'
@@ -178,8 +180,10 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setSelectedMatch(null)}
+          data-testid={`${selectedMatch.id}-backdrop`}
         >
           <div
+            data-testid={`${selectedMatch.id}-popup`}
             className={cn(
               'p-6 max-w-md w-full relative rounded-2xl border',
               isRamadan
@@ -248,7 +252,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 px-2 shrink-0">
+                    <div data-testid="popup-score" className="flex items-center gap-1 px-2 shrink-0">
                       <span className={cn('text-4xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{selectedMatch.homeGoals}</span>
                       <span className={cn('text-lg', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>-</span>
                       <span className={cn('text-4xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{selectedMatch.awayGoals}</span>
@@ -282,7 +286,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
 
                   {/* Scorers */}
                   <div className="flex items-stretch justify-between gap-3">
-                    <div className="flex-1">
+                    <div data-testid="home-scorers" className="flex-1">
                       {homeScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
@@ -301,7 +305,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                       })}
                     </div>
                     <div className="w-12" />
-                    <div className="flex-1">
+                    <div data-testid="away-scorers" className="flex-1">
                       {awayScorers.map((scorer: any, i: number) => {
                         const player = players.find((p: any) => p.id === scorer.playerId);
                         return (
@@ -332,8 +336,10 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         <div
           className="fixed inset-0 z-50"
           onClick={handleCloseContextMenu}
+          data-testid="context-menu-backdrop"
         >
           <div
+            data-testid="context-menu"
             className="absolute bg-card border border-border rounded-lg shadow-xl overflow-hidden"
             style={{ top: contextMenu.y, left: Math.min(contextMenu.x, window.innerWidth - 160) }}
             onClick={(e) => e.stopPropagation()}
@@ -369,6 +375,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
           onClick={() => setMatchToDelete(null)}
         >
           <div
+            data-testid="delete-confirmation-dialog"
             className={cn(
               'p-6 max-w-sm w-full rounded-2xl border',
               isRamadan

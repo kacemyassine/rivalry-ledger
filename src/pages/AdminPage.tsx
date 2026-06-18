@@ -405,6 +405,8 @@ const AdminPage = () => {
             onSave={handleSaveToGitHub}
             saving={saving}
             hasChanges={hasChanges}
+            onUndo={() => {}}
+            onUndoAll={() => {}}
           />
       </div>
     </AdminProvider>
