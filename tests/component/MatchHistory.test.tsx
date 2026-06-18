@@ -5,6 +5,7 @@ import React from "react";
 import { MatchHistory } from "@/components/MatchHistory";
 import { useLeagueStore } from "@/store/leagueStore";
 import {
+  getMockMatchById,
   getMockLeagueData,
   getMockTeamById,
 } from "tests/fixtures/mockSelectors";
@@ -39,34 +40,43 @@ const mockStoreBase = (overrides = {}) => ({
   ...overrides,
 });
 
+const setMockStore = (overrides = {}) =>
+  mockUseLeagueStore.mockReturnValue(mockStoreBase(overrides));
+
 const renderMatchHistory = (
   props?: Partial<React.ComponentProps<typeof MatchHistory>>,
 ) => {
   render(<MatchHistory {...defaultProps} {...props} />);
 };
 
+const getMatchesNumbers = () => screen.getAllByText(/#\d+/);
+
+const getThreeDotsButton = (matchId: string) =>
+  within(getMatchRow(matchId)).getByRole("button");
+
 const getMatchRow = (matchId: string) => screen.getByTestId(matchId);
 const displayedMatches = [...data.matches].reverse().slice(0, 10);
+const lastPlayedMatchId = displayedMatches[0].id;
 describe("MatchHistory - rendering", () => {
+  const getRecentMatchesTitle = () => screen.getByText(/recent matches/i);
+  const getEmptyStateMessage = () => screen.getByText(/no matches played yet/i);
   beforeEach(() => {
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(
-      mockStoreBase({ matches: data.matches }),
-    );
+    setMockStore({ matches: data.matches });
   });
   test("renders 'Recent Matches' title by default", () => {
     renderMatchHistory();
-    expect(screen.getByText(/recent matches/i)).toBeInTheDocument();
+    expect(getRecentMatchesTitle()).toBeInTheDocument();
   });
 
   test("renders empty state message when no matches", () => {
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(mockStoreBase());
+    setMockStore();
     renderMatchHistory();
-    expect(screen.getByText(/no matches played yet/i)).toBeInTheDocument();
+    expect(getEmptyStateMessage()).toBeInTheDocument();
   });
 
   test("renders only 10 matches by default when more than 10 exist", () => {
     renderMatchHistory();
-    expect(screen.getAllByText(/#\d+/)).toHaveLength(10);
+    expect(getMatchesNumbers()).toHaveLength(10);
   });
 
   test("renders home and away team names", () => {
@@ -93,9 +103,7 @@ describe("MatchHistory - rendering", () => {
 
   test("renders Shield icon when team has no logo", () => {
     const teamsWithoutLogos = data.teams.map((t) => ({ ...t, logo: "" }));
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(
-      mockStoreBase({ matches: data.matches, teams: teamsWithoutLogos }),
-    );
+    setMockStore({ matches: data.matches, teams: teamsWithoutLogos });
     renderMatchHistory();
     expect(screen.getAllByTestId("shield-icon").length).toBe(20);
   });
@@ -105,9 +113,7 @@ describe("MatchHistory - rendering", () => {
       ...team,
       logo: `images/team${index + 1}-logo.png`,
     }));
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(
-      mockStoreBase({ matches: data.matches, teams: teamsWithLogos }),
-    );
+    setMockStore({ matches: data.matches, teams: teamsWithLogos });
     renderMatchHistory();
     displayedMatches.forEach((match) => {
       const matchRow = getMatchRow(match.id);
@@ -131,66 +137,71 @@ describe("MatchHistory - rendering", () => {
 });
 
 describe("MatchHistory - pagination", () => {
+  const getShowAllButton = (exists: boolean = true) =>
+    exists
+      ? screen.getByRole("button", { name: /show all/i })
+      : screen.queryByRole("button", { name: /show all/i });
+  const getShowLessButton = (exists: boolean = true) =>
+    exists
+      ? screen.getByRole("button", { name: /show less/i })
+      : screen.queryByRole("button", { name: /show less/i });
+  const getAllMatchesTitle = () => screen.getByText(/all matches/i);
   beforeEach(() => {
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(
-      mockStoreBase({ matches: data.matches }),
-    );
+    setMockStore({ matches: data.matches });
   });
   test("renders Show All button when more than 10 matches exist", () => {
     renderMatchHistory(); // 11 matches exist.
-    expect(
-      screen.getByRole("button", { name: /show all/i }),
-    ).toBeInTheDocument();
+    expect(getShowAllButton()).toBeInTheDocument();
   });
   test("does not render Show All button when 10 or fewer matches", () => {
-    (mockUseLeagueStore as jest.Mock).mockReturnValue(
-      mockStoreBase({ matches: data.matches.slice(0, 9) }),
-    );
+    setMockStore({ matches: data.matches.slice(0, 9) });
     renderMatchHistory();
-    expect(
-      screen.queryByRole("button", { name: /show all/i }),
-    ).not.toBeInTheDocument();
+    expect(getShowAllButton(false)).not.toBeInTheDocument();
   });
   test("renders all matches after clicking Show All", async () => {
     renderMatchHistory();
-    const showAllButton = screen.getByRole("button", { name: /show all/i });
-    await userEvent.click(showAllButton);
-    expect(screen.getAllByText(/#\d+/)).toHaveLength(data.matches.length);
+    await userEvent.click(getShowAllButton()!);
+    expect(getMatchesNumbers()).toHaveLength(data.matches.length);
   });
   test("renders 'All Matches' title after clicking Show All", async () => {
     renderMatchHistory();
-    const showAllButton = screen.getByRole("button", { name: /show all/i });
-    await userEvent.click(showAllButton);
-    expect(screen.getByText(/all matches/i)).toBeInTheDocument();
+    await userEvent.click(getShowAllButton()!);
+    expect(getAllMatchesTitle()).toBeInTheDocument();
   });
   test("collapses back to 10 matches after clicking Show Less", async () => {
     renderMatchHistory();
-    const showAllButton = screen.getByRole("button", { name: /show all/i });
-    await userEvent.click(showAllButton);
-    const showLessButton = screen.getByRole("button", { name: /show less/i });
-    await userEvent.click(showLessButton);
-    expect(screen.getAllByText(/#\d+/)).toHaveLength(10);
+    await userEvent.click(getShowAllButton()!);
+    await userEvent.click(getShowLessButton()!);
+    expect(getMatchesNumbers()).toHaveLength(10);
   });
 });
 
 describe("MatchHistory - match detail popup", () => {
+  const getMatchPopup = (matchId: string, exists: boolean = true) =>
+    exists
+      ? screen.getByTestId(`${matchId}-popup`)
+      : screen.queryByTestId(`${matchId}-popup`);
+  const getMatchBackdrop = (matchId: string) =>
+    screen.getByTestId(`${matchId}-backdrop`);
+  const getMatchPopupCloseButton = (matchId: string) =>
+    within(getMatchPopup(matchId)!).getByRole("button");
+  // const getMatchDetailsHeading = () => screen.getByText(/match details/i);
   const openMatchPopup = async (matchId: string) => {
     await userEvent.click(getMatchRow(matchId));
-    return screen.getByTestId(`${matchId}-popup`);
+    return getMatchPopup(matchId);
   };
   test("opens match detail popup when a match row is clicked", async () => {
     renderMatchHistory();
     for (const match of displayedMatches) {
       await openMatchPopup(match.id);
-      expect(screen.getByTestId(`${match.id}-popup`)).toBeInTheDocument();
+      expect(getMatchPopup(match.id)).toBeInTheDocument();
     }
   });
   test("renders Match Details heading in popup", async () => {
     renderMatchHistory();
     for (const match of displayedMatches) {
       await openMatchPopup(match.id);
-      const matchPopup = screen.getByTestId(`${match.id}-popup`);
-      const { getByText } = within(matchPopup);
+      const { getByText } = within(getMatchPopup(match.id)!);
       expect(getByText(/match details/i)).toBeInTheDocument();
     }
   });
@@ -198,8 +209,10 @@ describe("MatchHistory - match detail popup", () => {
     renderMatchHistory();
     for (const match of displayedMatches) {
       await openMatchPopup(match.id);
-      const matchPopup = screen.getByTestId(`${match.id}-popup`);
-      const scoreContainer = within(matchPopup).getByTestId("popup-score");
+
+      const scoreContainer = within(getMatchPopup(match.id)!).getByTestId(
+        "popup-score",
+      );
       expect(scoreContainer).toHaveTextContent(String(match.homeGoals));
       expect(scoreContainer).toHaveTextContent(String(match.awayGoals));
     }
@@ -208,7 +221,7 @@ describe("MatchHistory - match detail popup", () => {
     renderMatchHistory();
     for (const match of displayedMatches) {
       await openMatchPopup(match.id);
-      const matchPopup = screen.getByTestId(`${match.id}-popup`);
+      const matchPopup = getMatchPopup(match.id);
       const homeScorers = match.scorers.filter(
         (s) =>
           data.players.find((p) => p.id === s.playerId)?.teamId ===
@@ -219,10 +232,12 @@ describe("MatchHistory - match detail popup", () => {
           data.players.find((p) => p.id === s.playerId)?.teamId ===
           match.awayTeamId,
       );
-      const homeScorersContainer =
-        within(matchPopup).getByTestId("home-scorers");
-      const awayScorersContainer =
-        within(matchPopup).getByTestId("away-scorers");
+      const homeScorersContainer = within(matchPopup!).getByTestId(
+        "home-scorers",
+      );
+      const awayScorersContainer = within(matchPopup!).getByTestId(
+        "away-scorers",
+      );
 
       homeScorers.forEach((s) => {
         const player = data.players.find((p) => p.id === s.playerId)!;
@@ -238,92 +253,97 @@ describe("MatchHistory - match detail popup", () => {
   });
   test("closes popup when clicking the backdrop", async () => {
     renderMatchHistory();
-    await openMatchPopup(displayedMatches[0].id);
-    await userEvent.click(
-      screen.getByTestId(`${displayedMatches[0].id}-backdrop`),
-    );
-    expect(
-      screen.queryByTestId(`${displayedMatches[0].id}-popup`),
-    ).not.toBeInTheDocument();
+    await openMatchPopup(lastPlayedMatchId);
+    await userEvent.click(getMatchBackdrop(lastPlayedMatchId));
+    expect(getMatchPopup(lastPlayedMatchId, false)).not.toBeInTheDocument();
   });
   test("closes popup when clicking the X button", async () => {
     renderMatchHistory();
-    await openMatchPopup(displayedMatches[0].id);
-    const closeButton = within(
-      screen.getByTestId(`${displayedMatches[0].id}-popup`),
-    ).getByRole("button");
-    await userEvent.click(closeButton);
-    expect(
-      screen.queryByTestId(`${displayedMatches[0].id}-popup`),
-    ).not.toBeInTheDocument();
+    await openMatchPopup(lastPlayedMatchId);
+    await userEvent.click(getMatchPopupCloseButton(lastPlayedMatchId));
+    expect(getMatchPopup(lastPlayedMatchId, false)).not.toBeInTheDocument();
   });
 });
 
 describe("MatchHistory - context menu", () => {
+  const getMoreVerticalIcons = (exists: boolean = true) =>
+    exists
+      ? screen.getAllByTestId("more-vertical-icon")
+      : screen.queryByTestId("more-vertical-icon");
+  const getContextMenu = (exists: boolean = true) =>
+    exists
+      ? screen.getByTestId("context-menu")
+      : screen.queryByTestId("context-menu");
+  const getEditMatchMenuItem = () => screen.getByText(/edit match/i);
+  const getContextMenuBackdrop = () =>
+    screen.getByTestId("context-menu-backdrop");
   test("does not render three-dots button when no admin callbacks provided", () => {
     renderMatchHistory({ onEditMatch: undefined, onDeleteMatch: undefined });
-    expect(screen.queryByTestId("more-vertical-icon")).not.toBeInTheDocument();
+    expect(getMoreVerticalIcons(false)).not.toBeInTheDocument();
   });
   test("renders three-dots button when onEditMatch is provided", () => {
     renderMatchHistory({ onEditMatch: jest.fn(), onDeleteMatch: undefined });
-    expect(screen.getAllByTestId("more-vertical-icon").length).toBe(10); // 1 for each row , by default 10 rows .
+    expect((getMoreVerticalIcons() as HTMLElement[]).length).toBe(10); // 1 for each row , by default 10 rows .
   });
   test("renders three-dots button when onDeleteMatch is provided", () => {
     renderMatchHistory({ onEditMatch: undefined, onDeleteMatch: jest.fn() });
-    expect(screen.getAllByTestId("more-vertical-icon").length).toBe(10); // 1 for each row , by default 10 rows .
+    expect((getMoreVerticalIcons() as HTMLElement[]).length).toBe(10); // 1 for each row , by default 10 rows .
   });
   test("opens context menu when three-dots button is clicked", async () => {
     renderMatchHistory();
-    const matchRow = getMatchRow(displayedMatches[0].id);
-    const threeDotsButton = within(matchRow).getByRole("button");
-    await userEvent.click(threeDotsButton);
-    expect(screen.getByTestId("context-menu")).toBeInTheDocument();
+    await userEvent.click(getThreeDotsButton(lastPlayedMatchId));
+    expect(getContextMenu()).toBeInTheDocument();
   });
   test("closes context menu when clicking outside", async () => {
-  renderMatchHistory();
-  const matchRow = getMatchRow(displayedMatches[0].id);
-  const threeDotsButton = within(matchRow).getByRole("button");
-  await userEvent.click(threeDotsButton);
-  expect(screen.getByTestId("context-menu")).toBeInTheDocument();
-  await userEvent.click(screen.getByTestId("context-menu-backdrop"));
-  expect(screen.queryByTestId("context-menu")).not.toBeInTheDocument();
-});
+    renderMatchHistory();
+    await userEvent.click(getThreeDotsButton(lastPlayedMatchId));
+    expect(getContextMenu()).toBeInTheDocument();
+    await userEvent.click(getContextMenuBackdrop());
+    expect(getContextMenu(false)).not.toBeInTheDocument();
+  });
   test("calls onEditMatch with correct match when Edit is clicked", async () => {
-  const onEditMatch = jest.fn();
-  renderMatchHistory({ onEditMatch });
-  const matchRow = getMatchRow(displayedMatches[0].id);
-  await userEvent.click(within(matchRow).getByRole("button"));
-  await userEvent.click(screen.getByText(/edit match/i));
-  expect(onEditMatch).toHaveBeenCalledWith(displayedMatches[0]);
-});
+    const onEditMatch = jest.fn();
+    renderMatchHistory({ onEditMatch });
+    await userEvent.click(getThreeDotsButton(lastPlayedMatchId));
+    await userEvent.click(getEditMatchMenuItem());
+    expect(onEditMatch).toHaveBeenCalledWith(
+      getMockMatchById(data, lastPlayedMatchId),
+    );
+  });
 });
 
 describe("MatchHistory - delete confirmation", () => {
-  const openDeleteDialog = async () => {
-    renderMatchHistory();
-    const matchRow = getMatchRow(displayedMatches[0].id);
-    await userEvent.click(within(matchRow).getByRole("button"));
+  const getDeleteConfirmationDialog = (exists: boolean = true) =>
+    exists
+      ? screen.getByTestId("delete-confirmation-dialog")
+      : screen.queryByTestId("delete-confirmation-dialog");
+  const getDialogCancelButton = () =>
+    screen.getByRole("button", { name: /cancel/i });
+  const getDialogDeleteButton = () =>
+    screen.getByRole("button", { name: /delete/i });
+  const openDeleteDialog = async (
+    props?: Partial<React.ComponentProps<typeof MatchHistory>>,
+  ) => {
+    renderMatchHistory(props);
+    await userEvent.click(getThreeDotsButton(lastPlayedMatchId));
     await userEvent.click(screen.getByText(/delete match/i));
   };
 
   test("opens delete confirmation dialog when Delete is clicked in context menu", async () => {
     await openDeleteDialog();
-    expect(screen.getByTestId("delete-confirmation-dialog")).toBeInTheDocument();
+    expect(getDeleteConfirmationDialog()).toBeInTheDocument();
   });
 
   test("closes delete dialog when Cancel is clicked", async () => {
     await openDeleteDialog();
-    await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
-    expect(screen.queryByTestId("delete-confirmation-dialog")).not.toBeInTheDocument();
+    await userEvent.click(getDialogCancelButton());
+    expect(getDeleteConfirmationDialog(false)).not.toBeInTheDocument();
   });
 
   test("calls onDeleteMatch with correct matchId when Delete is confirmed", async () => {
     const onDeleteMatch = jest.fn();
-    renderMatchHistory({ onDeleteMatch });
-    const matchRow = getMatchRow(displayedMatches[0].id);
-    await userEvent.click(within(matchRow).getByRole("button"));
-    await userEvent.click(screen.getByText(/delete match/i));
-    await userEvent.click(screen.getByRole("button", { name: /delete/i }));
-    expect(onDeleteMatch).toHaveBeenCalledWith(displayedMatches[0].id);
+    await openDeleteDialog({ onDeleteMatch });
+    await userEvent.click(getDialogDeleteButton());
+    expect(onDeleteMatch).toHaveBeenCalledWith(lastPlayedMatchId);
   });
 });
