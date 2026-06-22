@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ImageLightbox } from "@/components/ImageLightbox";
 import { AuthService } from "@/lib/authService";
@@ -43,7 +43,6 @@ const renderImageLightbox = (
 
 const getTheImage = () => screen.getByAltText("Example Image");
 
-
 describe("ImageLightbox - rendering", () => {
   test("renders image with correct src and alt when src is provided", () => {
     renderImageLightbox();
@@ -58,6 +57,15 @@ describe("ImageLightbox - rendering", () => {
   test("renders 404 message when src is empty", () => {
     render(<ImageLightbox src="" alt="Example Image" onClose={() => {}} />);
     expect(screen.getByTestId("image-off-icon")).toBeInTheDocument();
+  });
+
+  test("renders 404 message when src is provided but the image fails to load (broken/missing file)", () => {
+    renderImageLightbox({ src: "/images/players/missing-player.webp" });
+    const image = getTheImage();
+    expect(screen.queryByTestId("image-off-icon")).not.toBeInTheDocument();
+    fireEvent.error(image);
+    expect(screen.getByTestId("image-off-icon")).toBeInTheDocument();
+    expect(screen.queryByAltText("Example Image")).not.toBeInTheDocument();
   });
 });
 
@@ -92,12 +100,12 @@ describe("ImageLightbox - close behavior", () => {
 
 describe("ImageLightbox - upload", () => {
   const mockIsAuthenticated = (value: boolean) => {
-  (AuthService.isAuthenticated as jest.Mock).mockReturnValue(value);
-};
+    (AuthService.isAuthenticated as jest.Mock).mockReturnValue(value);
+  };
   const getUploadIcon = (exists = true) =>
-  exists
-    ? screen.getByTestId("upload-icon")
-    : screen.queryByTestId("upload-icon");
+    exists
+      ? screen.getByTestId("upload-icon")
+      : screen.queryByTestId("upload-icon");
 
   test("renders Add Image button when src is empty, admin is authenticated and uploadPath is provided", async () => {
     mockIsAuthenticated(true);
