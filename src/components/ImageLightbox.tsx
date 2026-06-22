@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { X, Upload, ImageOff, Loader2 } from 'lucide-react';
-import { AuthService } from '@/lib/authService';
-import { useGitHubData } from '@/hooks/useGitHubData';
-import { convertToWebp } from '@/lib/imageUtils';
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { X, Upload, ImageOff, Loader2 } from "lucide-react";
+import { AuthService } from "@/lib/authService";
+import { useGitHubData } from "@/hooks/useGitHubData";
+import { convertToWebp } from "@/lib/imageUtils";
 
 interface ImageLightboxProps {
   src: string;
@@ -13,23 +13,33 @@ interface ImageLightboxProps {
   uploadPath?: string;
 }
 
-
-export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: ImageLightboxProps) {
+export function ImageLightbox({
+  src,
+  alt,
+  onClose,
+  onUpload,
+  uploadPath,
+}: ImageLightboxProps) {
   const isAdmin = AuthService.isAuthenticated();
   const { uploadImage } = useGitHubData();
   const [uploading, setUploading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const navbar = document.querySelector('[data-navbar]') as HTMLElement;
-    if (navbar) navbar.style.display = 'none';
+    setLoadError(false);
+  }, [src]);
+
+  useEffect(() => {
+    const navbar = document.querySelector("[data-navbar]") as HTMLElement;
+    if (navbar) navbar.style.display = "none";
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    window.addEventListener('keydown', handleKey);
+    window.addEventListener("keydown", handleKey);
     return () => {
-      if (navbar) navbar.style.display = '';
-      window.removeEventListener('keydown', handleKey);
+      if (navbar) navbar.style.display = "";
+      window.removeEventListener("keydown", handleKey);
     };
   }, [onClose]);
 
@@ -39,8 +49,10 @@ export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: Image
     setUploading(true);
     try {
       const base64 = await convertToWebp(file);
-      const filename = `${alt.toLowerCase().replace(/\s+/g, '-')}.webp`;
-      const fullPath = uploadPath ? `${uploadPath}/${filename}` : `images/${filename}`;
+      const filename = `${alt.toLowerCase().replace(/\s+/g, "-")}.webp`;
+      const fullPath = uploadPath
+        ? `${uploadPath}/${filename}`
+        : `images/${filename}`;
       const path = await uploadImage(base64, fullPath);
       if (path && onUpload) onUpload(path);
     } finally {
@@ -60,12 +72,13 @@ export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: Image
         <X className="w-8 h-8" />
       </button>
 
-      {src ? (
+      {src && !loadError ? (
         <img
           src={src}
           alt={alt}
           className="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
+          onError={() => setLoadError(true)}
         />
       ) : (
         <div
@@ -75,7 +88,9 @@ export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: Image
           <ImageOff className="w-20 h-20 opacity-30" />
           <div className="text-center">
             <p className="text-2xl font-semibold text-white/80">404</p>
-            <p className="text-base mt-1">Looks like this image is missing or doesn't exist yet.</p>
+            <p className="text-base mt-1">
+              Looks like this image is missing or doesn't exist yet.
+            </p>
           </div>
           {isAdmin && uploadPath && (
             <>
@@ -92,9 +107,13 @@ export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: Image
                 disabled={uploading}
               >
                 {uploading ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Uploading...
+                  </>
                 ) : (
-                  <><Upload className="w-4 h-4" /> Add Image</>
+                  <>
+                    <Upload className="w-4 h-4" /> Add Image
+                  </>
                 )}
               </button>
             </>
@@ -102,6 +121,6 @@ export function ImageLightbox({ src, alt, onClose, onUpload, uploadPath }: Image
         </div>
       )}
     </div>,
-    document.body
+    document.body,
   );
 }
