@@ -6,7 +6,7 @@ import { Match } from "@/store/leagueStore";
 
 export const mockLeagueData = {
   leagueConfig: { id: "test-league", name: "Test League" },
-  targetMatches: 10,
+  targetMatches: 20,
   teams: [
     {
       id: "team-1",
