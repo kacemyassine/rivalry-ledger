@@ -172,6 +172,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedHomeTeam?.name || 'Home Team'}</p>
               <Input
+                data-testid="home-score-input"
                 type="number"
                 min={0}
                 value={homeGoals}
@@ -183,6 +184,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">{selectedAwayTeam?.name || 'Away Team'}</p>
               <Input
+                data-testid="away-score-input"
                 type="number"
                 min={0}
                 value={awayGoals}
@@ -196,7 +198,7 @@ export function MatchForm({ open, onOpenChange, onSave, editingMatch }: MatchFor
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm text-yellow-200/80">Goal Scorers (Optional)</Label>
-              <Button type="button" variant="outline" size="sm" onClick={handleAddScorer} className="h-8 border-yellow-400/30 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200 bg-transparent">
+              <Button type="button" data-testid="add-scorer-btn" variant="outline" size="sm" onClick={handleAddScorer} className="h-8 border-yellow-400/30 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200 bg-transparent">
                 <Plus className="w-4 h-4 mr-1" /> Add Scorer
               </Button>
             </div>

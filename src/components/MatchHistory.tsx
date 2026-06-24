@@ -114,9 +114,9 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
 
                       {/* Score */}
                       <div className="flex items-center gap-1 md:gap-2 px-2 md:px-4 shrink-0">
-                        <span className={cn('text-lg md:text-xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{match.homeGoals}</span>
+                        <span data-testid="home-goals" className={cn('text-lg md:text-xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{match.homeGoals}</span>
                         <span className={cn('text-sm', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>-</span>
-                        <span className={cn('text-lg md:text-xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{match.awayGoals}</span>
+                        <span data-testid="away-goals" className={cn('text-lg md:text-xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>{match.awayGoals}</span>
                       </div>
 
                      {/* Away team */}
