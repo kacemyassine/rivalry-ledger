@@ -63,7 +63,7 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
               return (
                 <div
                   key={player.id}
-                  data-testid={`player-row-${index}`}
+                  data-testid={`player-row-${player.id}`}
                   className={cn(
                     'flex items-center gap-2 md:gap-4 p-3 md:p-4 rounded-lg transition-all mb-2',
                     isRamadan
@@ -129,7 +129,7 @@ export function TopScorers({ onEditPlayer, hideButtons = false, theme = 'default
 
                   {/* Goals */}
                   <div className="text-right shrink-0">
-                    <p className={cn('text-xl md:text-2xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>
+                    <p data-testid="player-goals" className={cn('text-xl md:text-2xl font-bold', isRamadan ? 'text-yellow-400' : 'text-gold')}>
                       {player.goals || 0}
                     </p>
                     <p className={cn('text-xs', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>goals</p>
