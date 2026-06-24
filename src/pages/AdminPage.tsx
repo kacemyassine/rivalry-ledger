@@ -210,6 +210,7 @@ const AdminPage = () => {
             <div className="flex flex-wrap justify-center gap-3 mt-8">
 
               <Button
+                data-testid="add-player-btn"
                 onClick={() => setPlayerFormOpen(true)}
                 className="gap-2 bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-300 border border-yellow-400/30 hover:border-yellow-400/60 transition-all"
                 variant="outline"
@@ -218,6 +219,7 @@ const AdminPage = () => {
               </Button>
 
               <Button
+                data-testid="record-match-btn"
                 onClick={() => setMatchFormOpen(true)}
                 className="gap-2 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold transition-all"
                 disabled={matches.length >= targetMatches}
@@ -226,6 +228,7 @@ const AdminPage = () => {
               </Button>
 
               <Button
+                data-testid="save-btn"
                 onClick={handleSaveToGitHub}
                 className="gap-2 bg-blue-900/50 hover:bg-blue-800/70 text-blue-200 border border-blue-400/20 hover:border-blue-400/40 transition-all"
                 variant="secondary"
@@ -238,7 +241,7 @@ const AdminPage = () => {
               {/* Start New League */}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all">
+                  <Button data-testid="start-new-league-btn" className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all">
                     <Archive className="w-4 h-4" /> Start New League
                   </Button>
                 </AlertDialogTrigger>
