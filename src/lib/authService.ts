@@ -45,6 +45,11 @@ export const AuthService = {
     return true;
   },
 
+  getRemainingLockout: (): number => {
+  if (!lockoutUntil) return 0;
+  return Math.max(0, Math.ceil((lockoutUntil - Date.now()) / 1000));
+},
+
   isAuthenticated: (): boolean => {
     const token = sessionStorage.getItem(AUTH_TOKEN_KEY);
     if (!token) return false;
