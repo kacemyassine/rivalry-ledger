@@ -2,6 +2,7 @@ import { defineConfig } from "cypress";
 import createBundler from "@bahmutov/cypress-esbuild-preprocessor";
 import { addCucumberPreprocessorPlugin } from "@badeball/cypress-cucumber-preprocessor";
 import { createEsbuildPlugin } from "@badeball/cypress-cucumber-preprocessor/esbuild";
+import path from "path";
 
 export default defineConfig({
   allowCypressEnv: true,
@@ -16,6 +17,10 @@ export default defineConfig({
         "file:preprocessor",
         createBundler({
           plugins: [createEsbuildPlugin(config)],
+          define: {},
+          alias: {
+            "@": path.resolve(__dirname, "src"),
+          },
         }),
       );
 
