@@ -3,6 +3,7 @@ import { Team, useLeagueStore, Match } from '@/store/leagueStore';
 import { cn } from '@/lib/utils';
 import { Shield, ChevronDown, X, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getScorersForTeam } from '@/lib/matchHistoryUtils';
 
 
 interface MatchHistoryProps {
@@ -215,17 +216,9 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
               const awayWin = selectedMatch.awayGoals > selectedMatch.homeGoals;
               const isDraw = selectedMatch.homeGoals === selectedMatch.awayGoals;
 
-              const homeScorers = selectedMatch.scorers?.filter((s: any) => {
-                const player = players.find((p: any) => p.id === s.playerId);
-                if (s.isOwnGoal) return player?.teamId === selectedMatch.awayTeamId;
-                return player?.teamId === selectedMatch.homeTeamId;
-              }) || [];
+              const homeScorers = getScorersForTeam(selectedMatch, players, selectedMatch.homeTeamId);
 
-              const awayScorers = selectedMatch.scorers?.filter((s: any) => {
-                const player = players.find((p: any) => p.id === s.playerId);
-                if (s.isOwnGoal) return player?.teamId === selectedMatch.homeTeamId;
-                return player?.teamId === selectedMatch.awayTeamId;
-              }) || [];
+              const awayScorers = getScorersForTeam(selectedMatch, players, selectedMatch.awayTeamId);
 
               return (
                 <div className="space-y-4">
