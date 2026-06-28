@@ -257,7 +257,7 @@ export function MatchForm({
             {scorers.map((scorer, index) => (
               <div
                 key={index}
-                data-testid={`scorer-row-${scorer.playerId}`}
+                data-testid={`scorer-row-${scorer.playerId}-${index}`}
                 className="flex items-center gap-2"
               >
                 <Select
