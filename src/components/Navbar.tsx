@@ -30,6 +30,20 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const interval = setInterval(() => {
+      const remaining = AuthService.getRemainingLockout();
+      setCountdown(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setError("");
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [countdown]);
 
   useEffect(() => {
     setIsAuthenticated(AuthService.isAuthenticated());
@@ -62,6 +76,7 @@ const Navbar = () => {
     } catch (e) {
       if (e instanceof Error) {
         setError(e.message);
+        setCountdown(AuthService.getRemainingLockout());
       }
       setPassword("");
     }
@@ -114,7 +129,9 @@ const Navbar = () => {
                 data-testId="password-error"
                 className="text-red-400 text-sm text-center"
               >
-                {error}
+                {countdown > 0
+                  ? `Too many failed attempts. Try again in ${countdown}s`
+                  : error}
               </p>
             )}
             <div className="flex gap-3 mt-2">
@@ -131,9 +148,10 @@ const Navbar = () => {
               </Button>
               <Button
                 onClick={handleAdminAccess}
+                disabled={countdown > 0}
                 className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
               >
-                Enter
+                {countdown > 0 ? <Lock className="w-4 h-4" /> : "Enter"}
               </Button>
             </div>
           </div>
@@ -224,7 +242,10 @@ const Navbar = () => {
 
           {/* Mobile menu */}
           {mobileMenuOpen && (
-            <div data-testId="mobile-menu" className="md:hidden border-t border-yellow-400/10 px-4 py-3 flex flex-col gap-1">
+            <div
+              data-testId="mobile-menu"
+              className="md:hidden border-t border-yellow-400/10 px-4 py-3 flex flex-col gap-1"
+            >
               {navItems.map(({ label, path, icon: Icon }) => (
                 <button
                   key={path}
