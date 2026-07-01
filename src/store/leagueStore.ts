@@ -499,6 +499,14 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
       throw new Error(MATCH_ERRORS.GOALS_UNREALISTIC);
     }
 
+    if (newDate && isNaN(Date.parse(newDate))) {
+      throw new Error(MATCH_ERRORS.INVALID_DATE);
+    }
+
+    if (newDate && new Date(newDate) > new Date()) {
+      throw new Error(MATCH_ERRORS.BAD_DATE);
+    }
+
     for (const scorer of newScorers) {
       const player = state.players.find((p) => p.id === scorer.playerId);
       if (!player) throw new Error(PLAYER_ERRORS.NOT_FOUND);

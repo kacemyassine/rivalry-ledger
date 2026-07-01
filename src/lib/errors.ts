@@ -7,6 +7,8 @@ export const MATCH_ERRORS = {
   SAME_TEAM: "Home and away teams cannot be the same",
   NOT_FOUND: "Match not found — either deleted or never existed",
   TARGET_REACHED: "League is complete — no more matches can be recorded",
+  INVALID_DATE: "Invalid date format",
+  BAD_DATE: "Match date cannot be in the future",
 };
 
 export const PLAYER_ERRORS = {

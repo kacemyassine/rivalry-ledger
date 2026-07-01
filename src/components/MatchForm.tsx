@@ -141,9 +141,16 @@ export function MatchForm({
       }
     }
 
-    const newDate = new Date(date).toISOString();
-
     if (editingMatch) {
+      const parsedDate = new Date(date);
+
+      if (Number.isNaN(parsedDate.getTime())) {
+        toast.error("Invalid date");
+        return;
+      }
+
+      const newDate = parsedDate.toISOString();
+
       try {
         useLeagueStore
           .getState()
