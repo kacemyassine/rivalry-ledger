@@ -10,6 +10,7 @@ import { MatchHistory } from "../components/MatchHistory";
 import { TopScorers } from "../components/TopScorers";
 import { getPlayerId } from "../../support/matchHelpers";
 import { Player } from "@/store/leagueStore";
+import { setCurrentMatchId } from "./sharedState";
 
 const adminPage = new AdminPage();
 const matchForm = new MatchForm();
@@ -19,17 +20,21 @@ const matchHistory = new MatchHistory();
 let homeGoals = 0;
 let awayGoals = 0;
 let nextMatchId = "";
-let scorers: { team: "home" | "away"; playerName: string; goals: number; isOwnGoal: boolean }[] =
-  [];
+let scorers: {
+  team: "home" | "away";
+  playerName: string;
+  goals: number;
+  isOwnGoal: boolean;
+}[] = [];
 // eslint-disable-next-line prefer-const
 let resolvedScorerIds: Record<string, string> = {}; // playerName -> playerId
 // eslint-disable-next-line prefer-const
 let initialGoals: Record<string, number> = {};
 
 function setScore(score: string) {
-  const match = score.match(/^\(?(-?\d+)\)?-\(?(-?\d+)\)?$/);
-  homeGoals = Number(match![1]);
-  awayGoals = Number(match![2]);
+  const [home, away] = score.split("-");
+  homeGoals = Number(home);
+  awayGoals = Number(away);
 
   cy.fixture("leagueData.json").then((data) => {
     nextMatchId = `match-${data.matches.length + 1}`;
@@ -41,17 +46,18 @@ function setScore(score: string) {
 
 When("I record a match with a final score of {string}", (score: string) => {
   setScore(score);
-  matchForm.submit();
+  matchForm.submit("record");
 });
 
 When("I record the match", () => {
-  matchForm.submit();
+  matchForm.submit("record");
 });
 
 When("I set the score to {string}", (score: string) => {
   setScore(score);
 });
 Then("the match should appear in the match history with no scorers", () => {
+  setCurrentMatchId(nextMatchId);
   matchHistory.assertMatchExists(nextMatchId);
   matchHistory.assertScore(nextMatchId, homeGoals, awayGoals);
   matchHistory.assertNoScorers(nextMatchId);
@@ -110,6 +116,9 @@ Then("each player's total goal count should increase accordingly", () => {
 
 Then("An error message telling goals don't add up should appear", () => {
   cy.contains(new RegExp("goals don.t add up", "i")).should("be.visible");
+  matchForm.closeTheForm();
 });
+
+
 
 
