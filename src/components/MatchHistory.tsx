@@ -160,6 +160,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
 
             {allMatches.length > 10 && (
               <button
+                data-testid="show-all/less-matches-btn"
                 onClick={() => setShowAll(!showAll)}
                 className={cn(
                   'w-full mt-3 py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-1',
@@ -223,7 +224,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
               return (
                 <div className="space-y-4">
                   {selectedMatch.date && (
-                    <p className={cn('text-xs text-center', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
+                    <p data-testid="match-date" className={cn('text-xs text-center', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
                       {new Date(selectedMatch.date).toLocaleDateString('en-US', {
                         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
                       })}
