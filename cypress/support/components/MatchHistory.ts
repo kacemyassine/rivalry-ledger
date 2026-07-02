@@ -2,6 +2,10 @@ export class MatchHistory {
   private openMatchCard(matchId: string) {
     return this.getMatchCard(matchId).click();
   }
+
+  private getThreeDotsButton(matchId: string) {
+    return this.getMatchCard(matchId).find('[data-testid="three-dots-btn"]');
+  }
   getMatchCard(matchId: string) {
     return cy.get("body").then(($body) => {
       if ($body.find(`[data-testid="${matchId}"]`).length === 0) {
@@ -14,6 +18,11 @@ export class MatchHistory {
   assertMatchExists(matchId: string) {
     this.getMatchCard(matchId).should("be.visible");
   }
+
+  assertMatchDoesNotExist(matchId: string) {
+    this.getMatchCard(matchId).should("not.exist");
+  }
+
   assertScore(matchId: string, homeGoals: number, awayGoals: number) {
     this.getMatchCard(matchId).within(() => {
       cy.get('[data-testid="home-goals"]').contains(homeGoals);
@@ -93,24 +102,45 @@ export class MatchHistory {
   openMatchEditMode(matchId: string | null) {
     if (matchId === null)
       throw new Error("the match you are looking for doesn't exist!");
-    const match = this.getMatchCard(matchId);
-    match.within(() => {
-      cy.get("button").click();
-    });
-    cy.get('[data-testid="context-menu"]').within(() => {
-      cy.contains(/edit match/i).click();
-    });
+    this.getThreeDotsButton(matchId).click();
+    cy.get('[data-testid="context-menu"]')
+      .should("be.visible")
+      .within(() => {
+        cy.contains(/edit match/i).click();
+      });
   }
 
   assertDateIs(matchId: string, expectedDate: string) {
-  const formatted = new Date(expectedDate).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  this.openMatchCard(matchId);
-  cy.get('[data-testid="match-date"]')
-    .should("not.be.empty")
-    .should("have.text", formatted);
-}}
+    const formatted = new Date(expectedDate).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    this.openMatchCard(matchId);
+    cy.get('[data-testid="match-date"]')
+      .should("not.be.empty")
+      .should("have.text", formatted);
+  }
+  deleteMatch(matchId: string | "") {
+    if (!matchId)
+      throw new Error("the match you are looking for doesn't exist!");
+    this.getThreeDotsButton(matchId).click();
+    cy.get('[data-testid="context-menu"]')
+      .should("be.visible")
+      .within(() => {
+        cy.contains(/delete match/i).click();
+      });
+  }
+  confirmDeleteMatch() {
+    cy.get('[data-testid="delete-confirmation-dialog"]').within(() => {
+      cy.contains('button', /delete/i).click();
+    });
+  }
+
+  cancelDeleteMatch() {
+    cy.get('[data-testid="delete-confirmation-dialog"]').within(() => {
+      cy.contains('button', /cancel/i).click();
+    });
+  }
+}
