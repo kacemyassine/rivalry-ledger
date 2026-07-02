@@ -7,4 +7,8 @@ beforeEach(() => {
       body: { content: encoded, sha: "abc123" },
     }).as("getLeagueData");
   });
+  cy.intercept("PUT", "https://api.github.com/**", {
+  statusCode: 200,
+  body: { content: { sha: "fake-sha" } },
+}).as("putLeagueData");
 });
