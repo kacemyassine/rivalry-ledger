@@ -64,17 +64,29 @@ Scenario: Admin cannot set a match date in the future
     Then An error message telling the date cannot be in the future should appear
     And the match should still appear in the match history with a date of "2026-03-18"
 
-# @RLQ-XX
-# Scenario: Admin deletes a match and stats are reversed
-#     Given I am deleting the "5-0" match
-#     When I delete the match
-#     Then the match should no longer appear in the match history
-#     And each scorer's total goal count should decrease accordingly
+@RLQ-XX
+Scenario: Admin deletes a match with no scorers.
+    Given I am deleting the "5-0" with no scorers match
+    When I delete the match
+    Then the match should no longer appear in the match history
 
-# @RLQ-XX
-# Scenario: Admin cancels a match deletion
-#     When I open the context menu for the match
-#     And I click "Delete Match"
-#     Then I should see the delete confirmation dialog
-#     When I cancel the deletion
-#     Then the match should still appear in the match history with a score of "3-2"
+@RLQ-XX
+Scenario: Admin deletes a match with scorers and player goal totals adjust accordingly
+    Given I am deleting the "3-2" with scorers match
+        | team | player-name       | goals |
+        | home | Antoine-Griezmann | 2     |
+        | away | Ruud-Gullit       | 1     |
+        | home | Kylian Mbappé     | 1     |
+        | away | Didier Drogba     | 1     |
+    When I delete the match
+    Then the match should no longer appear in the match history
+    And each player's total goal count should decrease accordingly
+
+@RLQ-XX
+Scenario: Admin cancels a match deletion
+    Given I am deleting the "5-0" with no scorers match
+    And I try mistakenly to delete the match
+    Then I should see the delete confirmation message
+    When I cancel the deletion
+    Then the match should still appear in the match history with a score of "5-0"
+

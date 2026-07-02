@@ -21,6 +21,7 @@ const topScorers = new TopScorers();
 let initialGoals: Record<string, number> = {};
 // eslint-disable-next-line prefer-const
 let oldScorerGoals: Record<string, number> = {};
+let deletedScorers: ScorerInput[] = [];
 
 function setUpdatedScore(score: string) {
   const [home, away] = score.split("-");
@@ -177,6 +178,7 @@ Then(
 );
 
 Then("each player's total goal count should reflect the updated values", () => {
+  cy.log('im here');
   cy.fixture("leagueData.json").then((data) => {
     updatedScorers.forEach((scorer) => {
       const playerId = getPlayerId(scorer.playerName, scorer.team, data);
@@ -211,4 +213,74 @@ Then("An error message telling the date cannot be in the future should appear", 
 
 Then("the match should still appear in the match history with a date of {string}", (expectedDate: string) => {
   matchHistory.assertDateIs(currentMatchId, expectedDate);
+});
+
+Given("I am deleting the {string} with no scorers match", (score: string) => {
+  cy.fixture("leagueData.json").then((data) => {
+    const matchId = getMatchByStats(score, null, data);
+    currentMatchId = matchId!;
+    setCurrentMatchId(currentMatchId);
+  });
+});
+
+When("I delete the match", () => {
+  cy.log(`Deleting match with ID: ${currentMatchId}`);
+  matchHistory.deleteMatch(currentMatchId);
+  matchHistory.confirmDeleteMatch();
+});
+
+Then("the match should no longer appear in the match history", () => {
+  matchHistory.assertMatchDoesNotExist(currentMatchId);
+});
+
+When("I try mistakenly to delete the match", () => {
+  matchHistory.deleteMatch(currentMatchId);
+});
+
+Then("I should see the delete confirmation message", () => {
+  cy.get('[data-testid="delete-confirmation-dialog"]').should("be.visible");
+});
+
+When("I cancel the deletion", () => {
+  matchHistory.cancelDeleteMatch();
+});
+
+Given(
+  "I am deleting the {string} with scorers match",
+  (score: string, dataTable: DataTable) => {
+    const scorers: ScorerInput[] = dataTable.hashes().map((row) => ({
+      team: row.team as "home" | "away",
+      playerName: row["player-name"],
+      goals: Number(row.goals),
+      isOwnGoal: row["own-goal"] === "true",
+    }));
+
+    deletedScorers = scorers;
+
+    cy.fixture("leagueData.json").then((data) => {
+      scorers.forEach((scorer) => {
+        const playerId = getPlayerId(scorer.playerName, scorer.team, data);
+        topScorers.getPlayerGoals(playerId).then((goals) => {
+          initialGoals[playerId] = goals;
+        });
+        oldScorerGoals[playerId] = scorer.goals;
+      });
+
+      const matchId = getMatchByStats(score, scorers, data);
+      currentMatchId = matchId!;
+      setCurrentMatchId(currentMatchId);
+    });
+  }
+);
+
+Then("each player's total goal count should decrease accordingly", () => {
+  cy.fixture("leagueData.json").then((data) => {
+    deletedScorers.forEach((scorer) => {
+      const playerId = getPlayerId(scorer.playerName, scorer.team, data);
+      topScorers.assertPlayerGoals(
+        playerId,
+        initialGoals[playerId] - scorer.goals,
+      );
+    });
+  });
 });
