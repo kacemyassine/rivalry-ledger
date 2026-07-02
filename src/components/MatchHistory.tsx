@@ -145,6 +145,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
                     {(onEditMatch || onDeleteMatch) && (
                       <button
                         className="shrink-0 p-1 rounded hover:bg-muted/30 transition-colors text-muted-foreground hover:text-foreground"
+                        data-testid="three-dots-btn"
                         onClick={(e) => {
                           e.stopPropagation();
                           setContextMenu({ x: e.clientX, y: e.clientY, match });
