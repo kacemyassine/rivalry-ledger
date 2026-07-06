@@ -58,13 +58,14 @@ const AdminPage = () => {
   const [archiveImageFile, setArchiveImageFile] = useState<File | null>(null);
   const [archiveImagePreview, setArchiveImagePreview] = useState<string | null>(null);
   const [keepPlayers, setKeepPlayers] = useState(true);
+  const [newLeagueType, setNewLeagueType] = useState<'with-scorers' | 'without-scorers'>('with-scorers');
 
   const {
     matches, teams, players,
     targetMatches, leagueName, leagueId,
     setTeams, setPlayers, setMatches,
     setTargetMatches, setLeagueName, setLeagueId,
-    hasChanges, changeLog, addToChangeLog, clearChangeLog,
+    hasChanges, changeLog, addToChangeLog, clearChangeLog, setLeagueType, leagueType
   } = useLeagueStore();
 
   const { fetchData, updateData, archiveLeague, uploadImage } = useGitHubData();
@@ -80,16 +81,17 @@ const AdminPage = () => {
         setTargetMatches(data.targetMatches ?? 50);
         setLeagueName(data.leagueConfig?.name ?? 'League');
         setLeagueId(data.leagueConfig?.id ?? 'league');
+        setLeagueType(data.leagueConfig?.leagueType ?? 'with-scorers');
       }
       setLoading(false);
     };
     loadData();
-  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
+  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType]);
 
   const handleSaveToGitHub = useCallback(async () => {
   setSaving(true);
   const success = await updateData({
-    leagueConfig: { name: leagueName, id: leagueId },
+    leagueConfig: { name: leagueName, id: leagueId, leagueType: leagueType },
     teams,
     players,
     matches,
@@ -97,7 +99,7 @@ const AdminPage = () => {
   });
   if (success) clearChangeLog();
   setSaving(false);
-  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId, clearChangeLog]); 
+  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId, leagueType, clearChangeLog]); 
 
   const handleArchiveLeague = useCallback(async () => {
     if (!newLeagueName.trim()) return;
@@ -121,13 +123,13 @@ const AdminPage = () => {
 
     const success = await archiveLeague({
       currentData: {
-        leagueConfig: { name: leagueName, id: leagueId },
+        leagueConfig: { name: leagueName, id: leagueId, leagueType: leagueType },
         teams,
         players,
         matches,
         targetMatches,
       },
-      newLeagueConfig: { name: newLeagueName, id: newId },
+      newLeagueConfig: { name: newLeagueName, id: newId, leagueType: newLeagueType },
       newTargetMatches,
       keepPlayers,
       imageName,
@@ -143,15 +145,17 @@ const AdminPage = () => {
         setTargetMatches(data.targetMatches ?? 50);
         setLeagueName(data.leagueConfig?.name ?? 'League');
         setLeagueId(data.leagueConfig?.id ?? 'league');
+        setLeagueType(data.leagueConfig?.leagueType ?? 'with-scorers');
       }
       setNewLeagueName('');
       setNewTargetMatches(50);
       setArchiveImageFile(null);
       setArchiveImagePreview(null);
       setKeepPlayers(true);
+      setNewLeagueType('with-scorers');
     }
     setArchiving(false);
-  }, [archiveLeague, uploadImage, leagueName, leagueId, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, archiveImageFile, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId]);
+  }, [archiveLeague, uploadImage, leagueName, leagueId, leagueType, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, archiveImageFile, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType]);
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -273,6 +277,34 @@ const AdminPage = () => {
                         className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                       />
                     </div>
+
+                    <div className="space-y-1">
+  <Label className="text-yellow-200/80 text-sm">League Type</Label>
+  <div className="flex gap-2">
+    <button
+      type="button"
+      onClick={() => setNewLeagueType('with-scorers')}
+      className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
+        newLeagueType === 'with-scorers'
+          ? 'bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400'
+          : 'bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40'
+      }`}
+    >
+      With Scorers
+    </button>
+    <button
+      type="button"
+      onClick={() => setNewLeagueType('without-scorers')}
+      className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
+        newLeagueType === 'without-scorers'
+          ? 'bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400'
+          : 'bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40'
+      }`}
+    >
+      Without Scorers
+    </button>
+  </div>
+</div>
 
                     <div className="space-y-1">
                       <Label className="text-yellow-200/80 text-sm">Archive Image</Label>

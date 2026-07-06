@@ -52,6 +52,7 @@ export function MatchForm({
     selectedAwayTeam,
     setSelectedHomeTeam,
     setSelectedAwayTeam,
+    leagueType,
   } = useLeagueStore();
 
   const [homeGoals, setHomeGoals] = useState(0);
@@ -121,7 +122,7 @@ export function MatchForm({
       return;
     }
 
-    if (scorers.length > 0) {
+    if (leagueType === "with-scorers" || scorers.length > 0) {
       const effectiveHomeGoals = calculateEffectiveGoals(
         scorers,
         players,
@@ -133,7 +134,10 @@ export function MatchForm({
         selectedAwayTeam.id,
       );
 
-      if (effectiveHomeGoals !== homeGoals || effectiveAwayGoals !== awayGoals) {
+      if (
+        effectiveHomeGoals !== homeGoals ||
+        effectiveAwayGoals !== awayGoals
+      ) {
         toast.error(
           `Goals don't add up. Home: ${effectiveHomeGoals}/${homeGoals}, Away: ${effectiveAwayGoals}/${awayGoals}`,
         );
@@ -212,7 +216,10 @@ export function MatchForm({
             </div>
           )}
 
-          <div data-testId="score-field" className="flex items-end justify-center gap-2 md:gap-4">
+          <div
+            data-testId="score-field"
+            className="flex items-end justify-center gap-2 md:gap-4"
+          >
             <div className="text-center flex-1">
               <p className="text-xs md:text-sm text-muted-foreground mb-2">
                 {selectedHomeTeam?.name || "Home Team"}
@@ -222,7 +229,9 @@ export function MatchForm({
                 type="number"
                 min={0}
                 value={homeGoals}
-                onChange={(e) => setHomeGoals(parseInt(e.target.value || "0") || 0)}
+                onChange={(e) =>
+                  setHomeGoals(parseInt(e.target.value || "0") || 0)
+                }
                 className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
               />
             </div>
@@ -238,7 +247,9 @@ export function MatchForm({
                 type="number"
                 min={0}
                 value={awayGoals}
-                onChange={(e) => setAwayGoals(parseInt(e.target.value || "0") || 0)}
+                onChange={(e) =>
+                  setAwayGoals(parseInt(e.target.value || "0") || 0)
+                }
                 className="text-center text-2xl md:text-3xl font-bold h-12 md:h-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
               />
             </div>
@@ -247,7 +258,8 @@ export function MatchForm({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm text-yellow-200/80">
-                Goal Scorers (Optional)
+                Goal Scorers{" "}
+                {leagueType === "with-scorers" ? "(Required)" : "(Optional)"}
               </Label>
               <Button
                 type="button"
@@ -269,7 +281,9 @@ export function MatchForm({
               >
                 <Select
                   value={scorer.playerId}
-                  onValueChange={(v) => handleScorerChange(index, "playerId", v)}
+                  onValueChange={(v) =>
+                    handleScorerChange(index, "playerId", v)
+                  }
                 >
                   <SelectTrigger className="flex-1 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 text-sm">
                     <SelectValue />
@@ -277,7 +291,8 @@ export function MatchForm({
                   <SelectContent className="bg-[#0d1133] border-yellow-400/20">
                     {players?.map((p: Player) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.name} ({teams?.find((t: Team) => t.id === p.teamId)?.name})
+                        {p.name} (
+                        {teams?.find((t: Team) => t.id === p.teamId)?.name})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -288,7 +303,11 @@ export function MatchForm({
                   min={1}
                   value={scorer.goals}
                   onChange={(e) =>
-                    handleScorerChange(index, "goals", parseInt(e.target.value || "1") || 1)
+                    handleScorerChange(
+                      index,
+                      "goals",
+                      parseInt(e.target.value || "1") || 1,
+                    )
                   }
                   className="w-14 md:w-16 bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                 />

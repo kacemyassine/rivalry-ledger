@@ -6,6 +6,8 @@ import { PLAYER_NAME_RULES, SQUAD_RULES } from "@/lib/rules";
 
 const STORAGE_KEY = "football-league-data";
 
+type LeagueType = "with-scorers" | "without-scorers";
+
 export interface Team {
   id: string;
   name: string;
@@ -41,6 +43,29 @@ export interface Match {
   date: string;
 }
 
+interface PersistedLeagueState {
+  teams: Team[];
+  players: Player[];
+  matches: Match[];
+  targetMatches: number;
+  leagueName: string;
+  leagueId: string;
+  leagueType: 'with-scorers' | 'without-scorers';
+  setLeagueType: (type: 'with-scorers' | 'without-scorers') => void;
+}
+
+interface LeagueDataShape {
+  leagueConfig?: {
+    name?: string;
+    id?: string;
+    leagueType?: LeagueType;
+  };
+  targetMatches?: number;
+  teams: Team[];
+  players: Player[];
+  matches: Match[];
+}
+
 export interface LeagueState {
   teams: Team[];
   players: Player[];
@@ -52,12 +77,14 @@ export interface LeagueState {
   selectedAwayTeam: Team | null;
   hasChanges: boolean;
   changeLog: string[];
+  leagueType: LeagueType;
   setTeams: (teams: Team[]) => void;
   setPlayers: (players: Player[]) => void;
   setMatches: (matches: Match[]) => void;
   setTargetMatches: (n: number) => void;
   setLeagueName: (name: string) => void;
   setLeagueId: (id: string) => void;
+  setLeagueType: (leagueType: LeagueType) => void;
   setSelectedHomeTeam: (team: Team | null) => void;
   setSelectedAwayTeam: (team: Team | null) => void;
   addMatch: (
@@ -82,48 +109,53 @@ export interface LeagueState {
   setHasChanges: (value: boolean) => void;
   addToChangeLog: (entry: string) => void;
   clearChangeLog: () => void;
+  
 }
 
-const loadState = () => {
+const defaultLeagueDataTyped = defaultLeagueData as LeagueDataShape;
+
+const normalizeScorers = (scorers: Match["scorers"] | undefined): Match["scorers"] =>
+  (scorers ?? []).map((s) => ({
+    playerId: s.playerId,
+    goals: s.goals,
+    isOwnGoal: s.isOwnGoal ?? false,
+  }));
+
+const normalizeMatches = (matches: Match[] | undefined): Match[] =>
+  (matches ?? []).map((m) => ({
+    ...m,
+    scorers: normalizeScorers(m.scorers),
+  }));
+
+const buildInitialState = (overrides?: Partial<PersistedLeagueState>): PersistedLeagueState => ({
+  teams: overrides?.teams ?? defaultLeagueDataTyped.teams,
+  players: overrides?.players ?? defaultLeagueDataTyped.players,
+  matches: normalizeMatches(overrides?.matches ?? defaultLeagueDataTyped.matches),
+  targetMatches: overrides?.targetMatches ?? defaultLeagueDataTyped.targetMatches ?? 50,
+  leagueName: overrides?.leagueName ?? defaultLeagueDataTyped.leagueConfig?.name ?? "League",
+  leagueId: overrides?.leagueId ?? defaultLeagueDataTyped.leagueConfig?.id ?? "league",
+  leagueType: overrides?.leagueType ?? defaultLeagueDataTyped.leagueConfig?.leagueType ?? "with-scorers",
+});
+
+const loadState = (): PersistedLeagueState => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      return {
-        ...parsed,
-        matches: (parsed.matches || []).map((m: any) => ({
-          ...m,
-          scorers: (m.scorers || []).map((s: any) => ({
-            ...s,
-            isOwnGoal: s.isOwnGoal ?? false,
-          })),
-        })),
-        targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
-        leagueName: (defaultLeagueData as any).leagueConfig?.name ?? "League",
-        leagueId: (defaultLeagueData as any).leagueConfig?.id ?? "league",
-      };
+      const parsed = JSON.parse(saved) as Partial<PersistedLeagueState>;
+      return buildInitialState(parsed);
     }
   } catch (e) {
     console.error("Error loading state:", e);
   }
-  return {
-    ...defaultLeagueData,
-    matches: (defaultLeagueData.matches || []).map((m: any) => ({
-      ...m,
-      scorers: (m.scorers || []).map((s: any) => ({
-        ...s,
-        isOwnGoal: s.isOwnGoal ?? false,
-      })),
-    })),
-  };
+  return buildInitialState();
 };
 
-const saveState = (state: Partial<LeagueState>) => {
+const saveState = (state: Pick<LeagueState, "teams" | "players" | "matches">) => {
   try {
     const toSave = {
       teams: state.teams,
       players: state.players,
-      matches: state.matches,
+      matches: normalizeMatches(state.matches),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch (e) {
@@ -168,15 +200,10 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   teams: initialState.teams,
   players: initialState.players,
   matches: initialState.matches,
-  targetMatches: initialState.targetMatches ?? 50,
-  leagueName:
-    (initialState as any).leagueConfig?.name ??
-    (initialState as any).leagueName ??
-    "League",
-  leagueId:
-    (initialState as any).leagueConfig?.id ??
-    (initialState as any).leagueId ??
-    "league",
+  targetMatches: initialState.targetMatches,
+  leagueName: initialState.leagueName,
+  leagueId: initialState.leagueId,
+  leagueType: initialState.leagueType,
   selectedHomeTeam: null,
   selectedAwayTeam: null,
   hasChanges: false,
@@ -188,6 +215,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   setTargetMatches: (targetMatches) => set({ targetMatches }),
   setLeagueName: (leagueName) => set({ leagueName }),
   setLeagueId: (leagueId) => set({ leagueId }),
+  setLeagueType: (leagueType) => set({ leagueType }),
   setSelectedHomeTeam: (team) => set({ selectedHomeTeam: team }),
   setSelectedAwayTeam: (team) => set({ selectedAwayTeam: team }),
   setHasChanges: (value) => set({ hasChanges: value }),
@@ -610,20 +638,19 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
 
   resetLeague: () => {
     localStorage.removeItem(STORAGE_KEY);
-    const normalizedMatches = (defaultLeagueData.matches || []).map((m: any) => ({
-      ...m,
-      scorers: (m.scorers || []).map((s: any) => ({
-        ...s,
-        isOwnGoal: s.isOwnGoal ?? false,
-      })),
-    }));
+    const resetState = buildInitialState();
     set({
-      teams: defaultLeagueData.teams,
-      players: defaultLeagueData.players,
-      matches: normalizedMatches,
-      targetMatches: (defaultLeagueData as any).targetMatches ?? 50,
-      leagueName: (defaultLeagueData as any).leagueConfig?.name ?? "League",
-      leagueId: (defaultLeagueData as any).leagueConfig?.id ?? "league",
+      teams: resetState.teams,
+      players: resetState.players,
+      matches: resetState.matches,
+      targetMatches: resetState.targetMatches,
+      leagueName: resetState.leagueName,
+      leagueId: resetState.leagueId,
+      leagueType: resetState.leagueType,
+      selectedHomeTeam: null,
+      selectedAwayTeam: null,
+      hasChanges: false,
+      changeLog: [],
     });
   },
 }));
