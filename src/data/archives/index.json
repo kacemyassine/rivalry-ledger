@@ -29,6 +29,16 @@
       "matches": 0,
       "description": "Season of test league. A battle between Ocean Dragon and Harbor United across 0 matches.",
       "image": "/images/default.png"
+    },
+    {
+      "id": "tgfdgdfv",
+      "name": "tgfdgdfv",
+      "startDate": "Jul 6, 2026",
+      "endDate": "Jul 6, 2026",
+      "winner": "Ocean Dragon",
+      "matches": 0,
+      "description": "Season of tgfdgdfv. A battle between Ocean Dragon and Harbor United across 0 matches.",
+      "image": "/images/default.png"
     }
   ]
 }
