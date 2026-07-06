@@ -38,7 +38,7 @@ export function PlayerForm({
   editingPlayerId,
   onSave,
 }: PlayerFormProps) {
-  const { players, teams, addPlayer, editPlayer } = useLeagueStore();
+  const { players, teams, addPlayer, editPlayer, leagueType } = useLeagueStore();
   const { uploadImage } = useGitHubData();
   const [name, setName] = useState("");
   const [teamId, setTeamId] = useState<string>(teams?.[0]?.id || "");
@@ -187,6 +187,7 @@ export function PlayerForm({
                 accept="image/*"
                 onChange={handleImageUpload}
                 className="hidden"
+                data-testid="image-upload-input"
               />
               <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200">
                 <Upload className="w-4 h-4" /> Upload Photo
@@ -261,7 +262,7 @@ export function PlayerForm({
           </Button>
 
           {/* Info message */}
-          {editingPlayerId && (
+          {editingPlayerId  && leagueType === "with-scorers" && (
             <p className="flex items-start gap-2 text-xs text-muted-foreground border border-border rounded-lg p-3">
               <Info className="w-3 h-3 shrink-0 mt-0.5" />
               Player goals are updated automatically when you record a match. To
