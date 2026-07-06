@@ -20,35 +20,5 @@
       "description": "Season of Ramadan League 2026. A battle between Ocean Dragon and Harbor United across 30 matches.",
       "image": "/images/testleague.jpeg"
     },
-    {
-      "id": "testleague",
-      "name": "test league",
-      "startDate": "Jul 6, 2026",
-      "endDate": "Jul 6, 2026",
-      "winner": "Ocean Dragon",
-      "matches": 0,
-      "description": "Season of test league. A battle between Ocean Dragon and Harbor United across 0 matches.",
-      "image": "/images/default.png"
-    },
-    {
-      "id": "tgfdgdfv",
-      "name": "tgfdgdfv",
-      "startDate": "Jul 6, 2026",
-      "endDate": "Jul 6, 2026",
-      "winner": "Ocean Dragon",
-      "matches": 0,
-      "description": "Season of tgfdgdfv. A battle between Ocean Dragon and Harbor United across 0 matches.",
-      "image": "/images/default.png"
-    },
-    {
-      "id": "hdslkfhsdlkfhsadlf",
-      "name": "hdslkfhsdlkfhsadlf",
-      "startDate": "Jul 6, 2026",
-      "endDate": "Jul 6, 2026",
-      "winner": "Ocean Dragon",
-      "matches": 0,
-      "description": "Season of hdslkfhsdlkfhsadlf. A battle between Ocean Dragon and Harbor United across 0 matches.",
-      "image": "/images/default.png"
-    }
   ]
 }
