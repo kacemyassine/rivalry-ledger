@@ -1,0 +1,1678 @@
+{
+  "leagueConfig": {
+    "name": "Ramadan League 2026",
+    "id": "ramadanleague2026",
+    "leagueType": "with-scorers"
+  },
+  "teams": [
+    {
+      "id": "team-1",
+      "name": "Ocean Dragon",
+      "coach": "Wassim",
+      "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
+      "played": 30,
+      "won": 6,
+      "drawn": 1,
+      "lost": 23,
+      "goalsFor": 95,
+      "goalsAgainst": 171,
+      "points": 19
+    },
+    {
+      "id": "team-2",
+      "name": "Harbor United",
+      "coach": "Yassine",
+      "logo": "/images/TeamsLogos/harbor-united-logo.webp",
+      "played": 30,
+      "won": 23,
+      "drawn": 1,
+      "lost": 6,
+      "goalsFor": 171,
+      "goalsAgainst": 95,
+      "points": 70
+    }
+  ],
+  "players": [
+    {
+      "id": "player-1",
+      "name": "Peter Schmeichel",
+      "teamId": "team-1",
+      "goals": 2,
+      "image": "/images/OceanDragonPlayers/images/peter-schmeichel.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/peter-schmeichel.webp"
+    },
+    {
+      "id": "player-2",
+      "name": "Alessandro Costacurta",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/alessandro-costacurta.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-costacurta.webp"
+    },
+    {
+      "id": "player-3",
+      "name": "Franz Beckenbauer",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/franz-beckenbauer.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/franz-beckenbauer.webp"
+    },
+    {
+      "id": "player-4",
+      "name": "Tony Adams",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/tony-adams.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/tony-adams.webp"
+    },
+    {
+      "id": "player-5",
+      "name": "Juliano Belletti",
+      "teamId": "team-1",
+      "goals": 1,
+      "image": "/images/OceanDragonPlayers/images/juliano-belletti.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/juliano-belletti.webp"
+    },
+    {
+      "id": "player-6",
+      "name": "Patrick Vieira",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/patrick-vieira.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/patrick-vieira.webp"
+    },
+    {
+      "id": "player-7",
+      "name": "David Beckham",
+      "teamId": "team-1",
+      "goals": 6,
+      "image": "/images/OceanDragonPlayers/images/david-beckham.avif",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/david-beckham.webp"
+    },
+    {
+      "id": "player-8",
+      "name": "Kevin De Bruyne",
+      "teamId": "team-1",
+      "goals": 6,
+      "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
+    },
+    {
+      "id": "player-9",
+      "name": "Antoine Griezmann",
+      "teamId": "team-1",
+      "goals": 22,
+      "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.webp"
+    },
+    {
+      "id": "player-10",
+      "name": "Kylian Mbappé",
+      "teamId": "team-1",
+      "goals": 15,
+      "image": "/images/OceanDragonPlayers/images/kylian-mbappe.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/kylian-mbappe.webp"
+    },
+    {
+      "id": "player-11",
+      "name": "Lionel Messi",
+      "teamId": "team-1",
+      "goals": 8,
+      "image": "/images/OceanDragonPlayers/images/lionel-messi.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/lionel-messi.webp"
+    },
+    {
+      "id": "player-12",
+      "name": "Erling Haaland",
+      "teamId": "team-1",
+      "goals": 8,
+      "image": "/images/OceanDragonPlayers/images/erling-haaland.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/erling-haaland.webp"
+    },
+    {
+      "id": "player-13",
+      "name": "Hristo Stoichkov",
+      "teamId": "team-1",
+      "goals": 2,
+      "image": "/images/OceanDragonPlayers/images/hristo-stoichkov.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/hristo-stoichkov.webp"
+    },
+    {
+      "id": "player-14",
+      "name": "Mohamed Salah",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/mohamed-salah.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/mohamed-salah.webp"
+    },
+    {
+      "id": "player-15",
+      "name": "Fernando Torres",
+      "teamId": "team-1",
+      "goals": 2,
+      "image": "/images/OceanDragonPlayers/images/fernando-torres.webp",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/fernando-torres.webp"
+    },
+    {
+      "id": "player-16",
+      "name": "Paul Scholes",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/paul-scholes.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/paul-scholes.webp"
+    },
+    {
+      "id": "player-17",
+      "name": "Frank Lampard",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/frank-lampard.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/frank-lampard.webp"
+    },
+    {
+      "id": "player-18",
+      "name": "Alessandro Bastoni",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/alessandro-bastoni.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/alessandro-bastoni.webp"
+    },
+    {
+      "id": "player-19",
+      "name": "johan cruyff",
+      "teamId": "team-1",
+      "goals": 18,
+      "image": "/images/OceanDragonPlayers/images/johan-cruyff.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/johan-cruyff.webp"
+    },
+    {
+      "id": "player-20",
+      "name": "Ben White",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/ben-white.avif",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/ben-white.webp"
+    },
+    {
+      "id": "player-21",
+      "name": "Giovanni van Bronckhorst",
+      "teamId": "team-2",
+      "goals": 11,
+      "image": "/images/HarborUnitedPlayers/images/giovanni-van-bronckhorst.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/giovanni-van-bronckhorst.webp"
+    },
+    {
+      "id": "player-22",
+      "name": "Marcus Rashford",
+      "teamId": "team-2",
+      "goals": 27,
+      "image": "/images/HarborUnitedPlayers/images/marcus-rashford.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/marcus-rashford.webp"
+    },
+    {
+      "id": "player-23",
+      "name": "Steven Gerrard",
+      "teamId": "team-1",
+      "goals": 0,
+      "image": "/images/OceanDragonPlayers/images/steven-gerrard.jpg",
+      "fullImage": "/images/OceanDragonPlayers/fullImages/steven-gerrard.webp"
+    },
+    {
+      "id": "player-24",
+      "name": "Lionel Messi",
+      "teamId": "team-2",
+      "goals": 56,
+      "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
+    },
+    {
+      "id": "player-25",
+      "name": "David Beckham",
+      "teamId": "team-2",
+      "goals": 6,
+      "image": "/images/HarborUnitedPlayers/images/david-beckham.avif",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/david-beckham.webp"
+    },
+    {
+      "id": "player-26",
+      "name": "Wesley Sneijder",
+      "teamId": "team-2",
+      "goals": 13,
+      "image": "/images/HarborUnitedPlayers/images/wesley-sneijder.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/wesley-sneijder.webp"
+    },
+    {
+      "id": "player-27",
+      "name": "Ruud Gullit",
+      "teamId": "team-2",
+      "goals": 26,
+      "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
+    },
+    {
+      "id": "player-28",
+      "name": "Kevin De Bruyne",
+      "teamId": "team-2",
+      "goals": 10,
+      "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.webp"
+    },
+    {
+      "id": "player-29",
+      "name": "Guti",
+      "teamId": "team-2",
+      "goals": 1,
+      "image": "/images/HarborUnitedPlayers/images/guti.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/guti.webp"
+    },
+    {
+      "id": "player-30",
+      "name": "Achraf Hakimi",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/achraf-hakimi.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/achraf-hakimi.webp"
+    },
+    {
+      "id": "player-31",
+      "name": "Alessandro Costacurta",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/alessandro-costacurta.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-costacurta.webp"
+    },
+    {
+      "id": "player-32",
+      "name": "Marquinhos",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/marquinhos.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/marquinhos.webp"
+    },
+    {
+      "id": "player-33",
+      "name": "Cafu",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/cafu.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/cafu.webp"
+    },
+    {
+      "id": "player-34",
+      "name": "Christian Abbiati",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/christian-abbiati.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/christian-abbiati.webp"
+    },
+    {
+      "id": "player-35",
+      "name": "Iker Casillas",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/iker-casillas.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/iker-casillas.webp"
+    },
+    {
+      "id": "player-36",
+      "name": "Rúben Neves",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/ruben-neves.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ruben-neves.webp"
+    },
+    {
+      "id": "player-37",
+      "name": "Didier Drogba",
+      "teamId": "team-2",
+      "goals": 12,
+      "image": "/images/HarborUnitedPlayers/images/didier-drogba.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/didier-drogba.webp"
+    },
+    {
+      "id": "player-38",
+      "name": "Martin Ødegaard",
+      "teamId": "team-2",
+      "goals": 1,
+      "image": "/images/HarborUnitedPlayers/images/martin-degaard.png",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/martin-degaard.webp"
+    },
+    {
+      "id": "player-39",
+      "name": "Erling Haaland",
+      "teamId": "team-2",
+      "goals": 1,
+      "image": "/images/HarborUnitedPlayers/images/erling-haaland.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/erling-haaland.webp"
+    },
+    {
+      "id": "player-42",
+      "name": "Warren Zaire-Emery",
+      "teamId": "team-2",
+      "goals": 1,
+      "image": "/images/HarborUnitedPlayers/images/warren-zaire-emery.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/warren-zaire-emery.webp"
+    },
+    {
+      "id": "player-43",
+      "name": "Eden Hazard",
+      "teamId": "team-2",
+      "goals": 5,
+      "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp"
+    },
+    {
+      "id": "player-44",
+      "name": "Ben White",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/ben-white.avif",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/ben-white.webp"
+    },
+    {
+      "id": "player-45",
+      "name": "Joshua Kimmich",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/joshua-kimmich.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/joshua-kimmich.webp"
+    },
+    {
+      "id": "player-46",
+      "name": "Alessandro Bastoni",
+      "teamId": "team-2",
+      "goals": 0,
+      "image": "/images/HarborUnitedPlayers/images/alessandro-bastoni.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/alessandro-bastoni.webp"
+    },
+    {
+      "name": "Désiré Doué",
+      "teamId": "team-2",
+      "image": "/images/HarborUnitedPlayers/images/desire-doue.jpg",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/desire-doue.webp",
+      "goals": 0,
+      "id": "player-1773810346810"
+    },
+    {
+      "name": "Petr Čech",
+      "teamId": "team-2",
+      "image": "/images/HarborUnitedPlayers/images/petr-cech.webp",
+      "fullImage": "/images/HarborUnitedPlayers/fullImages/petr-cech.webp",
+      "goals": 0,
+      "id": "player-1773872256153"
+    },
+    {
+      "name": "Filippo Inzaghi",
+      "teamId": "team-1",
+      "image": "/images/filippo-inzaghi.jpg",
+      "goals": 2,
+      "id": "player-1773979191775"
+    },
+    {
+      "name": "Zico",
+      "teamId": "team-1",
+      "image": "/images/zico.webp",
+      "goals": 0,
+      "id": "player-1773979262808"
+    },
+    {
+      "name": "Aurélien Tchouaméni",
+      "teamId": "team-1",
+      "image": "/images/aurélien-tchouaméni.webp",
+      "goals": 0,
+      "id": "player-1773979316452"
+    }
+  ],
+  "matches": [
+    {
+      "id": "match-1772684317449",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 8,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 1
+        },
+        {
+          "playerId": "player-22",
+          "goals": 2
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2
+        },
+        {
+          "playerId": "player-21",
+          "goals": 1
+        },
+        {
+          "playerId": "player-25",
+          "goals": 2
+        }
+      ],
+      "date": "2026-03-03T04:18:37.449Z"
+    },
+    {
+      "id": "match-1772684441398",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-24",
+          "goals": 1
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1
+        },
+        {
+          "playerId": "player-38",
+          "goals": 1
+        },
+        {
+          "playerId": "player-21",
+          "goals": 2
+        },
+        {
+          "playerId": "player-39",
+          "goals": 1
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1
+        },
+        {
+          "playerId": "player-13",
+          "goals": 1
+        },
+        {
+          "playerId": "player-1",
+          "goals": 1
+        }
+      ],
+      "date": "2026-03-04T04:20:41.398Z"
+    },
+    {
+      "id": "match-1772684647007",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-24",
+          "goals": 2
+        },
+        {
+          "playerId": "player-22",
+          "goals": 2
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1
+        }
+      ],
+      "date": "2026-03-04T04:24:07.007Z"
+    },
+    {
+      "id": "match-1772684826122",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 6,
+      "awayGoals": 8,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 1
+        },
+        {
+          "playerId": "player-28",
+          "goals": 2
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2
+        },
+        {
+          "playerId": "player-37",
+          "goals": 2
+        },
+        {
+          "playerId": "player-25",
+          "goals": 1
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2
+        },
+        {
+          "playerId": "player-12",
+          "goals": 2
+        },
+        {
+          "playerId": "player-19",
+          "goals": 2
+        }
+      ],
+      "date": "2026-03-05T04:27:06.122Z"
+    },
+    {
+      "id": "match-1772761739782",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 3,
+      "scorers": [
+        {
+          "playerId": "player-7",
+          "goals": 1
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1
+        },
+        {
+          "playerId": "player-27",
+          "goals": 2
+        }
+      ],
+      "date": "2026-03-06T01:48:59.782Z"
+    },
+    {
+      "id": "match-1772764116497",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-21",
+          "goals": 1
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2
+        },
+        {
+          "playerId": "player-43",
+          "goals": 1
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1
+        }
+      ],
+      "date": "2026-03-06T02:28:36.497Z"
+    },
+    {
+      "id": "match-1772776771420",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 1
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1
+        },
+        {
+          "playerId": "player-27",
+          "goals": 2
+        },
+        {
+          "playerId": "player-21",
+          "goals": 1
+        },
+        {
+          "playerId": "player-15",
+          "goals": 1
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1
+        }
+      ],
+      "date": "2026-03-06T05:59:31.420Z"
+    },
+    {
+      "id": "match-1772778734867",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 10,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 3
+        },
+        {
+          "playerId": "player-24",
+          "goals": 3
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1
+        }
+      ],
+      "date": "2026-03-06T06:32:14.867Z"
+    },
+    {
+      "id": "match-1772850759156",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-15",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-07T02:32:39.156Z"
+    },
+    {
+      "id": "match-1772862076426",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 1,
+      "awayGoals": 3,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-07T05:41:16.426Z"
+    },
+    {
+      "id": "match-1772863799161",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 8,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-07T06:09:59.161Z"
+    },
+    {
+      "id": "match-1772936847129",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 6,
+      "awayGoals": 1,
+      "scorers": [
+        {
+          "playerId": "player-10",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": true
+        }
+      ],
+      "date": "2026-03-08T02:27:27.129Z"
+    },
+    {
+      "id": "match-1772938732065",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 10,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-21",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-08T02:58:52.065Z"
+    },
+    {
+      "id": "match-1772945977622",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 9,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-43",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-08T04:59:37.622Z"
+    },
+    {
+      "id": "match-1773034073061",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 1,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-25",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-42",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-09T05:27:53.061Z"
+    },
+    {
+      "id": "match-1773358986348",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 3,
+      "scorers": [
+        {
+          "playerId": "player-10",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-25",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-12T23:43:06.348Z"
+    },
+    {
+      "id": "match-1773359044543",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-10",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-12T23:44:04.543Z"
+    },
+    {
+      "id": "match-1773359086938",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 1,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-22",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 3,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-12T23:44:46.938Z"
+    },
+    {
+      "id": "match-1773366682047",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 1,
+      "awayGoals": 3,
+      "scorers": [
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-13T01:51:22.047Z"
+    },
+    {
+      "id": "match-1773453699763",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 1,
+      "scorers": [
+        {
+          "playerId": "player-19",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-14T02:01:39.763Z"
+    },
+    {
+      "id": "match-1773459530441",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 9,
+      "scorers": [
+        {
+          "playerId": "player-24",
+          "goals": 5,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-5",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-43",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-13",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-14T03:38:50.441Z"
+    },
+    {
+      "id": "match-1773546746296",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-24",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-43",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-15T03:52:26.296Z"
+    },
+    {
+      "id": "match-1773549365451",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-12",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-15T04:36:05.451Z"
+    },
+    {
+      "id": "match-1773551272774",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 7,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-7",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-21",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": true
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-15T05:07:52.774Z"
+    },
+    {
+      "id": "match-1773716061399",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 1,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-21",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-17T02:54:21.399Z"
+    },
+    {
+      "id": "match-1773716130908",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-29",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-17T02:55:30.908Z"
+    },
+    {
+      "id": "match-1773717775929",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-21",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-17T03:22:55.929Z"
+    },
+    {
+      "id": "match-1773721326718",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 4,
+      "scorers": [
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-1",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-10",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-17T04:22:06.718Z"
+    },
+    {
+      "id": "match-1773722684289",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 1,
+      "scorers": [
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-11",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-17T04:44:44.289Z"
+    },
+    {
+      "id": "match-1773979105202",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-24",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-27",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-22",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-1773979191775",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-03-20T00:00:00.000Z"
+    }
+  ],
+  "targetMatches": 30
+}
