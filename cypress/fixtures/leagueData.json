@@ -1,7 +1,8 @@
 {
   "leagueConfig": {
     "id": "test-league",
-    "name": "Test League"
+    "name": "Test League",
+    "leagueType": ""
   },
   "targetMatches": 20,
   "teams": [
