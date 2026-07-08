@@ -199,7 +199,7 @@ export function TopScorers({
                   </div>
 
                   {/* Goals */}
-                  {leagueType !== "without-scorers" && (
+                  {leagueType === "with-scorers" && (
                     <div className="text-right shrink-0">
                       <p
                         data-testid="player-goals"
