@@ -35,7 +35,6 @@ let withScorersMatchId: string;
 let withoutScorersMatchId: string;
 let currentMatchId: string;
 
-
 let updatedHomeGoals: number;
 let updatedAwayGoals: number;
 let updatedScorers: ScorerInput[] = [];
@@ -86,6 +85,15 @@ Given("I am updating the {string} with no scorers match", (score: string) => {
   });
 });
 
+Then("each player's total goal count shouldn't change", () => {
+  cy.fixture("leagueData.json").then((data) => {
+    updatedScorers.forEach((scorer) => {
+      const playerId = getPlayerId(scorer.playerName, scorer.team, data);
+      topScorers.assertPlayerGoals(playerId, initialGoals[playerId]);
+    });
+  });
+});
+
 When("I update the match score to {string}", (score: string) => {
   setUpdatedScore(score);
   matchForm.submit("update");
@@ -103,8 +111,12 @@ Then(
 );
 
 Given(
-  "I am updating the {string} with scorers match",
-  (score: string, dataTable: DataTable) => {
+  "I am updating the {string} with scorers match in {string} league",
+  (
+    score: string,
+    leagueType: "with-scorers" | "without-scorers",
+    dataTable: DataTable,
+  ) => {
     const scorers: ScorerInput[] = dataTable.hashes().map((row) => ({
       team: row.team as "home" | "away",
       playerName: row["player-name"],
@@ -114,12 +126,14 @@ Given(
     updatedScorers = scorers;
 
     cy.fixture("leagueData.json").then((data) => {
-      updatedScorers.forEach((scorer) => {
-        const playerId = getPlayerId(scorer.playerName, scorer.team, data);
-        topScorers.getPlayerGoals(playerId).then((goals) => {
-          initialGoals[playerId] = goals;
+      if (leagueType === "with-scorers") {
+        updatedScorers.forEach((scorer) => {
+          const playerId = getPlayerId(scorer.playerName, scorer.team, data);
+          topScorers.getPlayerGoals(playerId).then((goals) => {
+            initialGoals[playerId] = goals;
+          });
         });
-      });
+      }
 
       const matchId = getMatchByStats(score, scorers, data);
 
@@ -178,7 +192,7 @@ Then(
 );
 
 Then("each player's total goal count should reflect the updated values", () => {
-  cy.log('im here');
+  cy.log("im here");
   cy.fixture("leagueData.json").then((data) => {
     updatedScorers.forEach((scorer) => {
       const playerId = getPlayerId(scorer.playerName, scorer.team, data);
@@ -203,17 +217,26 @@ When("I change the match date to {string}", (newDate: string) => {
   matchForm.submit("update");
 });
 
-Then("the match should appear in the match history with the new date {string}", (newDate: string) => {
-  matchHistory.assertDateIs(currentMatchId, newDate);
-});
+Then(
+  "the match should appear in the match history with the new date {string}",
+  (newDate: string) => {
+    matchHistory.assertDateIs(currentMatchId, newDate);
+  },
+);
 
-Then("An error message telling the date cannot be in the future should appear", () => {
-  matchForm.assertDateErrorMessage();
-});
+Then(
+  "An error message telling the date cannot be in the future should appear",
+  () => {
+    matchForm.assertDateErrorMessage();
+  },
+);
 
-Then("the match should still appear in the match history with a date of {string}", (expectedDate: string) => {
-  matchHistory.assertDateIs(currentMatchId, expectedDate);
-});
+Then(
+  "the match should still appear in the match history with a date of {string}",
+  (expectedDate: string) => {
+    matchHistory.assertDateIs(currentMatchId, expectedDate);
+  },
+);
 
 Given("I am deleting the {string} with no scorers match", (score: string) => {
   cy.fixture("leagueData.json").then((data) => {
@@ -246,8 +269,12 @@ When("I cancel the deletion", () => {
 });
 
 Given(
-  "I am deleting the {string} with scorers match",
-  (score: string, dataTable: DataTable) => {
+  "I am deleting the {string} with scorers match in {string} league",
+  (
+    score: string,
+    leagueType: "withoutScorers" | "with-scorers",
+    dataTable: DataTable,
+  ) => {
     const scorers: ScorerInput[] = dataTable.hashes().map((row) => ({
       team: row.team as "home" | "away",
       playerName: row["player-name"],
@@ -260,17 +287,20 @@ Given(
     cy.fixture("leagueData.json").then((data) => {
       scorers.forEach((scorer) => {
         const playerId = getPlayerId(scorer.playerName, scorer.team, data);
-        topScorers.getPlayerGoals(playerId).then((goals) => {
-          initialGoals[playerId] = goals;
-        });
-        oldScorerGoals[playerId] = scorer.goals;
-      });
 
-      const matchId = getMatchByStats(score, scorers, data);
-      currentMatchId = matchId!;
-      setCurrentMatchId(currentMatchId);
+        if (leagueType === "with-scorers") {
+          topScorers.getPlayerGoals(playerId).then((goals) => {
+            initialGoals[playerId] = goals;
+            oldScorerGoals[playerId] = scorer.goals;
+          });
+        }
+
+        const matchId = getMatchByStats(score, scorers, data);
+        currentMatchId = matchId!;
+        setCurrentMatchId(currentMatchId);
+      });
     });
-  }
+  },
 );
 
 Then("each player's total goal count should decrease accordingly", () => {
