@@ -44,6 +44,19 @@ function setScore(score: string) {
   });
 }
 
+Given(
+  "The current league type is {string}",
+  (leagueType: "with-scorers" | "without-scorers") => {
+    cy.fixture("leagueData.json").then((data) => {
+      data.leagueConfig.leagueType = leagueType;
+      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+      cy.intercept("GET", "https://api.github.com/**", {
+        body: { content: encoded, sha: "abc123" },
+      }).as("getLeagueData");
+    });
+  }
+);
+
 When("I record a match with a final score of {string}", (score: string) => {
   setScore(score);
   matchForm.submit("record");
@@ -118,7 +131,3 @@ Then("An error message telling goals don't add up should appear", () => {
   cy.contains(new RegExp("goals don.t add up", "i")).should("be.visible");
   matchForm.closeTheForm();
 });
-
-
-
-
