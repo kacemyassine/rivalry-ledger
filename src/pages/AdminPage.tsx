@@ -84,11 +84,12 @@ const AdminPage = () => {
         setLeagueName(data.leagueConfig?.name ?? 'League');
         setLeagueId(data.leagueConfig?.id ?? 'league');
         setLeagueType(data.leagueConfig?.leagueType ?? 'with-scorers');
+        setMinSquadSize(data.leagueConfig?.minSquadSize ?? SQUAD_RULES.defaultMinSize)
       }
       setLoading(false);
     };
     loadData();
-  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType]);
+  }, [fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType, setMinSquadSize]);
 
   const handleSaveToGitHub = useCallback(async () => {
   setSaving(true);

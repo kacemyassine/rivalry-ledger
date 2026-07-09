@@ -20,7 +20,7 @@ export interface LeagueData {
   leagueConfig?: {
     name: string;
     id: string;
-    leagueType?: string;
+    leagueType?: 'with-scorers' | 'without-scorers';
     minSquadSize?: number;
   };
   teams: Team[];
