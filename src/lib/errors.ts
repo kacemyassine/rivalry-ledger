@@ -23,7 +23,6 @@ export const PLAYER_ERRORS = {
   GOALS_READONLY:
     "Goals cannot be edited directly — they are managed by match operations only",
   HAS_GOALS: "Cannot delete a player with goals",
-  MIN_SQUAD_SIZE: `Squad must have more than ${SQUAD_RULES.minSize} players`,
 };
 
 export const TEAM_ERRORS = {

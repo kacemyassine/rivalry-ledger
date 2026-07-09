@@ -51,7 +51,7 @@ interface PersistedLeagueState {
   leagueName: string;
   leagueId: string;
   leagueType: 'with-scorers' | 'without-scorers';
-  setLeagueType: (type: 'with-scorers' | 'without-scorers') => void;
+  minSquadSize: number;
 }
 
 interface LeagueDataShape {
@@ -59,6 +59,7 @@ interface LeagueDataShape {
     name?: string;
     id?: string;
     leagueType?: LeagueType;
+    minSquadSize?: number;
   };
   targetMatches?: number;
   teams: Team[];
@@ -78,6 +79,7 @@ export interface LeagueState {
   hasChanges: boolean;
   changeLog: string[];
   leagueType: LeagueType;
+  minSquadSize: number;
   setTeams: (teams: Team[]) => void;
   setPlayers: (players: Player[]) => void;
   setMatches: (matches: Match[]) => void;
@@ -85,6 +87,7 @@ export interface LeagueState {
   setLeagueName: (name: string) => void;
   setLeagueId: (id: string) => void;
   setLeagueType: (leagueType: LeagueType) => void;
+  setMinSquadSize: (n: number) => void;
   setSelectedHomeTeam: (team: Team | null) => void;
   setSelectedAwayTeam: (team: Team | null) => void;
   addMatch: (
@@ -135,6 +138,7 @@ const buildInitialState = (overrides?: Partial<PersistedLeagueState>): Persisted
   leagueName: overrides?.leagueName ?? defaultLeagueDataTyped.leagueConfig?.name ?? "League",
   leagueId: overrides?.leagueId ?? defaultLeagueDataTyped.leagueConfig?.id ?? "league",
   leagueType: overrides?.leagueType ?? defaultLeagueDataTyped.leagueConfig?.leagueType ?? "with-scorers",
+  minSquadSize: overrides?.minSquadSize ?? defaultLeagueDataTyped.leagueConfig?.minSquadSize ?? SQUAD_RULES.defaultMinSize,
 });
 
 const loadState = (): PersistedLeagueState => {
@@ -204,6 +208,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   leagueName: initialState.leagueName,
   leagueId: initialState.leagueId,
   leagueType: initialState.leagueType,
+  minSquadSize: initialState.minSquadSize,
   selectedHomeTeam: null,
   selectedAwayTeam: null,
   hasChanges: false,
@@ -216,6 +221,7 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
   setLeagueName: (leagueName) => set({ leagueName }),
   setLeagueId: (leagueId) => set({ leagueId }),
   setLeagueType: (leagueType) => set({ leagueType }),
+  setMinSquadSize: (minSquadSize) => set({ minSquadSize }),
   setSelectedHomeTeam: (team) => set({ selectedHomeTeam: team }),
   setSelectedAwayTeam: (team) => set({ selectedAwayTeam: team }),
   setHasChanges: (value) => set({ hasChanges: value }),
@@ -412,8 +418,8 @@ export const useLeagueStore = create<LeagueState>((set, get) => ({
     if (player.goals > 0) throw new Error(PLAYER_ERRORS.HAS_GOALS);
 
     const teamPlayers = state.players.filter((p) => p.teamId === player.teamId);
-    if (teamPlayers.length <= SQUAD_RULES.minSize)
-      throw new Error(PLAYER_ERRORS.MIN_SQUAD_SIZE);
+    if (teamPlayers.length <= state.minSquadSize) 
+    throw new Error(`squad must have more than ${state.minSquadSize} players.`)
 
     const updatedPlayers = state.players.filter((p) => p.id !== id);
     const newState = { ...state, players: updatedPlayers };

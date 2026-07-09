@@ -1,5 +1,4 @@
 import { Player, Team } from '@/store/leagueStore';
-import { SQUAD_RULES } from './rules';
 import { calculatePoints, calculateGoalDifference } from './standingsUtils';
 
 export function sortPlayers(players: Player[], teams: Team[] = []): Player[] {
@@ -40,6 +39,6 @@ export function getVisiblePlayers(players: Player[], teams: Team[], showAll: boo
   return showAll ? sorted : getScorers(sorted);
 }
 
-export function canDeletePlayer(player: Player, teamPlayers: Player[]): boolean {
-  return player.goals === 0 && teamPlayers.length > SQUAD_RULES.minSize;
+export function canDeletePlayer(player: Player, teamPlayers: Player[], minSquadSize: number): boolean {
+  return player.goals === 0 && teamPlayers.length > minSquadSize;
 }

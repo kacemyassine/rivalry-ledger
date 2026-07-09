@@ -20,6 +20,8 @@ export interface LeagueData {
   leagueConfig?: {
     name: string;
     id: string;
+    leagueType?: string;
+    minSquadSize?: number;
   };
   teams: Team[];
   players: Player[];
@@ -29,7 +31,7 @@ export interface LeagueData {
 
 export interface ArchiveData {
   currentData: LeagueData;
-  newLeagueConfig: { name: string; id: string };
+  newLeagueConfig: { name: string; id: string; leagueType?: string; minSquadSize?: number };
   newTargetMatches: number;
   keepPlayers: boolean;
   imageName: string;

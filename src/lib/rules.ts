@@ -8,6 +8,7 @@ export const PLAYER_NAME_RULES = {
 
 export const SQUAD_RULES = {
   minSize: 23,
+  defaultMinSize: 11,
 };
 
 export const MAX_GOALS = 20;

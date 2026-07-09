@@ -42,6 +42,7 @@ export function TopScorers({
   const sorted = sortPlayers(players, teams);
   const scorers = getScorers(sorted);
   const nonScorers = getNonScorers(sorted);
+  const { minSquadSize } = useLeagueStore();
   const visiblePlayers = showAll
   ? sorted
   : scorers.length >= 10
@@ -92,7 +93,7 @@ export function TopScorers({
               const teamPlayers = players.filter(
                 (p: any) => p.teamId === player.teamId,
               );
-              const canDelete = canDeletePlayer(player, teamPlayers);
+              const canDelete = canDeletePlayer(player, teamPlayers, minSquadSize);
 
               return (
                 <div

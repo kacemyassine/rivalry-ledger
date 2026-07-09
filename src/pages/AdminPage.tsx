@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { SQUAD_RULES } from '@/lib/rules';
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -59,13 +60,14 @@ const AdminPage = () => {
   const [archiveImagePreview, setArchiveImagePreview] = useState<string | null>(null);
   const [keepPlayers, setKeepPlayers] = useState(true);
   const [newLeagueType, setNewLeagueType] = useState<'with-scorers' | 'without-scorers'>('with-scorers');
+  const [newMinSquadSize, setNewMinSquadSize] = useState<number>(SQUAD_RULES.defaultMinSize)
 
   const {
     matches, teams, players,
     targetMatches, leagueName, leagueId,
     setTeams, setPlayers, setMatches,
     setTargetMatches, setLeagueName, setLeagueId,
-    hasChanges, changeLog, addToChangeLog, clearChangeLog, setLeagueType, leagueType
+    hasChanges, changeLog, addToChangeLog, clearChangeLog, setLeagueType, leagueType, minSquadSize, setMinSquadSize
   } = useLeagueStore();
 
   const { fetchData, updateData, archiveLeague, uploadImage } = useGitHubData();
@@ -91,7 +93,7 @@ const AdminPage = () => {
   const handleSaveToGitHub = useCallback(async () => {
   setSaving(true);
   const success = await updateData({
-    leagueConfig: { name: leagueName, id: leagueId, leagueType: leagueType },
+    leagueConfig: { name: leagueName, id: leagueId, leagueType: leagueType, minSquadSize: minSquadSize }, // add minSquadSize
     teams,
     players,
     matches,
@@ -99,7 +101,7 @@ const AdminPage = () => {
   });
   if (success) clearChangeLog();
   setSaving(false);
-  }, [updateData, teams, players, matches, targetMatches, leagueName, leagueId, leagueType, clearChangeLog]); 
+}, [updateData, teams, players, matches, targetMatches, leagueName, leagueId, leagueType, minSquadSize, clearChangeLog]); // add minSquadSize
 
   const handleArchiveLeague = useCallback(async () => {
     if (!newLeagueName.trim()) return;
@@ -155,7 +157,7 @@ const AdminPage = () => {
       setNewLeagueType('with-scorers');
     }
     setArchiving(false);
-  }, [archiveLeague, uploadImage, leagueName, leagueId, leagueType, teams, players, matches, targetMatches, newLeagueName, newTargetMatches, archiveImageFile, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType]);
+  }, [archiveLeague, uploadImage, leagueName, leagueId, leagueType, teams, players, matches, targetMatches, newLeagueName, newTargetMatches,newLeagueType, archiveImageFile, keepPlayers, fetchData, setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId, setLeagueType ]);
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -277,6 +279,16 @@ const AdminPage = () => {
                         className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                       />
                     </div>
+
+                    <div className="space-y-1">
+  <Label className="text-yellow-200/80 text-sm">Min Squad Size per Team</Label>
+  <Input
+    type="number"
+    value={newMinSquadSize}
+    onChange={(e) => setNewMinSquadSize(parseInt(e.target.value) || SQUAD_RULES.defaultMinSize)}
+    className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+  />
+</div>
 
                     <div className="space-y-1">
   <Label className="text-yellow-200/80 text-sm">League Type</Label>
