@@ -217,7 +217,7 @@ export function MatchForm({
           )}
 
           <div
-            data-testId="score-field"
+            data-testid="score-field"
             className="flex items-end justify-center gap-2 md:gap-4"
           >
             <div className="text-center flex-1">

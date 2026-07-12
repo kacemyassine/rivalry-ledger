@@ -126,7 +126,7 @@ const Navbar = () => {
             />
             {error && (
               <p
-                data-testId="password-error"
+                data-testid="password-error"
                 className="text-red-400 text-sm text-center"
               >
                 {countdown > 0
@@ -233,7 +233,7 @@ const Navbar = () => {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              data-testId="mobile-hamburger"
+              data-testid="mobile-hamburger"
               className="md:hidden p-2 text-yellow-300/70 hover:text-yellow-300 hover:bg-yellow-400/10 rounded-xl transition-colors"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -243,7 +243,7 @@ const Navbar = () => {
           {/* Mobile menu */}
           {mobileMenuOpen && (
             <div
-              data-testId="mobile-menu"
+              data-testid="mobile-menu"
               className="md:hidden border-t border-yellow-400/10 px-4 py-3 flex flex-col gap-1"
             >
               {navItems.map(({ label, path, icon: Icon }) => (

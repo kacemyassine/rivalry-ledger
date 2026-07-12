@@ -101,7 +101,7 @@ export function LeagueHeader({
             className={`w-6 h-6 sm:w-10 sm:h-10 shrink-0 drop-shadow-lg ${isRamadan ? "text-yellow-400" : "text-gold"}`}
           />
           <h1
-            data-testId="league-title"
+            data-testid="league-title"
             className={`text-2xl sm:text-4xl md:text-6xl font-display font-bold tracking-wider text-center ${
               isRamadan
                 ? "text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-yellow-600"
@@ -117,7 +117,7 @@ export function LeagueHeader({
 
         {/* Subtitle */}
         <p
-          data-testId="league-subtitle"
+          data-testid="league-subtitle"
           className={`text-sm sm:text-lg font-body tracking-wide text-center px-2 ${isRamadan ? "text-yellow-200/70" : "text-muted-foreground"}`}
         >
           {targetMatches} Matches • {teams.length} Teams • 1 Champion
@@ -230,7 +230,7 @@ export function LeagueHeader({
 
         {/* Progress Bar */}
         <div
-          data-testId="progress-bar"
+          data-testid="progress-bar"
           className="mt-8 px-4 sm:px-8 max-w-2xl mx-auto"
         >
           <div className="flex items-center justify-between mb-3">
