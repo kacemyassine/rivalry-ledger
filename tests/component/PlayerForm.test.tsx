@@ -35,7 +35,7 @@ jest.mock("lucide-react", () => ({
   ChevronDown: () => <div data-testid="chevron-down-icon" />,
   ChevronUp: () => <div data-testid="chevron-up-icon" />,
   Check: () => <div data-testid="check-icon" />,
-  AlertCircle: () => <div data-testId="alert-circle-icon" />,
+  AlertCircle: () => <div data-testid="alert-circle-icon" />,
 }));
 
 const mockUseLeagueStore = useLeagueStore as unknown as jest.Mock;
