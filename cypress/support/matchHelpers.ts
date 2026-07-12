@@ -8,10 +8,10 @@ export type ScorerInput = {
   isOwnGoal?: boolean;
 };
 
-export function getPlayerId(playerName: string, team: string, fixture: LeagueData): string {
+export function getPlayerId(playerName: string, team: "home" | "away", fixture: LeagueData): string {
   const teamId = team === "home" ? "team-1" : "team-2";
   const name = playerName.replace(/-/g, " ").toLowerCase();
-  return (
+return (
   fixture.players.find(
     (p: Player) => p.teamId === teamId && p.name.toLowerCase() === name
   )?.id ?? (() => { throw new Error("player not found in this league!"); })()
@@ -56,4 +56,8 @@ export function getMatchByStats(
   });
 
   return found?.id ?? null;
+}
+
+export function getTeamName(teamId: string, data: LeagueData) {
+  return data.teams.find((t) => t.id === teamId)?.name;
 }

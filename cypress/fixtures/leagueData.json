@@ -2,7 +2,8 @@
   "leagueConfig": {
     "id": "test-league",
     "name": "Test League",
-    "leagueType": ""
+    "leagueType": "",
+    "minSquadSize": 5
   },
   "targetMatches": 20,
   "teams": [
@@ -111,6 +112,14 @@
       "name": "Cristiano Ronaldo",
       "teamId": "team-2",
       "goals": 5,
+      "image": "",
+      "fullImage": ""
+    },
+    {
+      "id": "player-11",
+      "name": "Ramy Bensebaini",
+      "teamId": "team-2",
+      "goals": 0,
       "image": "",
       "fullImage": ""
     }
