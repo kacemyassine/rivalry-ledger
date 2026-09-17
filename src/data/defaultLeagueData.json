@@ -5,33 +5,32 @@
     "leagueType": "with-scorers",
     "minSquadSize": 11
   },
-  "targetMatches": 50,
   "teams": [
     {
       "id": "team-1",
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 0,
+      "played": 4,
       "won": 0,
-      "drawn": 0,
+      "drawn": 4,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 0
+      "points": 4
     },
     {
       "id": "team-2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 0,
+      "played": 4,
       "won": 0,
-      "drawn": 0,
+      "drawn": 4,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 0
+      "points": 4
     }
   ],
   "players": [
@@ -425,5 +424,51 @@
       "id": "player-1773979316452"
     }
   ],
-  "matches": []
+  "matches": [
+    {
+      "id": "match-1",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-17T16:46:04.538Z"
+    },
+    {
+      "id": "match-2",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-17T16:46:05.426Z"
+    },
+    {
+      "id": "match-3",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-17T16:46:06.278Z"
+    },
+    {
+      "id": "match-4",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-17T16:46:07.314Z"
+    }
+  ],
+  "targetMatches": 50
 }
