@@ -11,26 +11,26 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 6,
+      "played": 7,
       "won": 0,
-      "drawn": 6,
+      "drawn": 7,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 6
+      "points": 7
     },
     {
       "id": "team-2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 6,
+      "played": 7,
       "won": 0,
-      "drawn": 6,
+      "drawn": 7,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 6
+      "points": 7
     }
   ],
   "players": [
@@ -490,6 +490,17 @@
       "awayGoals": 0,
       "scorers": [],
       "date": "2026-09-17T16:49:35.314Z"
+    },
+    {
+      "id": "match-7",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-17T16:54:10.325Z"
     }
   ],
   "targetMatches": 50
