@@ -24,9 +24,14 @@ import {
 } from "lucide-react";
 import { AuthService } from "@/lib/authService";
 import { UnsavedChanges } from "@/components/UnsavedChanges";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
-
- } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { SQUAD_RULES } from "@/lib/rules";
 import { sortTeams } from "@/lib/standingsUtils";
 
@@ -72,8 +77,9 @@ const AdminPage = () => {
   const [newMinSquadSize, setNewMinSquadSize] = useState<number>(
     SQUAD_RULES.defaultMinSize,
   );
-  const [dialogStep, setDialogStep] = useState<'warning' | 'config' | 'confirm' | 'unsaved' | null>(null);
-
+  const [dialogStep, setDialogStep] = useState<
+    "warning" | "config" | "confirm" | "unsaved" | null
+  >(null);
 
   const {
     matches,
@@ -163,6 +169,11 @@ const AdminPage = () => {
   const handleArchiveLeague = useCallback(async () => {
     if (!newLeagueName.trim()) return;
 
+    if (matches.length < 4) {
+      toast.error("Cannot archive: at least 4 matches required.");
+      return;
+    }
+
     const newId = newLeagueName.toLowerCase().replace(/\s+/g, "");
 
     setArchiving(true);
@@ -193,7 +204,8 @@ const AdminPage = () => {
         teams,
         players,
         matches,
-        targetMatches: matches.length < targetMatches ? matches.length : targetMatches,
+        targetMatches:
+          matches.length < targetMatches ? matches.length : targetMatches,
       },
       newLeagueConfig: {
         name: newLeagueName,
@@ -258,16 +270,20 @@ const AdminPage = () => {
   ]);
 
   const handleStartNewLeagueClick = () => {
+    if (matches.length < 4) {
+      toast.error("Cannot start new league: at least 4 matches required.");
+      return;
+    }
     if (hasChanges) {
-      setDialogStep('unsaved');
+      setDialogStep("unsaved");
       return;
     }
     if (matches.length < targetMatches) {
-      setDialogStep('warning');
+      setDialogStep("warning");
     } else {
-      setDialogStep('config');
+      setDialogStep("config");
     }
-  }
+  };
 
   const handleEditPlayer = (playerId: string) => {
     setEditingPlayerId(playerId);
@@ -361,66 +377,99 @@ const AdminPage = () => {
 
               {/* Start New League */}
               <Button
-  data-testid="start-new-league-btn"
-  onClick={handleStartNewLeagueClick}
-  className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all"
->
-  <Archive className="w-4 h-4" /> Start New League
-</Button>
+                data-testid="start-new-league-btn"
+                onClick={handleStartNewLeagueClick}
+                className="gap-2 bg-purple-900/50 hover:bg-purple-800/70 text-purple-300 border border-purple-400/20 hover:border-purple-400/40 transition-all"
+              >
+                <Archive className="w-4 h-4" /> Start New League
+              </Button>
               {/* Warning Dialog */}
-<Dialog open={dialogStep === 'warning'}  onOpenChange={(open) => !open && setDialogStep(null)}>
-  <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
-    <DialogHeader>
-      <DialogTitle  data-testid="warning-dialog" className="text-yellow-400 text-xl">League Not Complete</DialogTitle>
-      <DialogDescription className="text-yellow-200/60">
-        The current league has only played{' '}
-        <span className="text-yellow-300 font-semibold">{matches.length}/{targetMatches}</span>{' '}
-        matches. If you proceed, the target matches will be adjusted to{' '}
-        <span className="text-yellow-300 font-semibold">{matches.length}</span>.
-      </DialogDescription>
-    </DialogHeader>
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setDialogStep(null)} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
-        Cancel
-      </Button>
-      <Button onClick={() => setDialogStep('config')} className="bg-purple-600 hover:bg-purple-700 text-white">
-        Proceed
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+              <Dialog
+                open={dialogStep === "warning"}
+                onOpenChange={(open) => !open && setDialogStep(null)}
+              >
+                <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                  <DialogHeader>
+                    <DialogTitle
+                      data-testid="warning-dialog"
+                      className="text-yellow-400 text-xl"
+                    >
+                      League Not Complete
+                    </DialogTitle>
+                    <DialogDescription className="text-yellow-200/60">
+                      The current league has only played{" "}
+                      <span className="text-yellow-300 font-semibold">
+                        {matches.length}/{targetMatches}
+                      </span>{" "}
+                      matches. If you proceed, the target matches will be
+                      adjusted to{" "}
+                      <span className="text-yellow-300 font-semibold">
+                        {matches.length}
+                      </span>
+                      .
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogStep(null)}
+                      className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => setDialogStep("config")}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      Proceed
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
-{/* Unsaved Changes Dialog */}
-<Dialog open={dialogStep === 'unsaved'} onOpenChange={(open) => !open && setDialogStep(null)}>
-  <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
-    <DialogHeader>
-      <DialogTitle data-testid="unsaved-changes-dialog" className="text-yellow-400 text-xl">Unsaved Changes</DialogTitle>
-      <DialogDescription className="text-yellow-200/60">
-        You have unsaved changes. Please save them before starting a new league.
-      </DialogDescription>
-    </DialogHeader>
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setDialogStep(null)} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
-        OK
-      </Button>
-      <Button
-        onClick={async () => {
-          await handleSaveToGitHub();
-          if (matches.length < targetMatches) {
-            setDialogStep('warning');
-          } else {
-            setDialogStep('config');
-          }
-        }}
-        className="bg-blue-600 hover:bg-blue-700 text-white"
-      >
-        <Save className="w-4 h-4 mr-2" />
-        Save & Continue
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
-
+              {/* Unsaved Changes Dialog */}
+              <Dialog
+                open={dialogStep === "unsaved"}
+                onOpenChange={(open) => !open && setDialogStep(null)}
+              >
+                <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                  <DialogHeader>
+                    <DialogTitle
+                      data-testid="unsaved-changes-dialog"
+                      className="text-yellow-400 text-xl"
+                    >
+                      Unsaved Changes
+                    </DialogTitle>
+                    <DialogDescription className="text-yellow-200/60">
+                      You have unsaved changes. Please save them before starting
+                      a new league.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogStep(null)}
+                      className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20"
+                    >
+                      OK
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        await handleSaveToGitHub();
+                        if (matches.length < targetMatches) {
+                          setDialogStep("warning");
+                        } else {
+                          setDialogStep("config");
+                        }
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      Save & Continue
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
               <Button
                 onClick={handleLogout}
@@ -508,201 +557,268 @@ const AdminPage = () => {
           onUndoAll={() => {}}
         />
         {/* Config Dialog */}
-<Dialog open={dialogStep === 'config'} onOpenChange={(open) => !open && setDialogStep(null)}>
-  <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
-    <DialogHeader>
-      <DialogTitle datat-testid='config-dialog' className="text-yellow-400 text-xl">Start New League</DialogTitle>
-      <DialogDescription className="text-yellow-200/60">
-        This will archive <span className="text-yellow-300 font-semibold">{leagueName}</span> and start a fresh league.
-      </DialogDescription>
-    </DialogHeader>
+        <Dialog
+          open={dialogStep === "config"}
+          onOpenChange={(open) => !open && setDialogStep(null)}
+        >
+          <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+            <DialogHeader>
+              <DialogTitle
+                datat-testid="config-dialog"
+                className="text-yellow-400 text-xl"
+              >
+                Start New League
+              </DialogTitle>
+              <DialogDescription className="text-yellow-200/60">
+                This will archive{" "}
+                <span className="text-yellow-300 font-semibold">
+                  {leagueName}
+                </span>{" "}
+                and start a fresh league.
+              </DialogDescription>
+            </DialogHeader>
 
-    <div className="space-y-4 py-2">
-      <div className="space-y-1">
-        <Label className="text-yellow-200/80 text-sm">New League Name</Label>
-        <Input
-          value={newLeagueName}
-          data-testid="new-league-name-input"
-          onChange={(e) => setNewLeagueName(e.target.value)}
-          placeholder="e.g. Summer League 2026"
-          className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
-        />
-      </div>
+            <div className="space-y-4 py-2">
+              <div className="space-y-1">
+                <Label className="text-yellow-200/80 text-sm">
+                  New League Name
+                </Label>
+                <Input
+                  value={newLeagueName}
+                  data-testid="new-league-name-input"
+                  onChange={(e) => setNewLeagueName(e.target.value)}
+                  placeholder="e.g. Summer League 2026"
+                  className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
+                />
+              </div>
 
-      <div className="space-y-1">
-        <Label className="text-yellow-200/80 text-sm">Target Matches</Label>
-        <Input
-          type="number"
-          value={newTargetMatches}
-          onChange={(e) => setNewTargetMatches(parseInt(e.target.value) || 50)}
-          className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
-        />
-      </div>
+              <div className="space-y-1">
+                <Label className="text-yellow-200/80 text-sm">
+                  Target Matches
+                </Label>
+                <Input
+                  type="number"
+                  value={newTargetMatches}
+                  onChange={(e) =>
+                    setNewTargetMatches(parseInt(e.target.value) || 50)
+                  }
+                  className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+                />
+              </div>
 
-      <div className="space-y-1">
-        <Label className="text-yellow-200/80 text-sm">Min Squad Size per Team</Label>
-        <Input
-          type="number"
-          value={newMinSquadSize}
-          onChange={(e) => setNewMinSquadSize(parseInt(e.target.value) || SQUAD_RULES.defaultMinSize)}
-          className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
-        />
-      </div>
+              <div className="space-y-1">
+                <Label className="text-yellow-200/80 text-sm">
+                  Min Squad Size per Team
+                </Label>
+                <Input
+                  type="number"
+                  value={newMinSquadSize}
+                  onChange={(e) =>
+                    setNewMinSquadSize(
+                      parseInt(e.target.value) || SQUAD_RULES.defaultMinSize,
+                    )
+                  }
+                  className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+                />
+              </div>
 
-      <div className="space-y-1">
-        <Label className="text-yellow-200/80 text-sm">League Type</Label>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setNewLeagueType('with-scorers')}
-            className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
-              newLeagueType === 'with-scorers'
-                ? 'bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400'
-                : 'bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40'
-            }`}
-          >
-            With Scorers
-          </button>
-          <button
-            type="button"
-            onClick={() => setNewLeagueType('without-scorers')}
-            className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
-              newLeagueType === 'without-scorers'
-                ? 'bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400'
-                : 'bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40'
-            }`}
-          >
-            Without Scorers
-          </button>
-        </div>
-      </div>
+              <div className="space-y-1">
+                <Label className="text-yellow-200/80 text-sm">
+                  League Type
+                </Label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewLeagueType("with-scorers")}
+                    className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
+                      newLeagueType === "with-scorers"
+                        ? "bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400"
+                        : "bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40"
+                    }`}
+                  >
+                    With Scorers
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewLeagueType("without-scorers")}
+                    className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
+                      newLeagueType === "without-scorers"
+                        ? "bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400"
+                        : "bg-transparent text-yellow-200/60 border-yellow-400/20 hover:border-yellow-400/40"
+                    }`}
+                  >
+                    Without Scorers
+                  </button>
+                </div>
+              </div>
 
-      <div className="space-y-1">
-        <Label className="text-yellow-200/80 text-sm">Archive Image</Label>
-        <div className="flex flex-col items-center gap-3">
-          {archiveImagePreview && (
-            <img
-              src={archiveImagePreview}
-              alt="Preview"
-              className="w-24 h-24 object-cover rounded-xl border border-yellow-400/20"
-            />
-          )}
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                setArchiveImageFile(file);
-                const reader = new FileReader();
-                reader.onloadend = () => setArchiveImagePreview(reader.result as string);
-                reader.readAsDataURL(file);
-              }}
-            />
-            <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200 border border-yellow-400/20 hover:border-yellow-400/40 bg-yellow-400/10 px-4 py-2 rounded-lg transition-all">
-              <Upload className="w-4 h-4" />
-              {archiveImageFile ? archiveImageFile.name : 'Select Image'}
-            </span>
-          </label>
-        </div>
-      </div>
+              <div className="space-y-1">
+                <Label className="text-yellow-200/80 text-sm">
+                  Archive Image
+                </Label>
+                <div className="flex flex-col items-center gap-3">
+                  {archiveImagePreview && (
+                    <img
+                      src={archiveImagePreview}
+                      alt="Preview"
+                      className="w-24 h-24 object-cover rounded-xl border border-yellow-400/20"
+                    />
+                  )}
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setArchiveImageFile(file);
+                        const reader = new FileReader();
+                        reader.onloadend = () =>
+                          setArchiveImagePreview(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                    <span className="flex items-center gap-2 text-sm text-yellow-300 hover:text-yellow-200 border border-yellow-400/20 hover:border-yellow-400/40 bg-yellow-400/10 px-4 py-2 rounded-lg transition-all">
+                      <Upload className="w-4 h-4" />
+                      {archiveImageFile
+                        ? archiveImageFile.name
+                        : "Select Image"}
+                    </span>
+                  </label>
+                </div>
+              </div>
 
-      <div className="flex items-center gap-3 pt-1">
-        <input
-          type="checkbox"
-          id="keepPlayers"
-          checked={keepPlayers}
-          onChange={(e) => setKeepPlayers(e.target.checked)}
-          className="w-4 h-4 accent-yellow-400 cursor-pointer"
-        />
-        <label htmlFor="keepPlayers" className="text-yellow-200/80 text-sm cursor-pointer">
-          Keep players (goals reset to 0)
-        </label>
-      </div>
-    </div>
+              <div className="flex items-center gap-3 pt-1">
+                <input
+                  type="checkbox"
+                  id="keepPlayers"
+                  checked={keepPlayers}
+                  onChange={(e) => setKeepPlayers(e.target.checked)}
+                  className="w-4 h-4 accent-yellow-400 cursor-pointer"
+                />
+                <label
+                  htmlFor="keepPlayers"
+                  className="text-yellow-200/80 text-sm cursor-pointer"
+                >
+                  Keep players (goals reset to 0)
+                </label>
+              </div>
+            </div>
 
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setDialogStep(null)} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
-        Cancel
-      </Button>
-      <Button
-        onClick={() => setDialogStep('confirm')}
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setDialogStep(null)}
+                className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={() => setDialogStep("confirm")}
+                disabled={!newLeagueName.trim()}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Next
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-        disabled={!newLeagueName.trim()}
-        className="bg-purple-600 hover:bg-purple-700 text-white"
-      >
-        Next
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+        {/* Confirm Dialog */}
+        <Dialog
+          open={dialogStep === "confirm"}
+          onOpenChange={(open) => !open && setDialogStep(null)}
+        >
+          <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+            <DialogHeader>
+              <DialogTitle
+                data-testid="confirm-dialog"
+                className="text-yellow-400 text-xl"
+              >
+                Confirm New League
+              </DialogTitle>
+              <DialogDescription className="text-yellow-200/60">
+                Please review the details before proceeding.
+              </DialogDescription>
+            </DialogHeader>
 
-{/* Confirm Dialog */}
-<Dialog open={dialogStep === 'confirm'} onOpenChange={(open) => !open && setDialogStep(null)}>
-  <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
-    <DialogHeader>
-      <DialogTitle data-testid="confirm-dialog" className="text-yellow-400 text-xl">Confirm New League</DialogTitle>
-      <DialogDescription className="text-yellow-200/60">
-        Please review the details before proceeding.
-      </DialogDescription>
-    </DialogHeader>
+            <div className="space-y-3 py-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">Archiving</span>
+                <span className="text-yellow-300 font-semibold">
+                  {leagueName}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">Winner</span>
+                <span className="text-yellow-300 font-semibold">
+                  {sortTeams(teams)[0]?.name}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">New League Name</span>
+                <span className="text-yellow-300 font-semibold">
+                  {newLeagueName}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">League Type</span>
+                <span className="text-yellow-300 font-semibold">
+                  {newLeagueType}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">Target Matches</span>
+                <span className="text-yellow-300 font-semibold">
+                  {newTargetMatches}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">Min Squad Size</span>
+                <span className="text-yellow-300 font-semibold">
+                  {newMinSquadSize}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-yellow-200/60">Keep Players</span>
+                <span className="text-yellow-300 font-semibold">
+                  {keepPlayers ? "Yes" : "No"}
+                </span>
+              </div>
+            </div>
 
-    <div className="space-y-3 py-2 text-sm">
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">Archiving</span>
-        <span className="text-yellow-300 font-semibold">{leagueName}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">Winner</span>
-        <span className="text-yellow-300 font-semibold">{sortTeams(teams)[0]?.name}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">New League Name</span>
-        <span className="text-yellow-300 font-semibold">{newLeagueName}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">League Type</span>
-        <span className="text-yellow-300 font-semibold">{newLeagueType}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">Target Matches</span>
-        <span className="text-yellow-300 font-semibold">{newTargetMatches}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">Min Squad Size</span>
-        <span className="text-yellow-300 font-semibold">{newMinSquadSize}</span>
-      </div>
-      <div className="flex justify-between">
-        <span className="text-yellow-200/60">Keep Players</span>
-        <span className="text-yellow-300 font-semibold">{keepPlayers ? 'Yes' : 'No'}</span>
-      </div>
-    </div>
-
-    {archiving ? (
-  <div className="flex flex-col items-center justify-center py-8 gap-4">
-    <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
-    <p className="text-yellow-200/80 text-sm">Archiving league and preparing new season...</p>
-    <p className="text-yellow-200/40 text-xs">This may take a few seconds</p>
-  </div>
-) : (
-  <DialogFooter>
-    <Button variant="outline" onClick={() => setDialogStep('config')} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
-      Back
-    </Button>
-    <Button
-      onClick={handleArchiveLeague}
-      disabled={archiving}
-      className="bg-purple-600 hover:bg-purple-700 text-white"
-    >
-      <Archive className="w-4 h-4 mr-2" />
-      Archive & Start New
-    </Button>
-  </DialogFooter>
-)}
-</DialogContent>
-</Dialog>
+            {archiving ? (
+              <div className="flex flex-col items-center justify-center py-8 gap-4">
+                <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
+                <p className="text-yellow-200/80 text-sm">
+                  Archiving league and preparing new season...
+                </p>
+                <p className="text-yellow-200/40 text-xs">
+                  This may take a few seconds
+                </p>
+              </div>
+            ) : (
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setDialogStep("config")}
+                  className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleArchiveLeague}
+                  disabled={archiving}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  <Archive className="w-4 h-4 mr-2" />
+                  Archive & Start New
+                </Button>
+              </DialogFooter>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminProvider>
   );
