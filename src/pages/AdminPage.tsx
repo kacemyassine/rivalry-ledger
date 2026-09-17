@@ -226,7 +226,7 @@ const AdminPage = () => {
       setNewLeagueType("with-scorers");
       setNewMinSquadSize(SQUAD_RULES.defaultMinSize);
       setDialogStep(null);
-      navigate("/", { state: { newLeagueStarted: true }});
+      navigate("/");
     }
     setArchiving(false);
   }, [
