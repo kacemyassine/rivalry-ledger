@@ -164,7 +164,7 @@ const AdminPage = () => {
     leagueType,
     minSquadSize,
     clearChangeLog,
-  ]); // add minSquadSize
+  ]);
 
   const handleArchiveLeague = useCallback(async () => {
     if (!newLeagueName.trim()) return;
@@ -462,9 +462,14 @@ const AdminPage = () => {
                           setDialogStep("config");
                         }
                       }}
+                      disabled={saving}
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      {saving ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4 mr-2" />
+                      )}
                       Save & Continue
                     </Button>
                   </DialogFooter>
