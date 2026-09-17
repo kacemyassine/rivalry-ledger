@@ -603,10 +603,12 @@ const AdminPage = () => {
                 </Label>
                 <Input
                   type="number"
+                  min={4}
                   value={newTargetMatches}
-                  onChange={(e) =>
-                    setNewTargetMatches(parseInt(e.target.value) || 50)
-                  }
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 50;
+                    setNewTargetMatches(Math.max(4, val));
+                  }}
                   className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                 />
               </div>
