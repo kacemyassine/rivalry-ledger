@@ -7,11 +7,20 @@ import { MatchHistory } from '@/components/MatchHistory';
 import { useLeagueStore } from '@/store/leagueStore';
 import { useGitHubData } from '@/hooks/useGitHubData';
 import { Loader2 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const VisitorPage = () => {
   const [loading, setLoading] = useState(true);
   const { setTeams, setPlayers, setMatches, setTargetMatches, setLeagueName, setLeagueId } = useLeagueStore();
   const { fetchData } = useGitHubData();
+
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.newLeagueStarted) {
+      toast.success('A new league has been started successfully!');
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -28,7 +37,15 @@ const VisitorPage = () => {
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, [
+    fetchData,
+    setTeams,
+    setPlayers,
+    setMatches,
+    setTargetMatches,
+    setLeagueName,
+    setLeagueId,
+  ]);
 
   if (loading) {
     return (

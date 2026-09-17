@@ -226,6 +226,7 @@ const AdminPage = () => {
       setNewLeagueType("with-scorers");
       setNewMinSquadSize(SQUAD_RULES.defaultMinSize);
       setDialogStep(null);
+      navigate("/", { state: { newLeagueStarted: true }});
     }
     setArchiving(false);
   }, [
@@ -253,6 +254,7 @@ const AdminPage = () => {
     setLeagueName,
     setLeagueId,
     setLeagueType,
+    navigate,
   ]);
 
   const handleStartNewLeagueClick = () => {
@@ -366,10 +368,10 @@ const AdminPage = () => {
   <Archive className="w-4 h-4" /> Start New League
 </Button>
               {/* Warning Dialog */}
-<Dialog open={dialogStep === 'warning'} onOpenChange={(open) => !open && setDialogStep(null)}>
+<Dialog open={dialogStep === 'warning'}  onOpenChange={(open) => !open && setDialogStep(null)}>
   <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
     <DialogHeader>
-      <DialogTitle className="text-yellow-400 text-xl">League Not Complete</DialogTitle>
+      <DialogTitle  data-testid="warning-dialog" className="text-yellow-400 text-xl">League Not Complete</DialogTitle>
       <DialogDescription className="text-yellow-200/60">
         The current league has only played{' '}
         <span className="text-yellow-300 font-semibold">{matches.length}/{targetMatches}</span>{' '}
@@ -392,7 +394,7 @@ const AdminPage = () => {
 <Dialog open={dialogStep === 'unsaved'} onOpenChange={(open) => !open && setDialogStep(null)}>
   <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
     <DialogHeader>
-      <DialogTitle className="text-yellow-400 text-xl">Unsaved Changes</DialogTitle>
+      <DialogTitle data-testid="unsaved-changes-dialog" className="text-yellow-400 text-xl">Unsaved Changes</DialogTitle>
       <DialogDescription className="text-yellow-200/60">
         You have unsaved changes. Please save them before starting a new league.
       </DialogDescription>
@@ -509,7 +511,7 @@ const AdminPage = () => {
 <Dialog open={dialogStep === 'config'} onOpenChange={(open) => !open && setDialogStep(null)}>
   <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
     <DialogHeader>
-      <DialogTitle className="text-yellow-400 text-xl">Start New League</DialogTitle>
+      <DialogTitle datat-testid='config-dialog' className="text-yellow-400 text-xl">Start New League</DialogTitle>
       <DialogDescription className="text-yellow-200/60">
         This will archive <span className="text-yellow-300 font-semibold">{leagueName}</span> and start a fresh league.
       </DialogDescription>
@@ -520,6 +522,7 @@ const AdminPage = () => {
         <Label className="text-yellow-200/80 text-sm">New League Name</Label>
         <Input
           value={newLeagueName}
+          data-testid="new-league-name-input"
           onChange={(e) => setNewLeagueName(e.target.value)}
           placeholder="e.g. Summer League 2026"
           className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100 placeholder:text-yellow-200/20"
@@ -640,7 +643,7 @@ const AdminPage = () => {
 <Dialog open={dialogStep === 'confirm'} onOpenChange={(open) => !open && setDialogStep(null)}>
   <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
     <DialogHeader>
-      <DialogTitle className="text-yellow-400 text-xl">Confirm New League</DialogTitle>
+      <DialogTitle data-testid="confirm-dialog" className="text-yellow-400 text-xl">Confirm New League</DialogTitle>
       <DialogDescription className="text-yellow-200/60">
         Please review the details before proceeding.
       </DialogDescription>
@@ -677,20 +680,28 @@ const AdminPage = () => {
       </div>
     </div>
 
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setDialogStep('config')} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
-        Back
-      </Button>
-      <Button
-        onClick={handleArchiveLeague}
-        disabled={archiving}
-        className="bg-purple-600 hover:bg-purple-700 text-white"
-      >
-        {archiving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Archive className="w-4 h-4 mr-2" />}
-        Archive & Start New
-      </Button>
-    </DialogFooter>
-  </DialogContent>
+    {archiving ? (
+  <div className="flex flex-col items-center justify-center py-8 gap-4">
+    <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
+    <p className="text-yellow-200/80 text-sm">Archiving league and preparing new season...</p>
+    <p className="text-yellow-200/40 text-xs">This may take a few seconds</p>
+  </div>
+) : (
+  <DialogFooter>
+    <Button variant="outline" onClick={() => setDialogStep('config')} className="bg-yellow-400/10 border-yellow-400/20 text-yellow-200 hover:bg-yellow-400/20">
+      Back
+    </Button>
+    <Button
+      onClick={handleArchiveLeague}
+      disabled={archiving}
+      className="bg-purple-600 hover:bg-purple-700 text-white"
+    >
+      <Archive className="w-4 h-4 mr-2" />
+      Archive & Start New
+    </Button>
+  </DialogFooter>
+)}
+</DialogContent>
 </Dialog>
       </div>
     </AdminProvider>
