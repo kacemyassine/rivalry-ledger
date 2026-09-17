@@ -1,7 +1,7 @@
 {
   "leagueConfig": {
-    "name": "test league",
-    "id": "testleague",
+    "name": "test league 2",
+    "id": "testleague2",
     "leagueType": "with-scorers",
     "minSquadSize": 11
   },
