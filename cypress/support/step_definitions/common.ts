@@ -1,6 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import { currentMatchId } from "./sharedState";
-import { MatchHistory } from "../components/MatchHistory";
+import { MatchHistory } from "../POM/components/MatchHistory";
 
 const matchHistory = new MatchHistory();
 

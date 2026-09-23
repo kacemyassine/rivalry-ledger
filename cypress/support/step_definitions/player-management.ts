@@ -1,6 +1,6 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
-import { PlayerForm } from "../components/PlayerForm";
-import { TopScorers } from "../components/TopScorers";
+import { PlayerForm } from "../POM/components/PlayerForm";
+import { TopScorers } from "../POM/components/TopScorers";
 import { getPlayerId, getTeamName } from "../matchHelpers";
 import { Player } from "@/store/leagueStore";
 
@@ -98,7 +98,6 @@ When(
       const playerId = getPlayerId(playerName, team, data);
       currentPlayerId = playerId;
       topScorers.assertPlayerExists(playerId);
-      cy.log("the player already exists");
       topScorers.getDeletePlayerButton(playerId).click();
     });
   },

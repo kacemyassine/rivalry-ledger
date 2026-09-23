@@ -4,18 +4,20 @@ import {
   Then,
   DataTable,
 } from "@badeball/cypress-cucumber-preprocessor";
-import { MatchForm } from "../components/MatchForm";
+import { MatchForm } from "../POM/components/MatchForm";
 import { AdminPage } from "../pages/adminPage";
-import { MatchHistory } from "../components/MatchHistory";
-import { TopScorers } from "../components/TopScorers";
+import { MatchHistory } from "../POM/components/MatchHistory";
+import { TopScorers } from "../POM/components/TopScorers";
 import { getPlayerId } from "../../support/matchHelpers";
 import { Player } from "@/store/leagueStore";
 import { setCurrentMatchId } from "./sharedState";
+import { LeagueData } from "../POM/leagueData";
 
 const adminPage = new AdminPage();
 const matchForm = new MatchForm();
 const topScorers = new TopScorers();
 const matchHistory = new MatchHistory();
+const leagueData = new LeagueData();
 
 let homeGoals = 0;
 let awayGoals = 0;
@@ -47,13 +49,7 @@ function setScore(score: string) {
 Given(
   "The current league type is {string}",
   (leagueType: "with-scorers" | "without-scorers") => {
-    cy.fixture("leagueData.json").then((data) => {
-      data.leagueConfig.leagueType = leagueType;
-      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-      cy.intercept("GET", "https://api.github.com/**", {
-        body: { content: encoded, sha: "abc123" },
-      }).as("getLeagueData");
-    });
+    leagueData.setLeagueType(leagueType);
   }
 );
 

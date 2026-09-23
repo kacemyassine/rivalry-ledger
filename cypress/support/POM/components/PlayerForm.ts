@@ -1,5 +1,5 @@
-import { TopScorers } from "../components/TopScorers";
-import { getTeamName } from "../matchHelpers";
+import { TopScorers } from "./TopScorers";
+import { getTeamName } from "../../matchHelpers";
 const topScorers = new TopScorers();
 export class PlayerForm {
   addPlayer(playerName: string, team: 'home' | 'away') {
@@ -20,10 +20,15 @@ export class PlayerForm {
     cy.get('[data-testid="save-button"]').click();
   }
 
-  editPlayerName(playerId: string, newPlayerName: string) {
+  editPlayerNameWithoutSaving(playerId: string, newPlayerName: string) {
     topScorers.clickEditPlayerButton(playerId);
     cy.get("#name").clear().type(newPlayerName);
-      cy.get('[data-testid="save-button"]').click();
+
+  }
+
+  editPlayerName(playerId: string, newPlayerName: string) {
+    this.editPlayerNameWithoutSaving(playerId, newPlayerName);
+    cy.get('[data-testid="save-button"]').click();
   }
 
   editPlayerTeam(playerId: string, newTeam: "home" | "away") {

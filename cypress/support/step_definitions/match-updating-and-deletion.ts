@@ -5,10 +5,10 @@ import {
   DataTable,
 } from "@badeball/cypress-cucumber-preprocessor";
 import { getMatchByStats, getPlayerId } from "../matchHelpers";
-import { MatchHistory } from "../components/MatchHistory";
-import { MatchForm } from "../components/MatchForm";
+import { MatchHistory } from "../POM/components/MatchHistory";
+import { MatchForm } from "../POM/components/MatchForm";
 import { ScorerInput } from "../matchHelpers";
-import { TopScorers } from "../components/TopScorers";
+import { TopScorers } from "../POM/components/TopScorers";
 import { Match } from "@/store/leagueStore";
 import { setCurrentMatchId } from "./sharedState";
 
@@ -151,7 +151,7 @@ Given(
 
 When(
   "I change the scorer of the {string} team {string} goals to {int}",
-  (team: string, playerName: string, goals: number) => {
+  (team: "home" | "away", playerName: string, goals: number) => {
     cy.fixture("leagueData.json").then((data) => {
       const playerId = getPlayerId(playerName, team, data);
       matchForm.updateScorer(playerId, goals);
@@ -192,7 +192,6 @@ Then(
 );
 
 Then("each player's total goal count should reflect the updated values", () => {
-  cy.log("im here");
   cy.fixture("leagueData.json").then((data) => {
     updatedScorers.forEach((scorer) => {
       const playerId = getPlayerId(scorer.playerName, scorer.team, data);
@@ -247,7 +246,6 @@ Given("I am deleting the {string} with no scorers match", (score: string) => {
 });
 
 When("I delete the match", () => {
-  cy.log(`Deleting match with ID: ${currentMatchId}`);
   matchHistory.deleteMatch(currentMatchId);
   matchHistory.confirmDeleteMatch();
 });

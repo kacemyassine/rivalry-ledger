@@ -1,5 +1,5 @@
 import { LeagueData } from "@/lib/githubUtils";
-import { getTeamName } from "../matchHelpers";
+import { getTeamName } from "../../matchHelpers";
 
 export class TopScorers {
   getPlayerRow(playerId: string) {
