@@ -61,3 +61,13 @@ export function getMatchByStats(
 export function getTeamName(teamId: string, data: LeagueData) {
   return data.teams.find((t) => t.id === teamId)?.name;
 }
+
+export function interceptMatchesWithCount(count: number) {
+  cy.fixture('leagueData.json').then((data) => {
+    data.matches = data.matches.slice(0, count);
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    cy.intercept('GET', 'https://api.github.com/**', {
+      body: { content: encoded, sha: 'abc123' },
+    }).as(`getLeagueDataWith${count}Matches`);
+  });
+}

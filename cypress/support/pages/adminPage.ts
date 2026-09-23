@@ -19,4 +19,18 @@ export class AdminPage {
   clickStartNewLeague() {
     cy.get('[data-testid="start-new-league-btn"]').click();
   }
+
+  assertUsavedChangesIs(state: 'be.visible' | 'not.be.visible') {
+    cy.get('[data-testid="desctop-unsavedChanges-component"]').should(state);
+  }
+
+  getDialog(dialogType: 'Unsaved Changes Warning' | 'Config' | 'Confirmation' | 'League Incomplete') {
+    const partialMessages = {
+      'Unsaved Changes Warning': /Unsaved Changes/i,
+      'Config': /START NEW LEAGUE/i,
+      'Confirmation': /Please review/i,
+      'League Incomplete': /league not complete/i
+    }
+    cy.get('[role="dialog"]').contains(partialMessages[dialogType]).should('be.visible');
+  }
 }
