@@ -54,7 +54,7 @@ interface PersistedLeagueState {
   minSquadSize: number;
 }
 
-interface LeagueDataShape {
+export interface LeagueDataShape {
   leagueConfig?: {
     name?: string;
     id?: string;
