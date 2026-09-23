@@ -29,6 +29,16 @@
       "matches": 0,
       "description": "Season of test league. A battle between Ocean Dragon and Harbor United across 0 matches.",
       "image": "/images/default.png"
+    },
+    {
+      "id": "test-league",
+      "name": "Test League",
+      "startDate": "Jan 1, 2026",
+      "endDate": "Sep 23, 2026",
+      "winner": "Harbor United",
+      "matches": 12,
+      "description": "Season of Test League. A battle between Harbor United and Ocean Dragon across 12 matches.",
+      "image": "/images/default.png"
     }
   ]
 }
