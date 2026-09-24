@@ -1,9 +1,9 @@
 {
   "leagueConfig": {
-    "name": "Test League",
-    "id": "test-league",
-    "leagueType": "",
-    "minSquadSize": 5
+    "name": "testttt league 2",
+    "id": "testtttleague2",
+    "leagueType": "with-scorers",
+    "minSquadSize": 11
   },
   "teams": [
     {
@@ -11,26 +11,26 @@
       "name": "Harbor United",
       "coach": "Coach A",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 11,
-      "won": 6,
-      "drawn": 2,
-      "lost": 3,
-      "goalsFor": 24,
-      "goalsAgainst": 18,
-      "points": 0
+      "played": 4,
+      "won": 0,
+      "drawn": 4,
+      "lost": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "points": 4
     },
     {
       "id": "team-2",
       "name": "Ocean Dragon",
       "coach": "Coach B",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 11,
-      "won": 3,
-      "drawn": 2,
-      "lost": 6,
-      "goalsFor": 18,
-      "goalsAgainst": 24,
-      "points": 0
+      "played": 4,
+      "won": 0,
+      "drawn": 4,
+      "lost": 0,
+      "goalsFor": 0,
+      "goalsAgainst": 0,
+      "points": 4
     }
   ],
   "players": [
@@ -38,7 +38,7 @@
       "id": "player-1",
       "name": "New Player Name",
       "teamId": "team-1",
-      "goals": 7,
+      "goals": 0,
       "image": null,
       "fullImage": ""
     },
@@ -46,7 +46,7 @@
       "id": "player-2",
       "name": "Kylian Mbappé",
       "teamId": "team-1",
-      "goals": 5,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -54,7 +54,7 @@
       "id": "player-3",
       "name": "Lionel Messi",
       "teamId": "team-1",
-      "goals": 5,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -62,7 +62,7 @@
       "id": "player-4",
       "name": "Frank Lampard",
       "teamId": "team-1",
-      "goals": 3,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -70,7 +70,7 @@
       "id": "player-5",
       "name": "Johan Cruyff",
       "teamId": "team-1",
-      "goals": 4,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -78,7 +78,7 @@
       "id": "player-6",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 5,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -86,7 +86,7 @@
       "id": "player-7",
       "name": "Didier Drogba",
       "teamId": "team-2",
-      "goals": 3,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -94,7 +94,7 @@
       "id": "player-8",
       "name": "Petr Čech",
       "teamId": "team-2",
-      "goals": 2,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -102,7 +102,7 @@
       "id": "player-9",
       "name": "Désiré Doué",
       "teamId": "team-2",
-      "goals": 3,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -110,7 +110,7 @@
       "id": "player-10",
       "name": "Cristiano Ronaldo",
       "teamId": "team-2",
-      "goals": 5,
+      "goals": 0,
       "image": "",
       "fullImage": ""
     },
@@ -130,53 +130,21 @@
       "awayTeamId": "team-2",
       "homeTeamName": "Harbor United",
       "awayTeamName": "Ocean Dragon",
-      "homeGoals": 3,
-      "awayGoals": 2,
-      "scorers": [
-        {
-          "playerId": "player-1",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-2",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-6",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-7",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-01-01"
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-24T09:49:13.991Z"
     },
     {
       "id": "match-2",
-      "homeTeamId": "team-2",
-      "awayTeamId": "team-1",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 2,
-      "awayGoals": 1,
-      "scorers": [
-        {
-          "playerId": "player-10",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-3",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-01-08"
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Harbor United",
+      "awayTeamName": "Ocean Dragon",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-24T09:49:20.945Z"
     },
     {
       "id": "match-3",
@@ -184,269 +152,22 @@
       "awayTeamId": "team-2",
       "homeTeamName": "Harbor United",
       "awayTeamName": "Ocean Dragon",
-      "homeGoals": 2,
-      "awayGoals": 1,
-      "scorers": [
-        {
-          "playerId": "player-3",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-5",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-9",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-01-15"
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-24T09:49:21.981Z"
     },
     {
       "id": "match-4",
-      "homeTeamId": "team-2",
-      "awayTeamId": "team-1",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 3,
-      "awayGoals": 1,
-      "scorers": [
-        {
-          "playerId": "player-6",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-4",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-01-22"
-    },
-    {
-      "id": "match-5",
       "homeTeamId": "team-1",
       "awayTeamId": "team-2",
       "homeTeamName": "Harbor United",
       "awayTeamName": "Ocean Dragon",
-      "homeGoals": 1,
-      "awayGoals": 1,
-      "scorers": [
-        {
-          "playerId": "player-1",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-7",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-01-29"
-    },
-    {
-      "id": "match-6",
-      "homeTeamId": "team-2",
-      "awayTeamId": "team-1",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 2,
-      "awayGoals": 2,
-      "scorers": [
-        {
-          "playerId": "player-8",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-9",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-2",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-4",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-02-05"
-    },
-    {
-      "id": "match-7",
-      "homeTeamId": "team-1",
-      "awayTeamId": "team-2",
-      "homeTeamName": "Harbor United",
-      "awayTeamName": "Ocean Dragon",
-      "homeGoals": 4,
-      "awayGoals": 1,
-      "scorers": [
-        {
-          "playerId": "player-1",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-3",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-5",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-02-12"
-    },
-    {
-      "id": "match-8",
-      "homeTeamId": "team-2",
-      "awayTeamId": "team-1",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
-      "homeGoals": 1,
-      "awayGoals": 3,
-      "scorers": [
-        {
-          "playerId": "player-7",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-2",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-3",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-02-19"
-    },
-    {
-      "id": "match-9",
-      "homeTeamId": "team-1",
-      "awayTeamId": "team-2",
-      "homeTeamName": "Harbor United",
-      "awayTeamName": "Ocean Dragon",
-      "homeGoals": 2,
-      "awayGoals": 3,
-      "scorers": [
-        {
-          "playerId": "player-1",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-5",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-6",
-          "goals": 2,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-8",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-02-26"
-    },
-    {
-      "id": "match-10",
-      "homeTeamId": "team-2",
-      "awayTeamId": "team-1",
-      "homeTeamName": "Ocean Dragon",
-      "awayTeamName": "Harbor United",
       "homeGoals": 0,
-      "awayGoals": 2,
-      "scorers": [
-        {
-          "playerId": "player-1",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-3",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-05"
-    },
-    {
-      "id": "match-11",
-      "homeTeamId": "team-1",
-      "awayTeamId": "team-2",
-      "homeTeamName": "Harbor United",
-      "awayTeamName": "Ocean Dragon",
-      "homeGoals": 3,
-      "awayGoals": 2,
-      "scorers": [
-        {
-          "playerId": "player-2",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-4",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-5",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-9",
-          "goals": 1,
-          "isOwnGoal": false
-        },
-        {
-          "playerId": "player-10",
-          "goals": 1,
-          "isOwnGoal": false
-        }
-      ],
-      "date": "2026-03-12"
-    },
-    {
-      "id": "match-12",
-      "homeTeamId": "team-1",
-      "awayTeamId": "team-2",
-      "homeTeamName": "Harbor United",
-      "awayTeamName": "Ocean Dragon",
-      "homeGoals": 5,
       "awayGoals": 0,
       "scorers": [],
-      "date": "2026-03-18"
+      "date": "2026-09-24T09:49:23.197Z"
     }
   ],
-  "targetMatches": 20
+  "targetMatches": 50
 }
