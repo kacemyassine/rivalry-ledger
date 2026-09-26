@@ -26,9 +26,9 @@ When("I submit the login form", () => {
   cy.contains("button", "Enter").click();
 });
 
-When("I click the {string} button", (label: string) => {
-  cy.contains("button", label).click();
-});
+// When("I click the {string} button", (label: string) => {
+//   cy.contains("button", label).click();
+// });
 
 When("I visit the admin page directly without logging in", () => {
   cy.visit("/admin");

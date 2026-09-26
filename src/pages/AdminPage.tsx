@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { LeagueHeader } from "@/components/LeagueHeader";
@@ -21,6 +21,7 @@ import {
   LogOut,
   Archive,
   Upload,
+  X,
 } from "lucide-react";
 import { AuthService } from "@/lib/authService";
 import { UnsavedChanges } from "@/components/UnsavedChanges";
@@ -70,6 +71,7 @@ const AdminPage = () => {
   const [archiveImagePreview, setArchiveImagePreview] = useState<string | null>(
     null,
   );
+  const archiveImageInputRef = useRef<HTMLInputElement>(null);
   const [keepPlayers, setKeepPlayers] = useState(true);
   const [newLeagueType, setNewLeagueType] = useState<
     "with-scorers" | "without-scorers"
@@ -388,22 +390,28 @@ const AdminPage = () => {
                 open={dialogStep === "warning"}
                 onOpenChange={(open) => !open && setDialogStep(null)}
               >
-                <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                <DialogContent 
+                data-testid="league-incomplete-dialog"
+                starting-new-league-dialog="true"
+                className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
                   <DialogHeader>
                     <DialogTitle
-                      data-testid="warning-dialog"
                       className="text-yellow-400 text-xl"
                     >
                       League Not Complete
                     </DialogTitle>
                     <DialogDescription className="text-yellow-200/60">
                       The current league has only played{" "}
-                      <span className="text-yellow-300 font-semibold">
+                      <span 
+                      data-testid="played-vs-target-count"
+                      className="text-yellow-300 font-semibold">
                         {matches.length}/{targetMatches}
                       </span>{" "}
                       matches. If you proceed, the target matches will be
                       adjusted to{" "}
-                      <span className="text-yellow-300 font-semibold">
+                      <span 
+                      data-testid="new-target-matches"
+                      className="text-yellow-300 font-semibold">
                         {matches.length}
                       </span>
                       .
@@ -432,10 +440,12 @@ const AdminPage = () => {
                 open={dialogStep === "unsaved"}
                 onOpenChange={(open) => !open && setDialogStep(null)}
               >
-                <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                <DialogContent 
+                data-testid="unsaved-changes-dialog"
+                starting-new-league-dialog="true"
+                className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
                   <DialogHeader>
                     <DialogTitle
-                      data-testid="unsaved-changes-dialog"
                       className="text-yellow-400 text-xl"
                     >
                       Unsaved Changes
@@ -566,10 +576,12 @@ const AdminPage = () => {
           open={dialogStep === "config"}
           onOpenChange={(open) => !open && setDialogStep(null)}
         >
-          <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+          <DialogContent 
+          data-testid="config-dialog"
+          starting-new-league-dialog="true"
+          className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
             <DialogHeader>
               <DialogTitle
-                datat-testid="config-dialog"
                 className="text-yellow-400 text-xl"
               >
                 Start New League
@@ -637,6 +649,9 @@ const AdminPage = () => {
                   <button
                     type="button"
                     onClick={() => setNewLeagueType("with-scorers")}
+                    data-state={
+                      newLeagueType === "with-scorers" ? "active" : "unactive"
+                    }
                     className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
                       newLeagueType === "with-scorers"
                         ? "bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400"
@@ -648,6 +663,11 @@ const AdminPage = () => {
                   <button
                     type="button"
                     onClick={() => setNewLeagueType("without-scorers")}
+                    data-state={
+                      newLeagueType === "without-scorers"
+                        ? "active"
+                        : "unactive"
+                    }
                     className={`flex-1 py-2 rounded-lg text-sm border transition-all ${
                       newLeagueType === "without-scorers"
                         ? "bg-yellow-400 text-[#0a0e2a] font-bold border-yellow-400"
@@ -665,14 +685,33 @@ const AdminPage = () => {
                 </Label>
                 <div className="flex flex-col items-center gap-3">
                   {archiveImagePreview && (
-                    <img
-                      src={archiveImagePreview}
-                      alt="Preview"
-                      className="w-24 h-24 object-cover rounded-xl border border-yellow-400/20"
-                    />
+                    <div className="group relative">
+                      <img
+                        src={archiveImagePreview}
+                        alt="Preview"
+                        data-testid="archive-image-preview"
+                        className="w-24 h-24 object-cover rounded-xl border border-yellow-400/20"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Remove archive image"
+                        data-testid="remove-archive-image-btn"
+                        onClick={() => {
+                          setArchiveImageFile(null);
+                          setArchiveImagePreview(null);
+                          if (archiveImageInputRef.current) {
+                            archiveImageInputRef.current.value = "";
+                          }
+                        }}
+                        className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/60 text-yellow-300 opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
+                    </div>
                   )}
                   <label className="cursor-pointer">
                     <input
+                      ref={archiveImageInputRef}
                       type="file"
                       accept="image/*"
                       className="hidden"
@@ -737,10 +776,12 @@ const AdminPage = () => {
           open={dialogStep === "confirm"}
           onOpenChange={(open) => !open && setDialogStep(null)}
         >
-          <DialogContent className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+          <DialogContent 
+          data-testid="confirm-dialog"
+          starting-new-league-dialog="true"
+          className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
             <DialogHeader>
               <DialogTitle
-                data-testid="confirm-dialog"
                 className="text-yellow-400 text-xl"
               >
                 Confirm New League
