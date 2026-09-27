@@ -195,7 +195,7 @@ const AdminPage = () => {
 
     const winner = sortTeams(teams)[0].name;
 
-    const newTargetMatches =
+    const targetMatchesValue =
       typeof newTargetMatches === "string" ? 50 : newTargetMatches;
     const success = await archiveLeague({
       currentData: {
@@ -217,7 +217,7 @@ const AdminPage = () => {
         leagueType: newLeagueType,
         minSquadSize: newMinSquadSize,
       },
-      newTargetMatches,
+      targetMatchesValue,
       keepPlayers,
       imageName,
       winner: winner,
@@ -849,7 +849,7 @@ const AdminPage = () => {
             </div>
 
             {archiving ? (
-              <div className="flex flex-col items-center justify-center py-8 gap-4">
+              <div  data-testid="archiving-spinner" className="flex flex-col items-center justify-center py-8 gap-4">
                 <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
                 <p className="text-yellow-200/80 text-sm">
                   Archiving league and preparing new season...

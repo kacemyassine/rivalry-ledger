@@ -45,7 +45,7 @@ export function UnsavedChanges({
   return (
     <>
       {/* Desktop — fixed top right */}
-      <div className="hidden md:flex fixed top-6 right-6 z-50 flex-col items-end gap-2 w-80">
+      <div data-testid = 'desctop-unsavedChanges-component' className="hidden md:flex fixed top-6 right-6 z-50 flex-col items-end gap-2 w-80">
         <div className="w-full rounded-2xl overflow-hidden border border-yellow-400/30 bg-[#0a0e2a]/95 backdrop-blur-md shadow-[0_0_40px_rgba(234,179,8,0.15)]">
           {/* Header */}
           <div className="flex items-center gap-2 px-4 py-3 border-b border-yellow-400/20">
