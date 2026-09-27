@@ -1,9 +1,7 @@
 {
   "leagueConfig": {
     "name": "Test League",
-    "id": "test-league",
-    "leagueType": "",
-    "minSquadSize": 5
+    "id": "test-league"
   },
   "teams": [
     {
@@ -448,5 +446,5 @@
       "date": "2026-03-18"
     }
   ],
-  "targetMatches": 12
+  "targetMatches": 13
 }
