@@ -71,3 +71,14 @@ export function interceptMatchesWithCount(count: number) {
     }).as(`getLeagueDataWith${count}Matches`);
   });
 }
+
+export function interceptMatchesWithTarget(count: number) {
+  cy.fixture('leagueData.json').then((data) => {
+    data.matches = data.matches.slice(0, count);
+    data.targetMatches = count + 1; // Set target to one more than current matches
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    cy.intercept('GET', 'https://api.github.com/**', {
+      body: { content: encoded, sha: 'abc123' },
+    }).as(`getLeagueDataWith${count}MatchesAndTarget`);
+  });
+};
