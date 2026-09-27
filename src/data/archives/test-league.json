@@ -1,7 +1,9 @@
 {
   "leagueConfig": {
     "name": "Test League",
-    "id": "test-league"
+    "id": "test-league",
+    "leagueType": "",
+    "minSquadSize": 5
   },
   "teams": [
     {
@@ -34,10 +36,10 @@
   "players": [
     {
       "id": "player-1",
-      "name": "New Player Name",
+      "name": "Antoine Griezmann",
       "teamId": "team-1",
       "goals": 7,
-      "image": null,
+      "image": "",
       "fullImage": ""
     },
     {
@@ -446,5 +448,5 @@
       "date": "2026-03-18"
     }
   ],
-  "targetMatches": 13
+  "targetMatches": 12
 }
