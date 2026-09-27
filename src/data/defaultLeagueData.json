@@ -1,35 +1,36 @@
 {
   "leagueConfig": {
     "name": "dsfasdf",
-    "id": "dsfasdf"
+    "id": "dsfasdf",
+    "leagueType": "with-scorers",
+    "minSquadSize": 11
   },
-  "targetMatches": 50,
   "teams": [
     {
       "id": "team-1",
       "name": "Harbor United",
       "coach": "Coach A",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 0,
+      "played": 4,
       "won": 0,
-      "drawn": 0,
+      "drawn": 4,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 0
+      "points": 4
     },
     {
       "id": "team-2",
       "name": "Ocean Dragon",
       "coach": "Coach B",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 0,
+      "played": 4,
       "won": 0,
-      "drawn": 0,
+      "drawn": 4,
       "lost": 0,
       "goalsFor": 0,
       "goalsAgainst": 0,
-      "points": 0
+      "points": 4
     }
   ],
   "players": [
@@ -122,5 +123,51 @@
       "fullImage": ""
     }
   ],
-  "matches": []
+  "matches": [
+    {
+      "id": "match-1",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Harbor United",
+      "awayTeamName": "Ocean Dragon",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-27T13:39:25.550Z"
+    },
+    {
+      "id": "match-2",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Harbor United",
+      "awayTeamName": "Ocean Dragon",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-27T13:39:26.337Z"
+    },
+    {
+      "id": "match-3",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Harbor United",
+      "awayTeamName": "Ocean Dragon",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-27T13:39:27.843Z"
+    },
+    {
+      "id": "match-4",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Harbor United",
+      "awayTeamName": "Ocean Dragon",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "scorers": [],
+      "date": "2026-09-27T13:39:28.667Z"
+    }
+  ],
+  "targetMatches": 50
 }
