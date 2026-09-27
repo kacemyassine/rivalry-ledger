@@ -1,21 +1,32 @@
-# Rivalry Ledger — QA Portfolio Project
+# Rivalry Ledger — QA Automation Portfolio
 
 A full-stack football league management web application, used as the subject of a complete QA automation portfolio. This repository contains both the application source code and the full test suite.
+
+**Live:** https://rivalry-ledger.vercel.app
+
+---
+
+## Why This Project
+
+I play eFootball with a close friend and we had no proper way to track our matches — we were recording results on paper, which was messy and impractical. So I built Rivalry Ledger from scratch to solve that real problem. What started as a personal tool became the subject of my entire QA portfolio. Testing it myself meant I was both the developer and the QA — I wrote the features, then turned around and tried to break them. That dual perspective taught me more about finding real bugs than any tutorial could.
+
+![App Preview](./docs/preview.png)
+
+---
 
 ---
 
 ## Application Overview
 
-**Rivalry Ledger** is a football league tracker built for real use. It allows admins to record match results, manage players, track standings, manage cup competitions, and archive completed seasons. Visitors can view live standings, top scorers, head-to-head stats, and match history.
-
-**Live:** https://rivalry-ledger.vercel.app
+**Rivalry Ledger** is a football league tracker built for real use. It allows admins to record match results, manage players, track standings, and archive completed seasons. Visitors can view live standings, top scorers, and match history.
 
 ### Tech Stack
+
 | Layer | Technology |
-|-------|-----------|
+|-------|------------|
 | Frontend | React + TypeScript + Vite |
-| State Management | Zustand (persisted via localStorage) |
-| UI | Tailwind CSS + shadcn/ui |
+| State Management | Zustand |
+| UI | Tailwind CSS + shadcn/ui + Radix UI |
 | Backend | Supabase (Edge Functions) |
 | Data Persistence | GitHub API |
 | Deployment | Vercel |
@@ -24,17 +35,15 @@ A full-stack football league management web application, used as the subject of 
 
 ## QA Strategy
 
-This project follows a structured QA approach with two automation layers:
+This project follows a structured, multi-layer QA approach:
 
 | Layer | Tool | Scope |
 |-------|------|-------|
 | Unit & Integration | Jest + ts-jest | Pure logic — store actions, auth service, stat calculations |
-| End-to-End | Cypress | Full browser flows — auth, match recording, navigation, standings |
-| CI/CD | GitHub Actions | Runs full test suite on every push to main |
+| E2E Acceptance | Cypress + Cucumber (Gherkin) | Full browser flows written in BDD-style feature files |
+| CI/CD | GitHub Actions (in progress) | Automated test runs on push |
 
-**Key principle:** No mocking except for unreproducible failure scenarios (forced 500s, GitHub API rate limits). Every test runs against real application logic.
-
-**Test environment:** All automated tests run against `localhost:5173`. Production is never touched by automation.
+**Key principle:** GitHub API calls are intercepted in all E2E tests using `cy.intercept()` — no real network calls leave the browser during test runs. Every test runs against `localhost:8080`.
 
 ---
 
@@ -42,30 +51,35 @@ This project follows a structured QA approach with two automation layers:
 
 ```
 rivalry-ledger/
-├── src/                        # Application source code
-│   ├── store/
-│   │   └── leagueStore.ts      # Core state — all match/player/team logic
-│   ├── lib/
-│   │   └── authService.ts      # Admin authentication logic
-│   ├── pages/                  # Route pages
-│   └── components/             # UI components
-├── tests/
-│   └── unit/
-│       ├── leagueStore.test.ts # Jest unit tests — match logic
-│       └── authService.test.ts # Jest unit tests — authentication
+├── src/                          # Application source code
+│   ├── store/leagueStore.ts      # Core state — all match/player/team logic
+│   ├── lib/authService.ts        # Admin authentication logic
+│   ├── pages/                    # Route pages (AdminPage, HomePage, etc.)
+│   └── components/               # UI components
 ├── cypress/
-│   ├── e2e/
-│   │   ├── auth.cy.ts          # E2E — authentication flow
-│   │   ├── navigation.cy.ts    # E2E — routing and navigation
-│   │   └── matchFlow.cy.ts     # E2E — match recording and standings
-│   ├── fixtures/               # Test data
-│   └── support/                # Custom commands and config
+│   ├── e2e/                      # Gherkin feature files (one per feature)
+│   │   ├── admin-authentication.feature
+│   │   ├── create-new-league.feature
+│   │   ├── match-recording-NSL.feature
+│   │   ├── match-recording-WSL.feature
+│   │   ├── match-updating-and-deletion-NSL.feature
+│   │   ├── match-updating-and-deletion-WSL.feature
+│   │   └── player-management.feature
+│   ├── fixtures/                 # Test data (leagueData.json)
+│   └── support/
+│       ├── POM/                  # Page Object Model classes
+│       │   ├── components/       # Reusable component POMs (MatchForm, MatchHistory, PlayerForm, TopScorers)
+│       │   ├── configDialog.ts
+│       │   ├── confirmationDialog.ts
+│       │   └── leagueData.ts     # Fixture manipulation and API intercept helper
+│       ├── pages/
+│       │   └── adminPage.ts      # Admin page POM with dialog state machine
+│       ├── step_definitions/     # Cucumber step definitions
+│       └── matchHelpers.ts       # Shared intercept helpers
 ├── docs/
-│   ├── test-strategy.md        # QA strategy document
-│   └── test-plan.md            # Test cases and automation mapping
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # GitHub Actions CI pipeline
+│   ├── test-strategy.md          # Full QA strategy document
+│   ├── test-plan.md              # Test cases and automation mapping
+│   └── components/               # Static component review docs
 ├── cypress.config.ts
 ├── jest.config.ts
 └── package.json
@@ -73,22 +87,90 @@ rivalry-ledger/
 
 ---
 
+## E2E Test Coverage
+
+All E2E tests are written in Gherkin (Cucumber) and executed with Cypress. Each feature file maps to a real user-facing flow.
+
+### Admin Authentication
+| Scenario | Status |
+|----------|--------|
+| Login with correct password | ✅ |
+| Login with incorrect password | ✅ |
+| Logout from admin page | ✅ |
+| Visitor blocked from admin page | ✅ |
+
+### Match Recording — NSL (No Scorers League)
+| Scenario | Status |
+|----------|--------|
+| Record match with score only (multiple scores) | ✅ |
+| Record match with goal scorers | ✅ |
+| Scorer goals don't add up — error shown | ✅ |
+| Same player added as separate scorer rows | ✅ |
+| Own goal does not increment scorer's goals | ✅ |
+
+### Match Recording — WSL (With Scorers League)
+| Scenario | Status |
+|----------|--------|
+| Same scenarios as NSL with scorer tracking enforced | ✅ |
+
+### Match Updating & Deletion — NSL & WSL
+| Scenario | Status |
+|----------|--------|
+| Edit match score | ✅ |
+| Edit match with scorers | ✅ |
+| Scorer goals mismatch on edit — error shown | ✅ |
+| Delete a match | ✅ |
+
+### Player Management
+| Scenario | Status |
+|----------|--------|
+| Add a new player | ✅ |
+| Cannot add player without name | ✅ |
+| Cannot add player with name < 3 characters | ✅ |
+| Cannot add player with special characters | ✅ |
+| Cannot add duplicate player name | ✅ |
+| Edit player name | ✅ |
+| Edit player team | ✅ |
+| Cannot edit to invalid name | ✅ |
+| Cannot delete player with goals | ✅ |
+| Delete player with no goals | ✅ |
+| Cannot delete when team is at minimum squad size | ✅ |
+
+### Create New League (League Archiving)
+| Scenario | Status |
+|----------|--------|
+| Cannot start with unsaved changes | ✅ |
+| Cannot start with fewer than 4 matches | ✅ |
+| Warned when league has not reached target matches | ✅ |
+| Proceed despite incomplete league | ✅ |
+| Cancel league incomplete warning | ✅ |
+| Config dialog opens when target is reached | ✅ |
+| Next button disabled with empty or whitespace name | ✅ |
+| Select league type (With/Without Scorers) | ✅ |
+| Proceed to confirmation with valid config | ✅ |
+| Cancel config dialog | ✅ |
+| Go back from confirmation to config | ✅ |
+| Archiving spinner shown while processing | ✅ |
+| App navigates home after archive success | ✅ |
+
+---
+
 ## Getting Started
 
 ### Prerequisites
 - Node.js 18+
-- npm 9+
+- npm or bun
 
 ### Install dependencies
 ```bash
 npm install
 ```
 
-### Run the application locally
+### Run the application
 ```bash
 npm run dev
 ```
-App runs on `http://localhost:5173`
+App runs on `http://localhost:8080`
 
 ---
 
@@ -96,79 +178,21 @@ App runs on `http://localhost:5173`
 
 ### Unit Tests (Jest)
 ```bash
-# Run all unit tests
 npm run test
-
-# Run in watch mode
 npm run test:watch
-
-# Run with coverage
 npm run test:coverage
 ```
 
 ### E2E Tests (Cypress)
 ```bash
-# Make sure the app is running locally first
-npm run dev
-
-# Open Cypress interactive runner
+# Interactive mode
 npm run cypress:open
 
-# Run Cypress headless
+# Headless
 npm run cypress:run
 ```
 
----
-
-## Test Coverage
-
-### Unit Tests — leagueStore
-| Test ID | Scenario | Status |
-|---------|----------|--------|
-| MATCH-01 | Home win → 3 points for home team | 🔜 |
-| MATCH-02 | Draw → 1 point for both teams | 🔜 |
-| MATCH-03 | Away win → 3 points for away team | 🔜 |
-| MATCH-04 | Goals for/against update correctly | 🔜 |
-| MATCH-05 | Played count increments for both teams | 🔜 |
-| MATCH-06 | Scorer goals update after match | 🔜 |
-| MATCH-07 | Own goal does not increment scorer goals | 🔜 |
-| DEL-01 | Match deletion reverses all team stats | 🔜 |
-| DEL-02 | Match deletion reverses player goals | 🔜 |
-| EDIT-01 | Result change from win to draw updates points | 🔜 |
-| EDIT-02 | Editing scorers updates player goal counts | 🔜 |
-
-### Unit Tests — AuthService
-| Test ID | Scenario | Status |
-|---------|----------|--------|
-| AUTH-01 | Correct password returns true | 🔜 |
-| AUTH-02 | Incorrect password returns false | 🔜 |
-| AUTH-03 | Empty password returns false | 🔜 |
-| AUTH-04 | isAuthenticated returns true after login | 🔜 |
-| AUTH-05 | logout clears session | 🔜 |
-
-### E2E Tests — Cypress
-| Test ID | Scenario | Status |
-|---------|----------|--------|
-| AUTH-E2E-01 | Login with correct password navigates to admin | 🔜 |
-| AUTH-E2E-02 | Login with wrong password shows error | 🔜 |
-| AUTH-E2E-03 | Unauthenticated user redirected from /admin | 🔜 |
-| AUTH-E2E-04 | Session persists on page refresh | 🔜 |
-| AUTH-E2E-05 | Logout clears session | 🔜 |
-| NAV-01 | All routes load correctly | 🔜 |
-| NAV-02 | Unknown route shows 404 | 🔜 |
-| MATCH-E2E-01 | Record a match → standings update | 🔜 |
-
----
-
-## CI/CD
-
-Every push to `main` triggers the GitHub Actions pipeline:
-
-1. Install dependencies
-2. Run Jest unit tests
-3. Start the dev server
-4. Run Cypress E2E tests headless
-5. Upload test artifacts on failure
+> The app must be running locally before launching Cypress. The `cypress:open` and `cypress:run` scripts handle this automatically via `start-server-and-test`.
 
 ---
 
@@ -176,12 +200,12 @@ Every push to `main` triggers the GitHub Actions pipeline:
 
 | Document | Description |
 |----------|-------------|
-| [Test Strategy](./docs/test-strategy.md) | Overall QA approach, risk analysis, tools, environments |
-| [Test Plan](./docs/test-plan.md) | Full test case list with steps, expected results, automation mapping |
+| [Test Strategy](./docs/test-strategy.md) | QA approach, risk analysis, test levels, tools |
+| [Test Plan](./docs/test-plan.md) | Full test case list with steps and automation mapping |
 
 ---
 
 ## Author
 
-**Yassine Kacem** — Junior QA Automation Engineer
-ISTQB Certified | Jest · Cypress · GitHub Actions
+**Yassine Kacem** — Junior QA Automation Engineer  
+Cypress · Cucumber/Gherkin · Jest · TypeScript · React · GitHub Actions
