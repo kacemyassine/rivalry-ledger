@@ -66,7 +66,7 @@ const AdminPage = () => {
 
   // New league form state
   const [newLeagueName, setNewLeagueName] = useState("");
-  const [newTargetMatches, setNewTargetMatches] = useState(50);
+  const [newTargetMatches, setNewTargetMatches] = useState<number | string>(50);
   const [archiveImageFile, setArchiveImageFile] = useState<File | null>(null);
   const [archiveImagePreview, setArchiveImagePreview] = useState<string | null>(
     null,
@@ -76,7 +76,7 @@ const AdminPage = () => {
   const [newLeagueType, setNewLeagueType] = useState<
     "with-scorers" | "without-scorers"
   >("with-scorers");
-  const [newMinSquadSize, setNewMinSquadSize] = useState<number>(
+  const [newMinSquadSize, setNewMinSquadSize] = useState<number | string>(
     SQUAD_RULES.defaultMinSize,
   );
   const [dialogStep, setDialogStep] = useState<
@@ -195,6 +195,8 @@ const AdminPage = () => {
 
     const winner = sortTeams(teams)[0].name;
 
+    const newTargetMatches =
+      typeof newTargetMatches === "string" ? 50 : newTargetMatches;
     const success = await archiveLeague({
       currentData: {
         leagueConfig: {
@@ -390,28 +392,29 @@ const AdminPage = () => {
                 open={dialogStep === "warning"}
                 onOpenChange={(open) => !open && setDialogStep(null)}
               >
-                <DialogContent 
-                data-testid="league-incomplete-dialog"
-                starting-new-league-dialog="true"
-                className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                <DialogContent
+                  data-testid="league-incomplete-dialog"
+                  starting-new-league-dialog="true"
+                  className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md"
+                >
                   <DialogHeader>
-                    <DialogTitle
-                      className="text-yellow-400 text-xl"
-                    >
+                    <DialogTitle className="text-yellow-400 text-xl">
                       League Not Complete
                     </DialogTitle>
                     <DialogDescription className="text-yellow-200/60">
                       The current league has only played{" "}
-                      <span 
-                      data-testid="played-vs-target-count"
-                      className="text-yellow-300 font-semibold">
+                      <span
+                        data-testid="played-vs-target-count"
+                        className="text-yellow-300 font-semibold"
+                      >
                         {matches.length}/{targetMatches}
                       </span>{" "}
                       matches. If you proceed, the target matches will be
                       adjusted to{" "}
-                      <span 
-                      data-testid="new-target-matches"
-                      className="text-yellow-300 font-semibold">
+                      <span
+                        data-testid="new-target-matches"
+                        className="text-yellow-300 font-semibold"
+                      >
                         {matches.length}
                       </span>
                       .
@@ -440,14 +443,13 @@ const AdminPage = () => {
                 open={dialogStep === "unsaved"}
                 onOpenChange={(open) => !open && setDialogStep(null)}
               >
-                <DialogContent 
-                data-testid="unsaved-changes-dialog"
-                starting-new-league-dialog="true"
-                className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+                <DialogContent
+                  data-testid="unsaved-changes-dialog"
+                  starting-new-league-dialog="true"
+                  className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md"
+                >
                   <DialogHeader>
-                    <DialogTitle
-                      className="text-yellow-400 text-xl"
-                    >
+                    <DialogTitle className="text-yellow-400 text-xl">
                       Unsaved Changes
                     </DialogTitle>
                     <DialogDescription className="text-yellow-200/60">
@@ -576,14 +578,13 @@ const AdminPage = () => {
           open={dialogStep === "config"}
           onOpenChange={(open) => !open && setDialogStep(null)}
         >
-          <DialogContent 
-          data-testid="config-dialog"
-          starting-new-league-dialog="true"
-          className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+          <DialogContent
+            data-testid="config-dialog"
+            starting-new-league-dialog="true"
+            className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md"
+          >
             <DialogHeader>
-              <DialogTitle
-                className="text-yellow-400 text-xl"
-              >
+              <DialogTitle className="text-yellow-400 text-xl">
                 Start New League
               </DialogTitle>
               <DialogDescription className="text-yellow-200/60">
@@ -615,11 +616,18 @@ const AdminPage = () => {
                 </Label>
                 <Input
                   type="number"
+                  data-testid="target-matches-input"
                   min={4}
+                  max={100}
                   value={newTargetMatches}
-                  onChange={(e) => {
+                  onChange={(e) =>
+                    setNewTargetMatches(
+                      e.target.value === "" ? "" : parseInt(e.target.value),
+                    )
+                  }
+                  onBlur={(e) => {
                     const val = parseInt(e.target.value) || 50;
-                    setNewTargetMatches(Math.max(4, val));
+                    setNewTargetMatches(Math.min(100, Math.max(4, val)));
                   }}
                   className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
                 />
@@ -631,13 +639,18 @@ const AdminPage = () => {
                 </Label>
                 <Input
                   type="number"
+                  min={4}
+                  max={25}
                   value={newMinSquadSize}
                   onChange={(e) =>
                     setNewMinSquadSize(
-                      parseInt(e.target.value) || SQUAD_RULES.defaultMinSize,
+                      e.target.value === "" ? "" : parseInt(e.target.value),
                     )
                   }
-                  className="bg-[#0a0e2a] border-yellow-400/20 text-yellow-100"
+                  onBlur={(e) => {
+                    const val = parseInt(e.target.value) || 4;
+                    setNewMinSquadSize(Math.min(25, Math.max(4, val)));
+                  }}
                 />
               </div>
 
@@ -776,14 +789,13 @@ const AdminPage = () => {
           open={dialogStep === "confirm"}
           onOpenChange={(open) => !open && setDialogStep(null)}
         >
-          <DialogContent 
-          data-testid="confirm-dialog"
-          starting-new-league-dialog="true"
-          className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md">
+          <DialogContent
+            data-testid="confirm-dialog"
+            starting-new-league-dialog="true"
+            className="bg-[#0d1133] border border-yellow-400/20 text-yellow-100 max-w-md"
+          >
             <DialogHeader>
-              <DialogTitle
-                className="text-yellow-400 text-xl"
-              >
+              <DialogTitle className="text-yellow-400 text-xl">
                 Confirm New League
               </DialogTitle>
               <DialogDescription className="text-yellow-200/60">
