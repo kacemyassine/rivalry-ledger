@@ -143,4 +143,8 @@ export class MatchHistory {
       cy.contains('button', /cancel/i).click();
     });
   }
+
+  assertNoMatchesExist() {
+    cy.get('[data-testid="no-matches-available"]').should("be.visible");
+  }
 }
