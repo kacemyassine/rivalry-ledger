@@ -4,7 +4,7 @@ import { AdminPage } from "../pages/adminPage";
 import { PlayerForm } from "../POM/components/PlayerForm";
 import { interceptMatchesWithCount } from "../matchHelpers";
 import { LeagueData } from "../POM/leagueData";
-import { API_SUCCESS } from "@/lib/errors";
+import { API_SUCCESS, API_ERRORS } from "@/lib/errors";
 import { ConfigDialog } from "../POM/configDialog";
 import { ConfirmationDialog } from "../POM/confirmationDialog";
 
@@ -14,6 +14,7 @@ const playerForm = new PlayerForm();
 const leagueData = new LeagueData();
 const configDialog = new ConfigDialog();
 const confirmationDialog = new ConfirmationDialog();
+
 
 Given("I have unsaved changes", () => {
   playerForm.editPlayerName("player-1", "New Player Name");
@@ -239,6 +240,9 @@ When('I set target matches to {int}', (targetMatches:number) => {
 });
 
 When('I click the {string} button in the Confirmation dialog' , (buttonName: 'Back' | 'Archive & Start New') => {
+  if (buttonName === 'Archive & Start New') {
+    leagueData.setEmptyLeague();
+  }
   confirmationDialog.clickTheButton(buttonName);
 });
 
@@ -250,4 +254,31 @@ Then('the app should navigate to the home page after archiving success', () => {
   confirmationDialog.assertArchivingSuccess();
 });
 
+Then('I should see a success confiramation message', () => {
+  cy.get("[data-sonner-toast]" ,{ timeout: 6000}).should(
+    "contain.text",
+    API_SUCCESS.ARCHIVE_SUCCESS,
+  );
+  adminPage.assertUsavedChangesIs("not.exist");
+})
 
+Then('the visitor page should show a new league with zero matches', () => {
+  cy.get('[data-testid="confirm-dialog"]', { timeout: 6000 }).should('not.exist');
+  cy.url().should('include', '/');
+  matchHistory.assertNoMatchesExist();
+})
+
+When('the archive operation fails', () => {
+  leagueData.setArchiveFailure();
+})
+
+Then('I should see a message that indicates an error', () => {
+  cy.get("[data-sonner-toast]", { timeout: 6000 }).should(
+    "contain.text",
+    API_ERRORS.ARCHIVE_FAILED
+  );
+});
+
+Then('the {string} dialog should remain open', (dialogType: "Unsaved Changes Warning" | "Config" | "Confirmation" | "League Incomplete") => {
+  adminPage.getDialog(dialogType);
+});

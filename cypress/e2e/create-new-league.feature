@@ -165,41 +165,23 @@ Feature: Create New League
     Then I should see a spinner and "Archiving league and preparing new season..."
     And the app should navigate to the home page after archiving success
 
-  # # ─── Outcome ─────────────────────────────────────────────────────────────
+  # ─── Outcome ─────────────────────────────────────────────────────────────
 
-  # Scenario: Archive succeeds and a new league is started
-  #   Given the confirm dialog is open
-  #   When I click "Archive & Start New"
-  #   And the archive operation succeeds
-  #   Then I should see a success toast
-  #   And I should be redirected to the visitor page
-  #   And the admin page should now reflect the new league with zero matches
+    Scenario: Archiving a league succeeds
+    Given the "Confirmation" dialog is open
+    When I click the "Archive & Start New" button in the Confirmation dialog
+    Then I should see a spinner and "Archiving league and preparing new season..."
+    Then I should see a success confiramation message
+    And the app should navigate to the home page after archiving success
 
-  # Scenario: Archive fails and the current league is preserved
-  #   Given the confirm dialog is open
-  #   When I click "Archive & Start New"
-  #   And the archive operation fails
-  #   Then I should see an error toast
-  #   And the current league data should remain unchanged
+  Scenario: New league is created after archive
+    Given the "Confirmation" dialog is open
+    When I click the "Archive & Start New" button in the Confirmation dialog
+    Then the visitor page should show a new league with zero matches
 
-  # # ─── Archived Leagues page ────────────────────────────────────────────────
-
-  # Scenario: Archived leagues page lists all past seasons
-  #   Given I navigate to "/archived-leagues"
-  #   Then I should see a card for each archived league
-  #   And each card should show the league name, match count, champion, start date, and end date
-
-  # Scenario: Archived leagues page shows empty state
-  #   Given no leagues have been archived yet
-  #   When I navigate to "/archived-leagues"
-  #   Then I should see "No archived leagues yet."
-
-  # Scenario: Clicking an archived league card navigates to its detail page
-  #   Given I am on the archived leagues page
-  #   When I click on an archived league card
-  #   Then I should see the standings, match history, and top scorers for that season
-
-  # Scenario: Archived league detail shows not-found for an invalid ID
-  #   Given I navigate to "/archived-leagues/nonexistent-id"
-  #   Then I should see "League not found"
-  #   And I should see a link back to the archived leagues list
+  Scenario: Archive fails and the current league is preserved
+    Given the "Confirmation" dialog is open
+    When I click the "Archive & Start New" button in the Confirmation dialog
+    And the archive operation fails
+    Then I should see a message that indicates an error
+    And the "Confirmation" dialog should remain open
