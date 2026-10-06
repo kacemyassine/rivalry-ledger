@@ -52,8 +52,8 @@ export class LeagueData {
           lastMatchId = nextMatch.id;
           lastDate = nextMatch.date;
         }
-      this.matchCount = numberOfPlayedMatches;
-      this.targetMatches = data.targetMatches;
+        this.matchCount = numberOfPlayedMatches;
+        this.targetMatches = data.targetMatches;
       }
       this.interceptWith(
         data,
@@ -108,5 +108,28 @@ export class LeagueData {
         `getLeagueData_matchCount_${numberOfPlayedMatches}_withTarget`,
       );
     });
+  }
+
+  setEmptyLeague() {
+    cy.fixture("leagueData.json").then((data) => {
+      data.matches = [];
+      data.targetMatches = 50;
+      this.matchCount = 0;
+      this.targetMatches = 50;
+      this.interceptWith(data, "getLeagueData_emptyLeague");
+    });
+  }
+
+  setArchiveFailure() {
+    cy.intercept("POST", "https://dxeggswwjecxhkdlmutq.supabase.co/functions/v1/archive-league", {
+      statusCode: 500,
+      body: { message: "Internal Server Error" },
+    }).as("archiveFailure");
+  }
+
+  setEmptyArchivedLeague() {
+    cy.intercept("GET", 'https://api.github.com/**/index.json', {
+      body: { content: btoa(JSON.stringify({leagues: []})), sha: 'abc123'}
+    }).as('emptyArchivedleague');
   }
 }
