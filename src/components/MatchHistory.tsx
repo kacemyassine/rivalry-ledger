@@ -65,7 +65,7 @@ export function MatchHistory({ theme = 'default', onEditMatch, onDeleteMatch }: 
         </div>
 
         {allMatches.length === 0 ? (
-          <p className={cn('text-center py-8 text-sm md:text-base', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
+          <p data-testid="no-matches-available"className={cn('text-center py-8 text-sm md:text-base', isRamadan ? 'text-yellow-200/40' : 'text-muted-foreground')}>
             No matches played yet. Record your first match!
           </p>
         ) : (
