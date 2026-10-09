@@ -72,16 +72,17 @@ const ArchivedLeagueDetail = () => {
   if (loading) {
     return (
       <div className="w-screen h-screen flex items-center justify-center bg-black">
-        <Loader2 className="w-12 h-12 text-yellow-400 animate-spin" />
+        <Loader2 data-testid="league-not-found-loader"className="w-12 h-12 text-yellow-400 animate-spin" />
       </div>
     );
   }
 
   if (notFound) {
     return (
-      <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#08060f] gap-4">
-        <p className="text-yellow-400 text-2xl font-bold">League not found</p>
+      <div data-testid="league-not-found" className="w-screen h-screen flex flex-col items-center justify-center bg-[#08060f] gap-4">
+        <p data-testid="league-not-found-message" className="text-yellow-400 text-2xl font-bold">League not found</p>
         <button
+        data-testid="return-to-archived-leagues-btn"
           onClick={() => navigate('/archived-leagues')}
           className="text-purple-400 hover:text-yellow-400 transition-colors text-sm"
         >

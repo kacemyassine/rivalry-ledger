@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGitHubData } from '@/hooks/useGitHubData';
-import { Loader2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGitHubData } from "@/hooks/useGitHubData";
+import { Loader2 } from "lucide-react";
 
 const ArchivedLeagues = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const ArchivedLeagues = () => {
     const load = async () => {
       setLoading(true);
       const data = await fetchArchiveIndex();
-      if (data) setLeagues(data.leagues);
+      if (data) setLeagues(data.leagues as any[]);
       setLoading(false);
     };
     load();
@@ -22,14 +22,19 @@ const ArchivedLeagues = () => {
   if (loading) {
     return (
       <div className="w-screen h-screen flex items-center justify-center bg-[#08060f]">
-        <Loader2 className="w-12 h-12 text-yellow-400 animate-spin" />
+        <Loader2
+          data-testid="archived-leagues-loader"
+          className="w-12 h-12 text-yellow-400 animate-spin"
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#08060f] relative overflow-hidden">
-
+    <div
+      data-testid="archived-leagues-page"
+      className="min-h-screen bg-[#08060f] relative overflow-hidden"
+    >
       {/* Animated star field */}
       <div className="fixed inset-0 pointer-events-none z-0">
         {[...Array(40)].map((_, i) => (
@@ -57,7 +62,6 @@ const ArchivedLeagues = () => {
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-24">
-
         {/* Header */}
         <div className="text-center mb-20">
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -94,18 +98,23 @@ const ArchivedLeagues = () => {
         {/* Cards */}
         <div className="flex flex-col gap-8 max-w-3xl mx-auto">
           {leagues.length === 0 ? (
-            <p className="text-center text-purple-400/50">No archived leagues yet.</p>
+            <p
+              data-testid="no-archived-leagues-message"
+              className="text-center text-purple-400/50"
+            >
+              No archived leagues yet.
+            </p>
           ) : (
             leagues.map((league) => (
               <div
                 key={league.id}
+                data-testid={`archived-league-card-${league.name}`}
                 onClick={() => navigate(`/archived-leagues/${league.id}`)}
                 className="group cursor-pointer relative"
               >
                 <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500 via-purple-600 to-yellow-500 rounded-3xl opacity-20 group-hover:opacity-60 blur-md transition-all duration-500" />
 
                 <div className="relative flex flex-col sm:flex-row bg-gradient-to-br from-[#1a1428] via-[#120f1f] to-[#0d0b18] rounded-3xl border border-purple-500/30 group-hover:border-yellow-500/50 overflow-hidden transition-all duration-300 shadow-2xl">
-
                   {/* Image */}
                   <div className="w-full sm:w-[35%] shrink-0 overflow-hidden relative bg-[#0d0b18]">
                     {league.image ? (
@@ -118,7 +127,9 @@ const ArchivedLeagues = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-[#120f1f] via-transparent to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-[#1a1428]" />
                       </>
                     ) : (
-                      <div className="w-full h-48 flex items-center justify-center text-6xl bg-purple-900/20">🏆</div>
+                      <div className="w-full h-48 flex items-center justify-center text-6xl bg-purple-900/20">
+                        🏆
+                      </div>
                     )}
                   </div>
 
@@ -138,13 +149,21 @@ const ArchivedLeagues = () => {
 
                     <div className="flex items-center gap-6">
                       <div className="text-center">
-                        <p className="text-3xl font-bold text-yellow-400">{league.matches}</p>
-                        <p className="text-purple-400/50 text-xs uppercase tracking-wider mt-1">Matches</p>
+                        <p className="text-3xl font-bold text-yellow-400">
+                          {league.matches}
+                        </p>
+                        <p className="text-purple-400/50 text-xs uppercase tracking-wider mt-1">
+                          Matches
+                        </p>
                       </div>
                       <div className="w-px h-12 bg-gradient-to-b from-transparent via-purple-500/30 to-transparent" />
                       <div>
-                        <p className="text-xl font-bold text-yellow-300">{league.winner}</p>
-                        <p className="text-purple-400/50 text-xs uppercase tracking-wider mt-1">Champion 🏆</p>
+                        <p className="text-xl font-bold text-yellow-300">
+                          {league.winner}
+                        </p>
+                        <p className="text-purple-400/50 text-xs uppercase tracking-wider mt-1">
+                          Champion 🏆
+                        </p>
                       </div>
                     </div>
 
@@ -170,7 +189,7 @@ const ArchivedLeagues = () => {
           <div className="relative group/btn">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-yellow-500 rounded-xl opacity-0 group-hover/btn:opacity-50 blur transition-all duration-300" />
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="relative inline-flex items-center gap-3 bg-[#120f1f] hover:bg-[#1a1428] text-purple-300 hover:text-yellow-300 border border-purple-500/30 hover:border-yellow-500/40 font-medium py-3 px-10 rounded-xl transition-all duration-300 hover:scale-105 text-sm tracking-wide"
             >
               <span className="text-base">←</span>
@@ -178,7 +197,6 @@ const ArchivedLeagues = () => {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

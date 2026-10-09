@@ -44,13 +44,14 @@ export function TopScorers({
   const nonScorers = getNonScorers(sorted);
   const { minSquadSize } = useLeagueStore();
   const visiblePlayers = showAll
-  ? sorted
-  : scorers.length >= 10
-    ? scorers
-    : [...scorers, ...nonScorers.slice(0, 10 - scorers.length)];
+    ? sorted
+    : scorers.length >= 10
+      ? scorers
+      : [...scorers, ...nonScorers.slice(0, 10 - scorers.length)];
 
   return (
     <div
+      data-testid="top-scorers-section"
       className={cn(
         "p-4 md:p-6 animate-fade-in rounded-2xl border",
         isRamadan
@@ -93,7 +94,11 @@ export function TopScorers({
               const teamPlayers = players.filter(
                 (p: any) => p.teamId === player.teamId,
               );
-              const canDelete = canDeletePlayer(player, teamPlayers, minSquadSize);
+              const canDelete = canDeletePlayer(
+                player,
+                teamPlayers,
+                minSquadSize,
+              );
 
               return (
                 <div
