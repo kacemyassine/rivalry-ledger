@@ -121,15 +121,54 @@ export class LeagueData {
   }
 
   setArchiveFailure() {
-    cy.intercept("POST", "https://dxeggswwjecxhkdlmutq.supabase.co/functions/v1/archive-league", {
-      statusCode: 500,
-      body: { message: "Internal Server Error" },
-    }).as("archiveFailure");
+    cy.intercept(
+      "POST",
+      "https://dxeggswwjecxhkdlmutq.supabase.co/functions/v1/archive-league",
+      {
+        statusCode: 500,
+        body: { message: "Internal Server Error" },
+      },
+    ).as("archiveFailure");
   }
 
   setEmptyArchivedLeague() {
-    cy.intercept("GET", 'https://api.github.com/**/index.json', {
-      body: { content: btoa(JSON.stringify({leagues: []})), sha: 'abc123'}
-    }).as('emptyArchivedleague');
+    cy.intercept("GET", "https://api.github.com/**/index.json*", {
+      body: { content: btoa(JSON.stringify({ leagues: [] })), sha: "abc123" },
+    }).as("emptyArchivedleague");
   }
+
+  setUnexistingArchivedLeague() {
+    cy.intercept(
+      {
+        method: "GET",
+        pathname:
+          "/repos/kacemyassine/atlantis-showdown/contents/src/data/archives/nonexistent-id.json",
+      },
+      {
+        statusCode: 404,
+        body: { message: "Not Found" },
+      },
+    ).as("missingArchivedLeague");
+  }
+
+  setArchivedLeagues(archivedLeagues: { name: string }[]) {
+    const content = btoa(
+      JSON.stringify({
+        leagues: archivedLeagues.map((league) => ({
+          id: `${league.name.toLowerCase().replace(/\s+/g, "-")}`,
+          name: league.name,
+          matchCount: 10,
+          champion: "Team A",
+          startDate: "2022-01-01",
+          endDate: "2022-06-01",
+        })),
+      }),
+    );
+
+    cy.intercept("GET", "https://api.github.com/**/index.json*", {
+      body: { content, sha: "abc123" },
+    }).as("archivedLeagues");
+  };
 }
+
+
