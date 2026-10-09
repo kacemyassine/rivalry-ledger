@@ -98,10 +98,10 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <>
+    < div data-testid="navbar-component" >
       {/* Global Dialog — works on both mobile and desktop */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogContent className="w-[90vw] max-w-[400px] bg-[#0d1133] border border-yellow-400/20 shadow-2xl z-[9999]">
+        <DialogContent data-testid="admin-login-dialog" className="w-[90vw] max-w-[400px] bg-[#0d1133] border border-yellow-400/20 shadow-2xl z-[9999]">
           <DialogHeader>
             <DialogTitle className="text-xl text-yellow-300 text-center">
               Admin Access
@@ -147,6 +147,7 @@ const Navbar = () => {
                 Cancel
               </Button>
               <Button
+                data-testid="admin-submit-button"
                 onClick={handleAdminAccess}
                 disabled={countdown > 0}
                 className="flex-1 bg-yellow-400 hover:bg-yellow-300 text-[#0a0e2a] font-bold"
@@ -213,7 +214,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Admin button */}
-            <div className="hidden md:flex items-center shrink-0">
+            <div data-testid="admin-button" className="hidden md:flex items-center shrink-0">
               <button
                 onClick={handleAdminClick}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl border border-yellow-400/25 text-yellow-300/70 hover:text-yellow-300 hover:border-yellow-400/50 hover:bg-yellow-400/10 text-sm font-medium transition-all duration-200"
@@ -276,7 +277,7 @@ const Navbar = () => {
           )}
         </nav>
       </div>
-    </>
+    </div>
   );
 };
 
