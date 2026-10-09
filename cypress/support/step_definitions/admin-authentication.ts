@@ -1,6 +1,7 @@
-/// <reference types="cypress" />
-
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { Navbar } from "../../support/POM/components/navbar";
+
+const navbar = new Navbar();
 
 Given("I am on the home page", () => {
   cy.visit("/");
@@ -15,20 +16,16 @@ Given("I am on the admin page", () => {
 });
 
 When("I open the admin login dialog", () => {
-  cy.contains("button", "Admin").click();
+  navbar.openAdminLoginDialog();
 });
 
 When("I enter the password {string}", (password: string) => {
-  cy.get('input[type="password"]').clear().type(password);
+  navbar.adminLoginDialog.typePassword(password);
 });
 
 When("I submit the login form", () => {
-  cy.contains("button", "Enter").click();
+  navbar.adminLoginDialog.submit();
 });
-
-// When("I click the {string} button", (label: string) => {
-//   cy.contains("button", label).click();
-// });
 
 When("I visit the admin page directly without logging in", () => {
   cy.visit("/admin");
@@ -47,5 +44,22 @@ Then("I should still be on the home page", () => {
 });
 
 Then("I should see the error message {string}", (message: string) => {
-  cy.get('[data-testid="password-error"]').should("contain.text", message);
+  navbar.adminLoginDialog.getErrorMessage().should("contain.text", message);
+});
+
+When('I attempt to login with incorrect password {int} times', (count: number) => {
+  for (let i = 0; i < count; i++) {
+    navbar.adminLoginDialog.typePassword("wrongpass");
+    navbar.adminLoginDialog.submit();
+  }
+});
+
+Then('I should still be able to attempt login', () => {
+  navbar.adminLoginDialog.getErrorMessage().should("be.visible");
+  navbar.adminLoginDialog.assertSubmitButtonIs("enabled");
+
+});
+
+Then('the submit button should be disabled', () => {
+  navbar.adminLoginDialog.assertSubmitButtonIs("disabled");
 });

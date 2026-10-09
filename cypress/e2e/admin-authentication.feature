@@ -24,10 +24,21 @@ Feature: Admin Authentication
   Scenario: Admin logs out from the admin page
     Given I am logged in as admin
     And I am on the admin page
-    When I click the "Logout" button
+    When I click the "Logout" button on the admin page
     Then I should be redirected to the home page
 
   @RLQ-11
   Scenario: Visitor cannot access the admin page directly without authentication
     When I visit the admin page directly without logging in
     Then I should be redirected to the home page
+
+  Scenario: Admin sees warning message after multiple failed login attempts
+  When I open the admin login dialog
+  And I attempt to login with incorrect password 3 times
+  Then I should see the error message "Too many attempts. Please slow down."
+  And I should still be able to attempt login
+
+Scenario: Admin is locked out after 5 failed login attempts
+  When I open the admin login dialog
+  When I attempt to login with incorrect password 5 times
+  Then the submit button should be disabled
