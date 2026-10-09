@@ -2,3 +2,6 @@ project_id = "wczvqdocbrfhbdahjyhu"
 
 [functions.update-json]
 verify_jwt = false
+
+[functions.archive-league]
+verify_jwt = false
