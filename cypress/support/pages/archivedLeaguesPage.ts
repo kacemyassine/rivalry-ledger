@@ -31,4 +31,18 @@ export class ArchivedLeaguesPage {
       cy.get(`[data-testid="archived-league-card-${leagueName}"]`).click();
     });
   }
+
+  assertNoArchivedLeaguesMessageIsVisible() {
+    this.getArchivedLeaguesPage().within(() => {
+      cy.get('[data-testid="no-archived-leagues-message"]').should("be.visible");
+    });
+  }
+
+  assertLeagueNotFoundSpinnerIsNotVisible() {
+    cy.get('[data-testid="league-not-found-spinner"]').should("not.exist");
+  }
+
+  assertLeagueNotFoundMessageIsVisible() {
+    cy.get('[data-testid="league-not-found-message"]').should("be.visible");
+  }
 }

@@ -11,11 +11,13 @@ import { ScorerInput } from "../matchHelpers";
 import { TopScorers } from "../POM/components/TopScorers";
 import { Match } from "@/store/leagueStore";
 import { setCurrentMatchId } from "./sharedState";
+import { AdminPage } from "../pages/adminPage";
 
 type MatchScorer = Match["scorers"][number];
 
 const matchForm = new MatchForm();
 const topScorers = new TopScorers();
+const adminPage = new AdminPage();
 
 // eslint-disable-next-line prefer-const
 let initialGoals: Record<string, number> = {};
@@ -97,7 +99,7 @@ Then("each player's total goal count shouldn't change", () => {
 When("I update the match score to {string}", (score: string) => {
   setUpdatedScore(score);
   matchForm.submit("update");
-  cy.get('[role="dialog"]').should("not.exist");
+  adminPage.assertNoDialogIsOpen();
 });
 
 Then(

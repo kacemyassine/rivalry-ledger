@@ -39,7 +39,7 @@ Then(
 );
 
 When("I click the {string} button on the admin page", (buttonName: string) => {
-  cy.get("button").contains(buttonName).click();
+  adminPage.clickButton(buttonName);
 });
 
 Given("target matches for the current league has been reached", () => {
@@ -61,9 +61,7 @@ Given("the current league has played less matches than the target", () => {
 });
 
 When("I choose to proceed despite the warning", () => {
-  cy.get('[role="dialog"]').within(() => {
-    cy.get("button").contains("Proceed").click();
-  });
+  adminPage.clickLeagueNotCompleteDialogButton("Proceed");
 });
 
 Given("I am on the config dialog", () => {
@@ -72,21 +70,15 @@ Given("I am on the config dialog", () => {
 });
 
 When("I leave the league name empty", () => {
-  cy.get('[role="dialog"]').within(() => {
-    cy.get('[data-testid="new-league-name-input"]').clear();
-  });
+  configDialog.clearNewLeagueName();
 });
 
-Then("the {string} button should be disabled", (buttonName: string) => {
-  cy.get('[role="dialog"]').within(() => {
-    cy.get("button").contains(buttonName).should("be.disabled");
-  });
+Then("the {string} button should be disabled", (buttonName: 'Next') => {
+  configDialog.assertNextButtonIsDisabled();
 });
 
 When("I type {string} as the new league name", (leagueName: string) => {
-  cy.get('[role="dialog"]').within(() => {
-    cy.get('[data-testid="new-league-name-input"]').clear().type(leagueName);
-  });
+  configDialog.enterNewLeagueName(leagueName);
 });
 
 Given("the current league has fewer than 4 matches played", () => {
@@ -98,7 +90,7 @@ Then("I should see the error toast {string}", (errorMessage: string) => {
 });
 
 Then("no dialog should open", () => {
-  cy.get('[role="dialog"]').should("not.exist");
+  adminPage.assertNoDialogIsOpen();
 });
 
 Given("the current league has at least 4 matches played", () => {
@@ -119,7 +111,7 @@ Given(
 );
 
 Then("the dialog should close", () => {
-  cy.get('[role="dialog"]').should("not.exist");
+  adminPage.assertNoDialogIsOpen();
 });
 
 Then("I should remain on the admin page with my unsaved changes intact", () => {

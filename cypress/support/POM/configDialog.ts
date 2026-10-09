@@ -18,6 +18,13 @@ export class ConfigDialog {
       cy.get('[data-testid="new-league-name-input"]').clear().type(LeagueName);
     });
   }
+  
+  
+  clearNewLeagueName() {
+    this.configDialog.within(() => {
+      cy.get('[data-testid="new-league-name-input"]').clear();
+    });
+  }
 
   setLeagueType(leagueType: "With Scorers" | "Without Scorers") {
     this.configDialog.within(() => {
@@ -56,5 +63,11 @@ export class ConfigDialog {
       .type('{selectall}')
       .type(targetMatches.toString());
     })
+  }
+
+  assertNextButtonIsDisabled() {
+    this.configDialog.within(() => {
+      cy.get("button").contains("Next").should("be.disabled");
+    });
   }
 }

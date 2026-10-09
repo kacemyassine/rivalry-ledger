@@ -21,33 +21,18 @@ Given("there are no archived leagues", () => {
   leagueData.setEmptyArchivedLeague();
 });
 
-// Given('there are 2 archived leagues with the following details:', (dataTable) => {
-//     // Assuming the dataTable is a Cucumber DataTable object
-//     const leagues = dataTable.hashes();
-
-// })
-
 Then(
   "I should see a message indicating that there are no archived leagues",
   () => {
-    cy.get('[data-testid="archived-leagues-page"]').within(() => {
-      cy.get('[data-testid="no-archived-leagues-message"]').should(
-        "be.visible",
-      );
-    });
+    archivedLeaguesPage.assertNoArchivedLeaguesMessageIsVisible();
   },
 );
 
 Then(
   'I should see a "League not found" message with a link to return to archived leagues',
   () => {
-    cy.get('[data-testid="league-not-found"]').within(() => {
-      cy.get('[data-testid="league-not-found-spinner"]').should("not.exist");
-      cy.get('[data-testid="league-not-found-message"]').should("be.visible");
-      cy.get('[data-testid="return-to-archived-leagues-btn"]').should(
-        "be.visible",
-      );
-    });
+    archivedLeaguesPage.assertLeagueNotFoundMessageIsVisible();
+    archivedLeaguesPage.assertLeagueNotFoundSpinnerIsNotVisible();
   },
 );
 

@@ -123,4 +123,19 @@ export class AdminPage {
       }
     });
   }
+
+  clickButton(buttonName: string) {
+    cy.get("button").contains(buttonName).click();
+  }
+
+  clickLeagueNotCompleteDialogButton(buttonName: 'Proceed' | 'Cancel') {
+    cy.get('[data-testid="league-incomplete-dialog"]').within(() => {
+      cy.get("button").contains(buttonName).click();
+    });
+  }
+
+  assertNoDialogIsOpen() {
+    cy.get('[role="dialog"]').should("not.exist");
+  }
 }
+
