@@ -96,6 +96,17 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return jsonResponse(
+      {
+        success: false,
+        code: "METHOD_NOT_ALLOWED",
+        message: "Only POST is supported",
+      },
+      405,
+    );
+  }
+
   const authError = validateAuth(req);
   if (authError) {
     return authError;
