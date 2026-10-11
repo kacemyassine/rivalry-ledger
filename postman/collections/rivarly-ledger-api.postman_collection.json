@@ -1,0 +1,277 @@
+{
+  "info": {
+    "_postman_id": "06135b28-1699-48e5-a34b-15dac5137878",
+    "name": "rivalry-ledger-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49015095",
+    "_collection_link": "https://go.postman.co/collection/49015095-06135b28-1699-48e5-a34b-15dac5137878?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "00-cors",
+      "item": [
+        {
+          "name": "OPTIONS update-json",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.headers.get('access-control-allow-origin')).to.eql('*');\r\n    pm.expect(pm.response.headers.get('access-control-allow-methods')).to.eql('POST, OPTIONS');\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/update-json",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "update-json"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01-update-json",
+      "item": [
+        {
+          "name": "validation",
+          "item": [
+            {
+              "name": "missing required fields",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 400\", () => {\r\n     pm.response.to.have.status(400);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is INVALID_PAYLOAD\", () => {\r\n     pm.expect(body.code).to.eql('INVALID_PAYLOAD');\r\n   });\r\n\r\n   pm.test(\"message names the missing fields\", () => {\r\n     pm.expect(body.message).to.eql('Missing required fields: data, owner, repo, path');\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "missing path",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 400\", () => {\r\n     pm.response.to.have.status(400);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is INVALID_PAYLOAD\", () => {\r\n     pm.expect(body.code).to.eql('INVALID_PAYLOAD');\r\n   });\r\n\r\n   pm.test(\"message names the missing fields\", () => {\r\n     pm.expect(body.message).to.eql('Missing required fields: data, owner, repo, path');\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "missing repo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 400\", () => {\r\n     pm.response.to.have.status(400);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is INVALID_PAYLOAD\", () => {\r\n     pm.expect(body.code).to.eql('INVALID_PAYLOAD');\r\n   });\r\n\r\n   pm.test(\"message names the missing fields\", () => {\r\n     pm.expect(body.message).to.eql('Missing required fields: data, owner, repo, path');\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "missing owner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 400\", () => {\r\n     pm.response.to.have.status(400);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is INVALID_PAYLOAD\", () => {\r\n     pm.expect(body.code).to.eql('INVALID_PAYLOAD');\r\n   });\r\n\r\n   pm.test(\"message names the missing fields\", () => {\r\n     pm.expect(body.message).to.eql('Missing required fields: data, owner, repo, path');\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "missing data",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 400\", () => {\r\n     pm.response.to.have.status(400);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is INVALID_PAYLOAD\", () => {\r\n     pm.expect(body.code).to.eql('INVALID_PAYLOAD');\r\n   });\r\n\r\n   pm.test(\"message names the missing fields\", () => {\r\n     pm.expect(body.message).to.eql('Missing required fields: data, owner, repo, path');\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02-archive-league",
+      "item": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{anon_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          "pm.request.headers.upsert({ key: 'apikey', value: pm.environment.get('anon_key') });"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
