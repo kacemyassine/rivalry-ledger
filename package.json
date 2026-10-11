@@ -13,7 +13,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "cypress:open": "start-server-and-test dev http://localhost:8080 'npx cypress open'",
-    "cypress:run": "start-server-and-test dev http://localhost:8080 'npx cypress run'"
+    "cypress:run": "start-server-and-test dev http://localhost:8080 'npx cypress run'",
+    "postman:pull": "node --env-file=.env.local scripts/pull-postman.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
