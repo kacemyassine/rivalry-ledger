@@ -104,6 +104,10 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== 'POST') {
+  return jsonResponse({ success: false, code: 'METHOD_NOT_ALLOWED', message: 'Only POST is supported' }, 405);
+}
+
   const authError = validateAuth(req);
   if (authError) {
     return authError;
@@ -123,7 +127,12 @@ serve(async (req) => {
       return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'Content-Type must be application/json' }, 400);
     }
 
-    const body = await req.json();
+    let body: any;
+try {
+  body = await req.json();
+} catch {
+  return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'Request body must be valid JSON' }, 400);
+}
     const {
       currentData,
       newLeagueConfig,
