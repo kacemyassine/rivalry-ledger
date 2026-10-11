@@ -156,6 +156,21 @@ serve(async (req) => {
     }
 
     if (
+      typeof data !== "object" ||
+      Array.isArray(data) ||
+      Object.keys(data).length === 0
+    ) {
+      return jsonResponse(
+        {
+          success: false,
+          code: "INVALID_PAYLOAD",
+          message: "data must be a non-empty JSON object",
+        },
+        400,
+      );
+    }
+
+    if (
       !isValidGitHubField(owner, GITHUB_REPO_PATTERN, "owner") ||
       !isValidGitHubField(repo, GITHUB_REPO_PATTERN, "repo")
     ) {
