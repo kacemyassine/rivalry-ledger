@@ -1,0 +1,1250 @@
+{
+  "info": {
+    "_postman_id": "06135b28-1699-48e5-a34b-15dac5137878",
+    "name": "rivalry-ledger-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-10-09T18:33:50.000Z",
+    "updatedAt": "2026-10-09T18:41:15.000Z",
+    "lastUpdatedBy": "49015095",
+    "uid": "49015095-06135b28-1699-48e5-a34b-15dac5137878"
+  },
+  "item": [
+    {
+      "name": "00-cors",
+      "item": [
+        {
+          "name": "OPTIONS update-json",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.headers.get('access-control-allow-origin')).to.eql('*');\r\n    pm.expect(pm.response.headers.get('access-control-allow-methods')).to.eql('POST, OPTIONS');\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "id": "7d74c7e1-43a2-4569-aace-77c053b06ef7",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "OPTIONS",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/update-json",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "update-json"
+              ]
+            }
+          },
+          "response": [],
+          "createdAt": "2026-10-09T18:41:45.000Z",
+          "updatedAt": "2026-10-11T10:23:17.000Z",
+          "uid": "49015095-7d74c7e1-43a2-4569-aace-77c053b06ef7"
+        }
+      ],
+      "id": "6679c683-4e24-4fc0-a733-38cdfc1885cf",
+      "createdAt": "2026-10-09T18:38:33.000Z",
+      "updatedAt": "2026-10-09T18:41:45.000Z",
+      "uid": "49015095-6679c683-4e24-4fc0-a733-38cdfc1885cf"
+    },
+    {
+      "name": "01-update-json",
+      "item": [
+        {
+          "name": "validation",
+          "item": [
+            {
+              "name": "missing required fields",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Missing required fields: data, owner, repo, path\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "6fbe7f08-1c45-4815-90be-e3d310a39c76",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:07:54.000Z",
+              "updatedAt": "2026-10-11T10:57:21.000Z",
+              "uid": "49015095-6fbe7f08-1c45-4815-90be-e3d310a39c76"
+            },
+            {
+              "name": "wrong content-type",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Content-Type must be application/json\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "7736c7d4-1d0d-4330-bfd3-d74558137aef",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "hello",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:58:21.000Z",
+              "updatedAt": "2026-10-11T10:59:35.000Z",
+              "uid": "49015095-7736c7d4-1d0d-4330-bfd3-d74558137aef"
+            },
+            {
+              "name": "malformed json",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Request body must be valid JSON\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "8d85d0a1-9ee5-4afa-b398-6660afd0c45e",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": ",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:00:35.000Z",
+              "updatedAt": "2026-10-11T11:04:59.000Z",
+              "uid": "49015095-8d85d0a1-9ee5-4afa-b398-6660afd0c45e"
+            },
+            {
+              "name": "path traversal",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"path is not allowed. Only src/data/*.json files are supported.\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "133f912e-3076-497a-8481-e2d93e23590a",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"package.json\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:03:56.000Z",
+              "updatedAt": "2026-10-11T11:06:16.000Z",
+              "uid": "49015095-133f912e-3076-497a-8481-e2d93e23590a"
+            },
+            {
+              "name": "path outside src/data",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"path is not allowed. Only src/data/*.json files are supported.\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "2cae9014-5cfa-4a66-a505-63979239d630",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"package.json\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:00:28.000Z",
+              "updatedAt": "2026-10-11T11:02:31.000Z",
+              "uid": "49015095-2cae9014-5cfa-4a66-a505-63979239d630"
+            },
+            {
+              "name": "invalid branch chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"branch contains invalid characters\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "ea8b235a-a15a-4289-a897-e6e2309ab0f2",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\", \"branch\": \"bad branch!\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:00:25.000Z",
+              "updatedAt": "2026-10-11T11:01:49.000Z",
+              "uid": "49015095-ea8b235a-a15a-4289-a897-e6e2309ab0f2"
+            },
+            {
+              "name": "invalid owner chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"owner and repo must be valid GitHub repository identifiers\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "98393491-a054-4b15-a2a4-994bb2c9b284",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"bad owner!\", \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:00:21.000Z",
+              "updatedAt": "2026-10-11T11:01:19.000Z",
+              "uid": "49015095-98393491-a054-4b15-a2a4-994bb2c9b284"
+            },
+            {
+              "name": "missing path",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Missing required fields: data, owner, repo, path\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "2ddfd85b-b47b-40aa-8b65-50f2df06110a",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:15:31.000Z",
+              "updatedAt": "2026-10-11T10:57:25.000Z",
+              "uid": "49015095-2ddfd85b-b47b-40aa-8b65-50f2df06110a"
+            },
+            {
+              "name": "invalid repo chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"owner and repo must be valid GitHub repository identifiers\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "0a495d7a-1497-410a-a3cd-f14d5bf70d26",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"bad repo!\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:06:32.000Z",
+              "updatedAt": "2026-10-11T14:09:20.000Z",
+              "uid": "49015095-0a495d7a-1497-410a-a3cd-f14d5bf70d26"
+            },
+            {
+              "name": "path not json",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"path is not allowed. Only src/data/*.json files are supported.\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "4689f900-f2d4-41e3-9c79-c416d2095bda",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"src/data/notes.txt\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:09:45.000Z",
+              "updatedAt": "2026-10-11T14:11:01.000Z",
+              "uid": "49015095-4689f900-f2d4-41e3-9c79-c416d2095bda"
+            },
+            {
+              "name": "path absolute",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"path is not allowed. Only src/data/*.json files are supported.\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "67131280-b051-46f9-bf0e-37f7e0506ee5",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"/src/data/x.json\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:11:19.000Z",
+              "updatedAt": "2026-10-11T14:11:43.000Z",
+              "uid": "49015095-67131280-b051-46f9-bf0e-37f7e0506ee5"
+            },
+            {
+              "name": "missing repo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Missing required fields: data, owner, repo, path\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "5be7e8ee-03d9-434c-9d8c-4987a010344d",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"owner\": \"{{gh_owner}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:15:29.000Z",
+              "updatedAt": "2026-10-11T10:57:27.000Z",
+              "uid": "49015095-5be7e8ee-03d9-434c-9d8c-4987a010344d"
+            },
+            {
+              "name": "missing owner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Missing required fields: data, owner, repo, path\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "e3369853-1aa7-4bb7-b473-5043ee336b9b",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\":1}, \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:15:26.000Z",
+              "updatedAt": "2026-10-11T10:57:29.000Z",
+              "uid": "49015095-e3369853-1aa7-4bb7-b473-5043ee336b9b"
+            },
+            {
+              "name": "missing data",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"Missing required fields: data, owner, repo, path\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "1d76a2f5-e815-4622-ab18-bea5389065a5",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T10:15:22.000Z",
+              "updatedAt": "2026-10-11T10:57:34.000Z",
+              "uid": "49015095-1d76a2f5-e815-4622-ab18-bea5389065a5"
+            },
+            {
+              "name": "data is empty object",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const expected = {\r\n  status: 400,\r\n  code: \"INVALID_PAYLOAD\",\r\n  message: \"data must be a non-empty JSON object\",\r\n};\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "c457caf6-c90c-4d76-812a-9d4a7430afa1",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_repo}}\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:16:12.000Z",
+              "updatedAt": "2026-10-11T11:17:33.000Z",
+              "uid": "49015095-c457caf6-c90c-4d76-812a-9d4a7430afa1"
+            },
+            {
+              "name": "method not allowed",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      " const expected = {\r\n     status: 405,\r\n     code: \"METHOD_NOT_ALLOWED\",\r\n     message: \"Only POST is supported\",\r\n   };\r\n\r\nconst body = pm.response.json();\r\n\r\npm.test(\"status is \" + expected.status, () => {\r\n  pm.response.to.have.status(expected.status);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is \" + expected.code, () => {\r\n  pm.expect(body.code).to.eql(expected.code);\r\n});\r\n\r\npm.test(\"message matches\", () => {\r\n  pm.expect(body.message).to.eql(expected.message);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "42725394-8d3c-4d4d-b3a4-df231d55309b",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T11:26:15.000Z",
+              "updatedAt": "2026-10-11T11:29:13.000Z",
+              "uid": "49015095-42725394-8d3c-4d4d-b3a4-df231d55309b"
+            }
+          ],
+          "id": "f0f4dc3b-7e27-478e-8119-dbed2e549290",
+          "createdAt": "2026-10-11T10:07:39.000Z",
+          "updatedAt": "2026-10-11T14:22:46.000Z",
+          "uid": "49015095-f0f4dc3b-7e27-478e-8119-dbed2e549290"
+        },
+        {
+          "name": "github-errors",
+          "item": [
+            {
+              "name": "nonexistent branch",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();\r\n\r\npm.test(\"status is a GitHub client error (404 or 422)\", () => {\r\n  pm.expect([404, 422]).to.include(pm.response.code);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is GITHUB_API_ERROR\", () => {\r\n  pm.expect(body.code).to.eql(\"GITHUB_API_ERROR\");\r\n});\r\n\r\npm.test(\"message names the GitHub status\", () => {\r\n  pm.expect(body.message).to.eql(\"GitHub API error: \" + pm.response.code);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "70eab203-378a-45a6-b3d1-906b16b58c0b",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\": 1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"{{gh_branch}}\", \"path\": \"{{scratch_path}}\", \"branch\": \"does-not-exist-xyz\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:17:43.000Z",
+              "updatedAt": "2026-10-11T14:22:41.000Z",
+              "uid": "49015095-70eab203-378a-45a6-b3d1-906b16b58c0b"
+            },
+            {
+              "name": "nonexistent repo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();\r\n\r\npm.test(\"status is a GitHub client error (404 or 422)\", () => {\r\n  pm.expect([404, 422]).to.include(pm.response.code);\r\n});\r\n\r\npm.test(\"success is false\", () => {\r\n  pm.expect(body.success).to.eql(false);\r\n});\r\n\r\npm.test(\"code is GITHUB_API_ERROR\", () => {\r\n  pm.expect(body.code).to.eql(\"GITHUB_API_ERROR\");\r\n});\r\n\r\npm.test(\"message names the GitHub status\", () => {\r\n  pm.expect(body.message).to.eql(\"GitHub API error: \" + pm.response.code);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "3ba4ee0e-cfbb-4ee0-a27d-bdb57ddc6678",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"data\": {\"a\": 1}, \"owner\": \"{{gh_owner}}\", \"repo\": \"does-not-exist-xyz\", \"path\": \"{{scratch_path}}\" }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:12:32.000Z",
+              "updatedAt": "2026-10-11T14:22:46.000Z",
+              "uid": "49015095-3ba4ee0e-cfbb-4ee0-a27d-bdb57ddc6678"
+            }
+          ],
+          "id": "36f5f790-a06b-4445-9c3e-d430a7baa0b0",
+          "createdAt": "2026-10-11T14:22:26.000Z",
+          "updatedAt": "2026-10-11T14:22:46.000Z",
+          "uid": "49015095-36f5f790-a06b-4445-9c3e-d430a7baa0b0"
+        },
+        {
+          "name": "happy_paths",
+          "item": [
+            {
+              "name": "writes scratch file",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   pm.environment.set(\"run_at\", new Date().toISOString());"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n   pm.environment.set(\"last_sha\", body.sha);\r\n\r\n   pm.test(\"status is 200\", () => {\r\n     pm.response.to.have.status(200);\r\n   });\r\n\r\n   pm.test(\"success is true\", () => {\r\n     pm.expect(body.success).to.eql(true);\r\n   });\r\n\r\n   pm.test(\"sha is a 40-char git hash\", () => {\r\n     pm.expect(body.sha).to.match(/^[0-9a-f]{40}$/);\r\n   });\r\n\r\n   pm.test(\"requestId is present\", () => {\r\n     pm.expect(body.requestId).to.be.a(\"string\").and.not.empty;\r\n   });\r\n\r\n   pm.test(\"responds in under 10s\", () => {\r\n     pm.expect(pm.response.responseTime).to.be.below(10000);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "2e714719-961d-4635-b421-da95020f6ded",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "  {\r\n     \"data\": { \"apiTest\": true, \"runAt\": \"{{run_at}}\", \"label\": \"héllo ⚽\" },\r\n     \"owner\": \"{{gh_owner}}\",\r\n     \"repo\": \"{{gh_repo}}\",\r\n     \"path\": \"{{scratch_path}}\",\r\n     \"branch\": \"{{gh_branch}}\"\r\n   }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/update-json",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "update-json"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:24:26.000Z",
+              "updatedAt": "2026-10-11T14:49:48.000Z",
+              "uid": "49015095-2e714719-961d-4635-b421-da95020f6ded"
+            },
+            {
+              "name": "reads scratch file back",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const body = pm.response.json();\r\n   pm.environment.set(\"last_sha\", body.sha);\r\n   const decoded = JSON.parse(\r\n     CryptoJS.enc.Base64.parse(body.content.replace(/\\n/g, \"\")).toString(CryptoJS.enc.Utf8)\r\n   );\r\n\r\n   pm.test(\"status is 200\", () => {\r\n     pm.response.to.have.status(200);\r\n   });\r\n\r\n   pm.test(\"file sha matches the sha the function returned\", () => {\r\n     pm.expect(body.sha).to.eql(pm.environment.get(\"last_sha\"));\r\n   });\r\n\r\n   pm.test(\"content is the exact data we sent\", () => {\r\n     pm.expect(decoded.apiTest).to.eql(true);\r\n     pm.expect(decoded.runAt).to.eql(pm.environment.get(\"run_at\"));\r\n   });\r\n\r\n   pm.test(\"unicode survived the round trip\", () => {\r\n     pm.expect(decoded.label).to.eql(\"héllo ⚽\");\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "4709ed01-64b8-4f02-8fbd-26f27a89062a",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{gh_pat}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.github.v3+json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://api.github.com/repos/{{gh_owner}}/{{gh_repo}}/contents/{{scratch_path}}?ref={{gh_branch}}",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "github",
+                    "com"
+                  ],
+                  "path": [
+                    "repos",
+                    "{{gh_owner}}",
+                    "{{gh_repo}}",
+                    "contents",
+                    "{{scratch_path}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "ref",
+                      "value": "{{gh_branch}}"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T14:40:22.000Z",
+              "updatedAt": "2026-10-11T14:53:30.000Z",
+              "uid": "49015095-4709ed01-64b8-4f02-8fbd-26f27a89062a"
+            }
+          ],
+          "id": "3d7877d8-dcae-4dcd-8a9c-3f126de0dac1",
+          "createdAt": "2026-10-11T14:23:05.000Z",
+          "updatedAt": "2026-10-11T14:40:22.000Z",
+          "uid": "49015095-3d7877d8-dcae-4dcd-8a9c-3f126de0dac1"
+        }
+      ],
+      "id": "97d3afdd-bd0d-4edb-a93b-fc51db73b398",
+      "createdAt": "2026-10-09T18:39:43.000Z",
+      "updatedAt": "2026-10-11T14:23:05.000Z",
+      "uid": "49015095-97d3afdd-bd0d-4edb-a93b-fc51db73b398"
+    },
+    {
+      "name": "02-archive-league",
+      "item": [
+        {
+          "name": "validation",
+          "item": [
+            {
+              "name": "wrong content-type",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"Content-Type must be application/json\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "eb7137af-1805-4c07-80c7-e15ebda6a2bc",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "hello",
+                  "options": {
+                    "raw": {
+                      "language": "text"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:06:17.000Z",
+              "updatedAt": "2026-10-11T15:07:11.000Z",
+              "uid": "49015095-eb7137af-1805-4c07-80c7-e15ebda6a2bc"
+            },
+            {
+              "name": "invalid owner chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"owner and repo must be valid GitHub repository identifiers\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "9f345e2a-8b13-4dc9-818d-791745418376",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"bad owner!\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"{{gh_branch}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:08:08.000Z",
+              "updatedAt": "2026-10-11T15:34:24.000Z",
+              "uid": "49015095-9f345e2a-8b13-4dc9-818d-791745418376"
+            },
+            {
+              "name": "invalid repo chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"owner and repo must be valid GitHub repository identifiers\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "cf44d673-f2cc-4ccd-8a67-8cba69bc63aa",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"bad repo!\",\r\n  \"branch\": \"{{gh_branch}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:33:25.000Z",
+              "updatedAt": "2026-10-11T15:35:11.000Z",
+              "uid": "49015095-cf44d673-f2cc-4ccd-8a67-8cba69bc63aa"
+            },
+            {
+              "name": "invalid branch chars",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"branch contains invalid characters\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "d738fd65-60cd-43e0-a552-d16ee1255426",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"bad branch!\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:33:24.000Z",
+              "updatedAt": "2026-10-11T15:36:01.000Z",
+              "uid": "49015095-d738fd65-60cd-43e0-a552-d16ee1255426"
+            },
+            {
+              "name": "malformed json",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"Request body must be valid JSON\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "b4449090-5f0d-437e-8dd2-66107579bbe8",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"currentData\": ",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:33:22.000Z",
+              "updatedAt": "2026-10-11T15:36:32.000Z",
+              "uid": "49015095-b4449090-5f0d-437e-8dd2-66107579bbe8"
+            },
+            {
+              "name": "method not allowed",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 405,\r\n     code: \"METHOD_NOT_ALLOWED\",\r\n     message: \"Only POST is supported\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "d641e393-af9b-453b-8668-5d0dad83dac3",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-11T15:33:16.000Z",
+              "updatedAt": "2026-10-11T15:37:18.000Z",
+              "uid": "49015095-d641e393-af9b-453b-8668-5d0dad83dac3"
+            }
+          ],
+          "id": "5ba8bab0-d516-40d7-afb3-a1383d93123c",
+          "createdAt": "2026-10-11T15:05:57.000Z",
+          "updatedAt": "2026-10-11T15:33:25.000Z",
+          "uid": "49015095-5ba8bab0-d516-40d7-afb3-a1383d93123c"
+        }
+      ],
+      "id": "86cdba3a-3d84-4ca9-80cc-5698d2b018cc",
+      "createdAt": "2026-10-09T18:40:00.000Z",
+      "updatedAt": "2026-10-11T15:05:58.000Z",
+      "uid": "49015095-86cdba3a-3d84-4ca9-80cc-5698d2b018cc"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{anon_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "6cd0c849-28ad-4b11-821a-7ed9dda3074c",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          "pm.request.headers.upsert({ key: 'apikey', value: pm.environment.get('anon_key') });"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "03522bf7-3ba9-4830-b51b-2c83192d97ab",
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
