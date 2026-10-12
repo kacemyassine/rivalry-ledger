@@ -14,7 +14,8 @@
     "test:coverage": "jest --coverage",
     "cypress:open": "start-server-and-test dev http://localhost:8080 'npx cypress open'",
     "cypress:run": "start-server-and-test dev http://localhost:8080 'npx cypress run'",
-    "postman:pull": "node --env-file=.env.local scripts/pull-postman.mjs"
+    "postman:pull": "node --env-file=.env.local scripts/pull-postman.mjs",
+    "newman:run": "newman run postman/collections/rivalry-ledger-api.postman_collection.json -e postman/environments/rivalry-ledger-develop.postman_environment.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
