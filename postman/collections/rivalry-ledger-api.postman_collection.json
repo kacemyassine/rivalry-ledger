@@ -2565,11 +2565,258 @@
           "createdAt": "2026-10-12T11:34:10.000Z",
           "updatedAt": "2026-10-12T11:35:51.000Z",
           "uid": "49015095-3f71cafe-c860-4bdb-82a8-233a525b2fd1"
+        },
+        {
+          "name": "happy_paths",
+          "item": [
+            {
+              "name": "archive and start new league",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   pm.environment.set(\"archive_id\", \"api-test-\" + Date.now());"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const archiveId = pm.environment.get(\"archive_id\");\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is 200\", () => pm.response.to.have.status(200));\r\n   pm.test(\"success is true\", () => pm.expect(body.success).to.eql(true));\r\n   pm.test(\"archivePath matches the id\", () => pm.expect(body.archivePath).to.eql(`src/data/archives/${archiveId}.json`));\r\n   pm.test(\"requestId present\", () => pm.expect(body.requestId).to.be.a(\"string\").and.have.length.above(0));"
+                    ]
+                  }
+                }
+              ],
+              "id": "fb45e022-4f56-4d26-beb3-ea55346de243",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "   {\r\n     \"currentData\": {\r\n       \"leagueConfig\": { \"name\": \"API Test League\", \"id\": \"{{archive_id}}\" },\r\n       \"teams\": [\r\n         { \"id\": \"t1\", \"name\": \"Alpha\", \"won\": 3, \"drawn\": 0, \"lost\": 0, \"goalsFor\": 5, \"goalsAgainst\": 1 },\r\n         { \"id\": \"t2\", \"name\": \"Beta\", \"won\": 0, \"drawn\": 0, \"lost\": 3, \"goalsFor\": 1, \"goalsAgainst\": 5 }\r\n       ],\r\n       \"players\": [{ \"id\": \"p1\", \"teamId\": \"t1\", \"name\": \"Ali\", \"goals\": 4 }],\r\n       \"matches\": [{ \"id\": \"m1\", \"homeTeamId\": \"t1\", \"awayTeamId\": \"t2\", \"date\": \"2026-01-15\" }]\r\n     },\r\n     \"newLeagueConfig\": { \"name\": \"Next League\", \"id\": \"api-test-next\" },\r\n     \"newTargetMatches\": 10,\r\n     \"keepPlayers\": true,\r\n     \"imageName\": \"test.png\",\r\n     \"owner\": \"{{gh_owner}}\",\r\n     \"repo\": \"{{gh_repo}}\",\r\n     \"branch\": \"{{gh_branch}}\"\r\n   }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T12:13:30.000Z",
+              "updatedAt": "2026-10-12T12:19:30.000Z",
+              "uid": "49015095-fb45e022-4f56-4d26-beb3-ea55346de243"
+            },
+            {
+              "name": "read archive file",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();\r\nconst file = JSON.parse(CryptoJS.enc.Base64.parse(body.content.replace(/\\n/g, \"\")).toString(CryptoJS.enc.Utf8));\r\n\r\npm.test(\"status is 200\", () => pm.response.to.have.status(200));\r\npm.test(\"archive id matches\", () => pm.expect(file.leagueConfig.id).to.eql(pm.environment.get(\"archive_id\")));\r\npm.test(\"teams and matches preserved\", () => {\r\n  pm.expect(file.teams).to.have.length(2);\r\n  pm.expect(file.matches).to.have.length(1);\r\n});\r\npm.test(\"final stats preserved\", () => pm.expect(file.teams[0].won).to.eql(3));"
+                    ]
+                  }
+                }
+              ],
+              "id": "aa73604d-adaa-4af3-a3ca-e8f3c27f7df8",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{gh_pat}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.github.v3+json"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api.github.com/repos/{{gh_owner}}/{{gh_repo}}/contents/src/data/archives/{{archive_id}}.json?ref={{gh_branch}}",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "github",
+                    "com"
+                  ],
+                  "path": [
+                    "repos",
+                    "{{gh_owner}}",
+                    "{{gh_repo}}",
+                    "contents",
+                    "src",
+                    "data",
+                    "archives",
+                    "{{archive_id}}.json"
+                  ],
+                  "query": [
+                    {
+                      "key": "ref",
+                      "value": "{{gh_branch}}"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T12:16:21.000Z",
+              "updatedAt": "2026-10-12T12:18:04.000Z",
+              "uid": "49015095-aa73604d-adaa-4af3-a3ca-e8f3c27f7df8"
+            },
+            {
+              "name": "read archive index",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();\r\nconst file = JSON.parse(CryptoJS.enc.Base64.parse(body.content.replace(/\\n/g, \"\")).toString(CryptoJS.enc.Utf8));\r\nconst last = file.leagues[file.leagues.length - 1];\r\n\r\npm.test(\"status is 200\", () => pm.response.to.have.status(200));\r\npm.test(\"new entry is last\", () => pm.expect(last.id).to.eql(pm.environment.get(\"archive_id\")));\r\npm.test(\"winner is Alpha\", () => pm.expect(last.winner).to.eql(\"Alpha\"));\r\npm.test(\"matches count is 1\", () => pm.expect(last.matches).to.eql(1));\r\npm.test(\"image path is correct\", () => pm.expect(last.image).to.eql(\"/images/test.png\"));"
+                    ]
+                  }
+                }
+              ],
+              "id": "8141ae85-a707-4b89-9625-0b29141eecbd",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{gh_pat}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.github.v3+json"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api.github.com/repos/{{gh_owner}}/{{gh_repo}}/contents/src/data/archives/index.json?ref={{gh_branch}}",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "github",
+                    "com"
+                  ],
+                  "path": [
+                    "repos",
+                    "{{gh_owner}}",
+                    "{{gh_repo}}",
+                    "contents",
+                    "src",
+                    "data",
+                    "archives",
+                    "index.json"
+                  ],
+                  "query": [
+                    {
+                      "key": "ref",
+                      "value": "{{gh_branch}}"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T12:19:33.000Z",
+              "updatedAt": "2026-10-12T12:24:40.000Z",
+              "uid": "49015095-8141ae85-a707-4b89-9625-0b29141eecbd"
+            },
+            {
+              "name": "read defaultLeagueData",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "const body = pm.response.json();\r\nconst file = JSON.parse(CryptoJS.enc.Base64.parse(body.content.replace(/\\n/g, \"\")).toString(CryptoJS.enc.Utf8));\r\n\r\npm.test(\"status is 200\", () => pm.response.to.have.status(200));\r\npm.test(\"new league config applied\", () => pm.expect(file.leagueConfig.id).to.eql(\"api-test-next\"));\r\npm.test(\"target matches applied\", () => pm.expect(file.targetMatches).to.eql(10));\r\npm.test(\"matches are cleared\", () => pm.expect(file.matches).to.have.length(0));\r\npm.test(\"team stats are reset\", () => pm.expect(file.teams.every(t => t.won === 0 && t.points === 0)).to.eql(true));\r\npm.test(\"players kept with goals reset\", () => {\r\n  pm.expect(file.players).to.have.length(1);\r\n  pm.expect(file.players[0].goals).to.eql(0);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "id": "90b6ae67-ea9b-4a86-b31d-a146ff665ba0",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{gh_pat}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/vnd.github.v3+json"
+                  }
+                ],
+                "url": {
+                  "raw": "https://api.github.com/repos/{{gh_owner}}/{{gh_repo}}/contents/src/data/defaultLeagueData.json?ref={{gh_branch}}",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "github",
+                    "com"
+                  ],
+                  "path": [
+                    "repos",
+                    "{{gh_owner}}",
+                    "{{gh_repo}}",
+                    "contents",
+                    "src",
+                    "data",
+                    "defaultLeagueData.json"
+                  ],
+                  "query": [
+                    {
+                      "key": "ref",
+                      "value": "{{gh_branch}}"
+                    }
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T12:25:26.000Z",
+              "updatedAt": "2026-10-12T12:27:05.000Z",
+              "uid": "49015095-90b6ae67-ea9b-4a86-b31d-a146ff665ba0"
+            }
+          ],
+          "id": "21833f35-3e9a-407e-be70-85a3043d82fa",
+          "createdAt": "2026-10-12T12:12:26.000Z",
+          "updatedAt": "2026-10-12T12:25:26.000Z",
+          "uid": "49015095-21833f35-3e9a-407e-be70-85a3043d82fa"
         }
       ],
       "id": "86cdba3a-3d84-4ca9-80cc-5698d2b018cc",
       "createdAt": "2026-10-09T18:40:00.000Z",
-      "updatedAt": "2026-10-12T11:34:10.000Z",
+      "updatedAt": "2026-10-12T12:12:26.000Z",
       "uid": "49015095-86cdba3a-3d84-4ca9-80cc-5698d2b018cc"
     }
   ],
