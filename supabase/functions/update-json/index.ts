@@ -11,6 +11,7 @@ const corsHeaders = {
 const GITHUB_REPO_PATTERN = /^[A-Za-z0-9_.-]+$/;
 const GITHUB_BRANCH_PATTERN = /^[A-Za-z0-9._/-]+$/;
 const JSON_DATA_PATH_PATTERN = /^src\/data\/[A-Za-z0-9_./-]+\.json$/;
+const GITHUB_USER_AGENT = "rivalry-ledger-edge";
 
 function jsonResponse(payload: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(payload), {
@@ -228,7 +229,7 @@ serve(async (req) => {
         headers: {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
           Accept: "application/vnd.github.v3+json",
-          "User-Agent": "Lovable-App",
+          "User-Agent": GITHUB_USER_AGENT,
         },
       },
     );
@@ -264,7 +265,7 @@ serve(async (req) => {
           Authorization: `Bearer ${GITHUB_TOKEN}`,
           Accept: "application/vnd.github.v3+json",
           "Content-Type": "application/json",
-          "User-Agent": "Lovable-App",
+          "User-Agent": GITHUB_USER_AGENT,
         },
         body: JSON.stringify(updatePayload),
       },
