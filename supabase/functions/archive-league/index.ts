@@ -55,7 +55,7 @@ function isValidGitHubField(value: unknown, pattern: RegExp, fieldName: string):
 }
 
 function isValidArchiveId(value: unknown) {
-  return typeof value === 'string' && ARCHIVE_ID_PATTERN.test(value.trim());
+  return typeof value === 'string' && ARCHIVE_ID_PATTERN.test(value);
 }
 
 async function getFileSha(token: string, owner: string, repo: string, path: string, branch: string) {
@@ -145,11 +145,27 @@ try {
       branch = 'main',
     } = body ?? {};
 
-    if (!currentData || !newLeagueConfig || typeof newTargetMatches !== 'number' || typeof keepPlayers !== 'boolean' || !imageName || !owner || !repo) {
+    if (
+      !currentData ||
+      !newLeagueConfig ||
+      typeof newTargetMatches !== 'number' ||
+      typeof keepPlayers !== 'boolean' ||
+      !imageName ||
+      !owner ||
+      owner === '.' ||
+      owner === '..' ||
+      !repo ||
+      repo === '.' ||
+      repo === '..'
+    ) {
       return jsonResponse(
         { success: false, code: 'INVALID_PAYLOAD', message: 'Missing required fields: currentData, newLeagueConfig, newTargetMatches, keepPlayers, imageName, owner, repo' },
         400,
       );
+    }
+
+    if (!Number.isInteger(newTargetMatches) || newTargetMatches <= 0) {
+      return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'newTargetMatches must be a positive integer' }, 400);
     }
 
     if (!isValidGitHubField(owner, GITHUB_REPO_PATTERN, 'owner') || !isValidGitHubField(repo, GITHUB_REPO_PATTERN, 'repo')) {
@@ -168,7 +184,12 @@ try {
       return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'currentData.leagueConfig.id contains invalid characters' }, 400);
     }
 
-    if (!newLeagueConfig || typeof newLeagueConfig.name !== 'string' || typeof newLeagueConfig.id !== 'string') {
+    if (
+      !newLeagueConfig ||
+      typeof newLeagueConfig.name !== 'string' ||
+      newLeagueConfig.name.trim().length === 0 ||
+      typeof newLeagueConfig.id !== 'string'
+    ) {
       return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'newLeagueConfig.name and id are required' }, 400);
     }
 
@@ -182,6 +203,10 @@ try {
 
     if (typeof imageName !== 'string' || imageName.trim().length === 0) {
       return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'imageName is required' }, 400);
+    }
+
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(imageName)) {
+      return jsonResponse({ success: false, code: 'INVALID_PAYLOAD', message: 'imageName is invalid' }, 400);
     }
 
     const sortedTeams = [...currentData.teams].sort((a: any, b: any) => {
