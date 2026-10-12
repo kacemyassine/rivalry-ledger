@@ -1896,6 +1896,375 @@
               "uid": "49015095-7bba626a-5643-497e-a640-1b4d3e43a5c4"
             },
             {
+              "name": "target matches negative",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"newTargetMatches must be a positive integer\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "ce34d626-7278-41a1-974e-fa2be299de37",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": -1,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:45.000Z",
+              "updatedAt": "2026-10-12T11:11:38.000Z",
+              "uid": "49015095-ce34d626-7278-41a1-974e-fa2be299de37"
+            },
+            {
+              "name": "target matches zero",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"newTargetMatches must be a positive integer\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "67556563-2619-45b6-947d-1b1e116a714f",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 0,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:43.000Z",
+              "updatedAt": "2026-10-12T11:11:43.000Z",
+              "uid": "49015095-67556563-2619-45b6-947d-1b1e116a714f"
+            },
+            {
+              "name": "target matches decimal",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"newTargetMatches must be a positive integer\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "8107689d-0b3b-4d3b-82b8-dcf142d94485",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 1.5,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:40.000Z",
+              "updatedAt": "2026-10-12T11:11:52.000Z",
+              "uid": "49015095-8107689d-0b3b-4d3b-82b8-dcf142d94485"
+            },
+            {
+              "name": "imageName path traversal",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"imageName is invalid\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "91dc8d24-8cd9-4aed-8c25-cd9215694090",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"../x\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:38.000Z",
+              "updatedAt": "2026-10-12T11:12:14.000Z",
+              "uid": "49015095-91dc8d24-8cd9-4aed-8c25-cd9215694090"
+            },
+            {
+              "name": "imageName with slash",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"imageName is invalid\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "1805330e-ac69-49d0-b75f-02ac0e61d1f0",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"a/b.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:36.000Z",
+              "updatedAt": "2026-10-12T11:12:43.000Z",
+              "uid": "49015095-1805330e-ac69-49d0-b75f-02ac0e61d1f0"
+            },
+            {
+              "name": "new id with spaces",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"newLeagueConfig.id contains invalid characters\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "ab781a62-94bc-4eba-b5d8-d863695ca0cc",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new \" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:34.000Z",
+              "updatedAt": "2026-10-12T11:13:00.000Z",
+              "uid": "49015095-ab781a62-94bc-4eba-b5d8-d863695ca0cc"
+            },
+            {
+              "name": "current id with spaces",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"currentData.leagueConfig.id contains invalid characters\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "654e5d4e-6853-48bd-a919-6df98a5afbf3",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league \" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:32.000Z",
+              "updatedAt": "2026-10-12T11:13:13.000Z",
+              "uid": "49015095-654e5d4e-6853-48bd-a919-6df98a5afbf3"
+            },
+            {
+              "name": "owner is dot",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"Missing required fields: currentData, newLeagueConfig, newTargetMatches, keepPlayers, imageName, owner, repo\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "6fc4350a-fc89-4f4a-b66e-6841e49400c1",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \".\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:30.000Z",
+              "updatedAt": "2026-10-12T11:13:24.000Z",
+              "uid": "49015095-6fc4350a-fc89-4f4a-b66e-6841e49400c1"
+            },
+            {
+              "name": "repo is dotdot",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "   const expected = {\r\n     status: 400,\r\n     code: \"INVALID_PAYLOAD\",\r\n     message: \"Missing required fields: currentData, newLeagueConfig, newTargetMatches, keepPlayers, imageName, owner, repo\",\r\n   };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "44c593df-7126-4209-89ef-b6c63dbaef1f",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"..\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:06:27.000Z",
+              "updatedAt": "2026-10-12T11:13:34.000Z",
+              "uid": "49015095-44c593df-7126-4209-89ef-b6c63dbaef1f"
+            },
+            {
               "name": "invalid repo chars",
               "event": [
                 {
@@ -2062,13 +2431,145 @@
           ],
           "id": "5ba8bab0-d516-40d7-afb3-a1383d93123c",
           "createdAt": "2026-10-11T15:05:57.000Z",
-          "updatedAt": "2026-10-12T10:31:30.000Z",
+          "updatedAt": "2026-10-12T11:06:58.000Z",
           "uid": "49015095-5ba8bab0-d516-40d7-afb3-a1383d93123c"
+        },
+        {
+          "name": "github-errors",
+          "item": [
+            {
+              "name": "nonexistent branch",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "    const expected = {\r\n    status: 404,\r\n    code: \"GITHUB_API_ERROR\",\r\n    message: \"GitHub API error: 404\",\r\n    };\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "7afbc8b8-24db-4ad4-979e-ac75cc6a831d",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"no-such-branch\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:34:25.000Z",
+              "updatedAt": "2026-10-12T11:54:31.000Z",
+              "uid": "49015095-7afbc8b8-24db-4ad4-979e-ac75cc6a831d"
+            },
+            {
+              "name": "nonexistent repo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "    const expected = {\r\n    status: 404,\r\n    code: \"GITHUB_API_ERROR\",\r\n    message: \"GitHub API error: 404\",\r\n    };\r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "c890309a-f3d7-4632-aa81-1149e9aeef2f",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"{{gh_owner}}\",\r\n  \"repo\": \"no-such-repo-xyz\",\r\n  \"branch\": \"{{gh_branch}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:35:51.000Z",
+              "updatedAt": "2026-10-12T11:54:44.000Z",
+              "uid": "49015095-c890309a-f3d7-4632-aa81-1149e9aeef2f"
+            },
+            {
+              "name": "nonexistent owner",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "    const expected = {\r\n    status: 404,\r\n    code: \"GITHUB_API_ERROR\",\r\n    message: \"GitHub API error: 404\",\r\n    };  \r\n\r\n   const body = pm.response.json();\r\n\r\n   pm.test(\"status is \" + expected.status, () => {\r\n     pm.response.to.have.status(expected.status);\r\n   });\r\n\r\n   pm.test(\"success is false\", () => {\r\n     pm.expect(body.success).to.eql(false);\r\n   });\r\n\r\n   pm.test(\"code is \" + expected.code, () => {\r\n     pm.expect(body.code).to.eql(expected.code);\r\n   });\r\n\r\n   pm.test(\"message matches\", () => {\r\n     pm.expect(body.message).to.eql(expected.message);\r\n   });"
+                    ]
+                  }
+                }
+              ],
+              "id": "62902b55-c86f-45e8-b387-90eec3d58b54",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"currentData\": {\r\n    \"leagueConfig\": { \"name\": \"Test League\", \"id\": \"api-test-league\" },\r\n    \"teams\": [{ \"name\": \"A\" }, { \"name\": \"B\" }],\r\n    \"players\": [],\r\n    \"matches\": []\r\n  },\r\n  \"newLeagueConfig\": { \"name\": \"New League\", \"id\": \"api-test-new\" },\r\n  \"newTargetMatches\": 10,\r\n  \"keepPlayers\": true,\r\n  \"imageName\": \"test.png\",\r\n  \"owner\": \"no-such-owner-xyz-123\",\r\n  \"repo\": \"{{gh_repo}}\",\r\n  \"branch\": \"{{gh_branch}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/archive-league",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "archive-league"
+                  ]
+                }
+              },
+              "response": [],
+              "createdAt": "2026-10-12T11:35:49.000Z",
+              "updatedAt": "2026-10-12T11:55:14.000Z",
+              "uid": "49015095-62902b55-c86f-45e8-b387-90eec3d58b54"
+            }
+          ],
+          "id": "3f71cafe-c860-4bdb-82a8-233a525b2fd1",
+          "createdAt": "2026-10-12T11:34:10.000Z",
+          "updatedAt": "2026-10-12T11:35:51.000Z",
+          "uid": "49015095-3f71cafe-c860-4bdb-82a8-233a525b2fd1"
         }
       ],
       "id": "86cdba3a-3d84-4ca9-80cc-5698d2b018cc",
       "createdAt": "2026-10-09T18:40:00.000Z",
-      "updatedAt": "2026-10-11T15:05:58.000Z",
+      "updatedAt": "2026-10-12T11:34:10.000Z",
       "uid": "49015095-86cdba3a-3d84-4ca9-80cc-5698d2b018cc"
     }
   ],
