@@ -31,6 +31,7 @@ const readLockoutState = (): LockoutState => {
     typeof state !== "object" ||
     state === null ||
     !("failedAttempts" in state) ||
+    typeof state.failedAttempts !== "number" ||
     !Number.isInteger(state.failedAttempts) ||
     state.failedAttempts < 0 ||
     state.failedAttempts > MAX_ATTEMPTS ||
