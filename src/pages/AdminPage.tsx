@@ -217,7 +217,7 @@ const AdminPage = () => {
         leagueType: newLeagueType,
         minSquadSize: newMinSquadSize,
       },
-      targetMatchesValue,
+      newTargetMatches: targetMatchesValue,
       keepPlayers,
       imageName,
       winner: winner,
