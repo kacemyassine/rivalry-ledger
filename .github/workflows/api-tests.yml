@@ -6,7 +6,11 @@ on:
   push:
     branches: [develop]
     paths-ignore:
-      - 'src/data/_api-test.json'
+      - 'src/data/**'
+
+concurrency:
+  group: api-tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   newman:
@@ -26,7 +30,6 @@ jobs:
           newman run postman/collections/rivalry-ledger-api.postman_collection.json \
             -e postman/environments/rivalry-ledger-develop.postman_environment.json \
             --env-var "anon_key=${{ secrets.ANON_KEY }}" \
-            --env-var "gh_pat=${{ secrets.GH_PAT }}" \
             -r cli,htmlextra \
             --reporter-htmlextra-export newman-report.html
 
