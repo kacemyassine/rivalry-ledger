@@ -1,0 +1,38 @@
+name: API tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [develop]
+    paths-ignore:
+      - 'src/data/_api-test.json'
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Newman
+        run: |
+          newman run postman/collections/rivalry-ledger-api.postman_collection.json \
+            -e postman/environments/rivalry-ledger-develop.postman_environment.json \
+            --env-var "anon_key=${{ secrets.ANON_KEY }}" \
+            --env-var "gh_pat=${{ secrets.GH_PAT }}" \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export newman-report.html
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report
+          path: newman-report.html
