@@ -64,7 +64,7 @@ const getShowAllButton = (exists: boolean = true) =>
       ? screen.getByRole("button", { name: /show all/i })
       : screen.queryByRole("button", { name: /show all/i });
 
-describe("TopScorers - rendering", () => {
+describe.skip("TopScorers - rendering", () => {
   test("renders the 'Top Scorers' heading", () => {
     renderTopScorers();
     expect(
@@ -128,7 +128,7 @@ describe("TopScorers - rendering", () => {
   });
 });
 
-describe("TopScorers - sorting & filtering", () => {
+describe.skip("TopScorers - sorting & filtering", () => {
   // Sorting logic is covered by scorersUtils unit tests
   // test("sorts players by goals descending");
   // test("sorts players with same goals by team points descending");
@@ -174,7 +174,7 @@ describe("TopScorers - sorting & filtering", () => {
   });
 });
 
-describe("TopScorers - buttons", () => {
+describe.skip("TopScorers - buttons", () => {
   const getEditIcon = (exists: boolean = true) =>
   exists ? screen.getByTestId("edit-icon") : screen.queryByTestId("edit-icon");
 

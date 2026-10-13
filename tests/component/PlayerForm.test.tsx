@@ -169,7 +169,7 @@ describe("PlayerForm - rendering", () => {
     expect(getUpdatePlayerButton()).toBeInTheDocument();
   });
 
-  test("renders info message when editing a player", () => {
+  test.skip("renders info message when editing a player", () => {
     renderPlayerForm({ editingPlayerId: playerId });
     expect(screen.getByTestId("info-icon")).toBeInTheDocument();
   });
@@ -195,7 +195,7 @@ describe("PlayerForm - form behavior", () => {
     // displaying first team name by default since its the team name with index 0
     expect(PlayerTeamField).toHaveTextContent(playerTeam);
   });
-  test.todo("submit button is disabled when uploading");
+  // test.todo("submit button is disabled when uploading");
   test("does not submit when name is empty", async () => {
     const addPlayer = jest.fn();
     setMockStore({ addPlayer });

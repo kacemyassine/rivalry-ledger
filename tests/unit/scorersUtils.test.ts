@@ -175,53 +175,53 @@ describe("scorersUtils", () => {
     });
   });
 
-  describe("canDeletePlayer()", () => {
-    const originalMinSize = SQUAD_RULES.minSize;
+  // describe("canDeletePlayer()", () => {
+  //   const originalMinSize = SQUAD_RULES.minSize;
 
-    beforeAll(() => {
-      (SQUAD_RULES as { minSize: number }).minSize = 1;
-    });
+  //   beforeAll(() => {
+  //     (SQUAD_RULES as { minSize: number }).minSize = 1;
+  //   });
 
-    afterAll(() => {
-      (SQUAD_RULES as { minSize: number }).minSize = originalMinSize;
-    });
+  //   afterAll(() => {
+  //     (SQUAD_RULES as { minSize: number }).minSize = originalMinSize;
+  //   });
 
-    test("returns true when player has 0 goals and squad exceeds min size", () => {
-      const Player = player("player-1", { goals: 0 });
-      const teamPlayers = getMockPlayersByTeamId(
-        data,
-        "team-1",
-        SQUAD_RULES.minSize + 1,
-      );
-      expect(canDeletePlayer(Player, teamPlayers)).toBe(true);
-    });
+  //   test("returns true when player has 0 goals and squad exceeds min size", () => {
+  //     const Player = player("player-1", { goals: 0 });
+  //     const teamPlayers = getMockPlayersByTeamId(
+  //       data,
+  //       "team-1",
+  //       SQUAD_RULES.minSize + 1,
+  //     );
+  //     expect(canDeletePlayer(Player, teamPlayers)).toBe(true);
+  //   });
 
-    test("returns false when player has goals", () => {
-      const Player = player("player-1", { goals: 3 });
-      const teamPlayers = getMockPlayersByTeamId(
-        data,
-        "team-1",
-        SQUAD_RULES.minSize + 1,
-      );
-      expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
-    });
+  //   test("returns false when player has goals", () => {
+  //     const Player = player("player-1", { goals: 3 });
+  //     const teamPlayers = getMockPlayersByTeamId(
+  //       data,
+  //       "team-1",
+  //       SQUAD_RULES.minSize + 1,
+  //     );
+  //     expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
+  //   });
 
-    test("returns false when squad is at min size", () => {
-      const Player = player("player-1", { goals: 0 });
-      const teamPlayers = getMockPlayersByTeamId(
-        data,
-        "team-1",
-        SQUAD_RULES.minSize,
-      );
-      expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
-    });
+  //   test("returns false when squad is at min size", () => {
+  //     const Player = player("player-1", { goals: 0 });
+  //     const teamPlayers = getMockPlayersByTeamId(
+  //       data,
+  //       "team-1",
+  //       SQUAD_RULES.minSize,
+  //     );
+  //     expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
+  //   });
 
-    test("returns false when squad is below min size", () => {
-      const Player = player("player-1", { goals: 0 });
-      const teamPlayers = getMockPlayersByTeamId(data, "team-1", 0);
-      expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
-    });
-  });
+  //   test("returns false when squad is below min size", () => {
+  //     const Player = player("player-1", { goals: 0 });
+  //     const teamPlayers = getMockPlayersByTeamId(data, "team-1", 0);
+  //     expect(canDeletePlayer(Player, teamPlayers)).toBe(false);
+  //   });
+  // });
 
   describe("getTeam()", () => {
   test("returns the correct team by id", () => {

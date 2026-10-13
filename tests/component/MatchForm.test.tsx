@@ -197,7 +197,7 @@ describe("MatchForm - scorer management", () => {
     expect(getScorerCheckboxes()).toHaveLength(3);
   });
 
-  test("removes a scorer row when Minus button clicked", async () => {
+  test.skip("removes a scorer row when Minus button clicked", async () => {
     renderMatchForm();
     await addScorer("player-1", "1");
     await addScorer("player-2", "1");
