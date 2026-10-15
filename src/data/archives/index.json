@@ -19,6 +19,16 @@
       "matches": 1,
       "description": "Season of API Test League. A battle between Alpha and Beta across 1 matches.",
       "image": "/images/test.png"
+    },
+    {
+      "id": "test-league",
+      "name": "Test League",
+      "startDate": "Jan 1, 2026",
+      "endDate": "Oct 15, 2026",
+      "winner": "Harbor United",
+      "matches": 12,
+      "description": "Season of Test League. A battle between Harbor United and Ocean Dragon across 12 matches.",
+      "image": "/images/default.png"
     }
   ]
 }
