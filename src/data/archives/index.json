@@ -9,6 +9,16 @@
       "matches": 50,
       "description": "The inaugural season of the Cosmus League. An epic battle between Ocean Dragon and Harbor United across 50 intense matches.",
       "image": "/images/LeaguesLogos/cosmusleague.png"
+    },
+    {
+      "id": "api-test-1792072650604",
+      "name": "API Test League",
+      "startDate": "Jan 15, 2026",
+      "endDate": "Oct 15, 2026",
+      "winner": "Alpha",
+      "matches": 1,
+      "description": "Season of API Test League. A battle between Alpha and Beta across 1 matches.",
+      "image": "/images/test.png"
     }
   ]
 }
