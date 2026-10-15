@@ -19,6 +19,16 @@
       "matches": 1,
       "description": "Season of API Test League. A battle between Alpha and Beta across 1 matches.",
       "image": "/images/test.png"
+    },
+    {
+      "id": "api-test-1792075243142",
+      "name": "API Test League",
+      "startDate": "Jan 15, 2026",
+      "endDate": "Oct 15, 2026",
+      "winner": "Alpha",
+      "matches": 1,
+      "description": "Season of API Test League. A battle between Alpha and Beta across 1 matches.",
+      "image": "/images/test.png"
     }
   ]
 }
