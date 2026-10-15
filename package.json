@@ -12,8 +12,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "cypress:open": "start-server-and-test dev http://localhost:8080 'npx cypress open'",
-    "cypress:run": "start-server-and-test dev http://localhost:8080 'npx cypress run'",
+    "dev:e2e": "vite --mode e2e",
+    "cypress:open": "start-server-and-test dev:e2e http://localhost:8080 'npx cypress open'",
+    "cypress:run": "start-server-and-test dev:e2e http://localhost:8080 'npx cypress run'",
     "postman:pull": "node --env-file=.env.local scripts/pull-postman.mjs",
     "newman:run": "newman run postman/collections/rivalry-ledger-api.postman_collection.json -e postman/environments/rivalry-ledger-develop.postman_environment.json"
   },

@@ -6,7 +6,7 @@ const GITHUB_CONFIG: GitHubConfig = {
   owner: 'kacemyassine',
   repo: 'rivalry-ledger',
   path: 'src/data/defaultLeagueData.json',
-  branch: 'main',
+  branch: import.meta.env.VITE_GITHUB_BRANCH || 'main',
 };
 
 const TOKEN = import.meta.env.VITE_GITHUB_TOKEN;

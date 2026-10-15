@@ -11,7 +11,7 @@ import { Loader2 } from 'lucide-react';
 const GITHUB_CONFIG = {
   owner: 'kacemyassine',
   repo: 'atlantis-showdown',
-  branch: 'main',
+  branch: import.meta.env.VITE_GITHUB_BRANCH || 'main',
 };
 
 function base64ToUtf8(str: string) {
