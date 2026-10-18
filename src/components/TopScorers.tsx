@@ -29,6 +29,7 @@ export function TopScorers({
     deletePlayer,
     updatePlayerImage,
     leagueType,
+    addToChangeLog,
   } = useLeagueStore();
   const isRamadan = theme === "ramadan";
   const [showAll, setShowAll] = useState(false);
@@ -260,7 +261,9 @@ export function TopScorers({
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 md:h-8 md:w-8 text-muted-foreground hover:text-destructive disabled:opacity-30 disabled:cursor-not-allowed"
-                          onClick={() => deletePlayer(player.id)}
+                          onClick={() => { deletePlayer(player.id);
+                            addToChangeLog(`Deleted player: ${player.name} from team: ${team?.name}`);
+                          }}
                           disabled={!canDelete}
                         >
                           <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
