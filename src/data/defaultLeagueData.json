@@ -5,19 +5,18 @@
     "leagueType": "with-scorers",
     "minSquadSize": 11
   },
-  "targetMatches": 50,
   "teams": [
     {
       "id": "team-1",
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 0,
+      "played": 1,
       "won": 0,
       "drawn": 0,
-      "lost": 0,
-      "goalsFor": 0,
-      "goalsAgainst": 0,
+      "lost": 1,
+      "goalsFor": 3,
+      "goalsAgainst": 4,
       "points": 0
     },
     {
@@ -25,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 0,
-      "won": 0,
+      "played": 1,
+      "won": 1,
       "drawn": 0,
       "lost": 0,
-      "goalsFor": 0,
-      "goalsAgainst": 0,
-      "points": 0
+      "goalsFor": 4,
+      "goalsAgainst": 3,
+      "points": 3
     }
   ],
   "players": [
@@ -95,7 +94,7 @@
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team-1",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -175,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -183,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -239,7 +238,7 @@
       "id": "player-26",
       "name": "Eden Hazard",
       "teamId": "team-2",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp"
     },
@@ -266,7 +265,77 @@
       "image": "/images/HarborUnitedPlayers/images/petr-cech.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/petr-cech.webp",
       "goals": 0
+    },
+    {
+      "name": "Alexis Mac Allister",
+      "teamId": "team-2",
+      "image": "/images/alexis-mac-allister.webp",
+      "goals": 0,
+      "id": "player-30"
+    },
+    {
+      "name": "Marcelo",
+      "teamId": "team-1",
+      "image": "/images/marcelo.jpg",
+      "goals": 1,
+      "id": "player-31"
+    },
+    {
+      "name": "Wayne Rooney",
+      "teamId": "team-2",
+      "image": "/images/wayne-rooney.jpg",
+      "goals": 1,
+      "id": "player-32"
     }
   ],
-  "matches": []
+  "matches": [
+    {
+      "id": "match-1",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 4,
+      "scorers": [
+        {
+          "playerId": "player-30",
+          "goals": 1,
+          "isOwnGoal": true
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-31",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-18T14:07:22.038Z"
+    }
+  ],
+  "targetMatches": 50
 }
