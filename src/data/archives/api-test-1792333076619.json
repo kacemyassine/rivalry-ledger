@@ -1,0 +1,42 @@
+{
+  "leagueConfig": {
+    "name": "API Test League",
+    "id": "api-test-1792333076619"
+  },
+  "teams": [
+    {
+      "id": "t1",
+      "name": "Alpha",
+      "won": 3,
+      "drawn": 0,
+      "lost": 0,
+      "goalsFor": 5,
+      "goalsAgainst": 1
+    },
+    {
+      "id": "t2",
+      "name": "Beta",
+      "won": 0,
+      "drawn": 0,
+      "lost": 3,
+      "goalsFor": 1,
+      "goalsAgainst": 5
+    }
+  ],
+  "players": [
+    {
+      "id": "p1",
+      "teamId": "t1",
+      "name": "Ali",
+      "goals": 4
+    }
+  ],
+  "matches": [
+    {
+      "id": "m1",
+      "homeTeamId": "t1",
+      "awayTeamId": "t2",
+      "date": "2026-01-15"
+    }
+  ]
+}
