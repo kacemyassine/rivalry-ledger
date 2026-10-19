@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 8,
+      "played": 9,
       "won": 3,
       "drawn": 0,
-      "lost": 5,
-      "goalsFor": 39,
-      "goalsAgainst": 44,
+      "lost": 6,
+      "goalsFor": 43,
+      "goalsAgainst": 50,
       "points": 9
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 8,
-      "won": 5,
+      "played": 9,
+      "won": 6,
       "drawn": 0,
       "lost": 3,
-      "goalsFor": 44,
-      "goalsAgainst": 39,
-      "points": 15
+      "goalsFor": 50,
+      "goalsAgainst": 43,
+      "points": 18
     }
   ],
   "players": [
@@ -238,7 +238,7 @@
       "id": "player-26",
       "name": "Eden Hazard",
       "teamId": "team-2",
-      "goals": 2,
+      "goals": 3,
       "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp"
     },
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 9,
+      "goals": 13,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 23,
+      "goals": 27,
       "id": "player-33"
     },
     {
@@ -319,7 +319,7 @@
       "name": "Rui Costa",
       "teamId": "team-2",
       "image": "/images/rui-costa.png",
-      "goals": 2,
+      "goals": 3,
       "id": "player-37"
     },
     {
@@ -666,6 +666,38 @@
         }
       ],
       "date": "2026-10-19T18:14:48.227Z"
+    },
+    {
+      "id": "match-9",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-33",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-19T18:44:50.373Z"
     }
   ],
   "targetMatches": 50
