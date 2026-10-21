@@ -150,7 +150,7 @@
       "id": "player-15",
       "name": "Giovanni van Bronckhorst",
       "teamId": "team-2",
-      "goals": 1,
+      "goals": 0,
       "image": "/images/HarborUnitedPlayers/images/giovanni-van-bronckhorst.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/giovanni-van-bronckhorst.webp"
     },
@@ -328,6 +328,13 @@
       "image": "/images/daniele-massaro.jpg",
       "goals": 3,
       "id": "player-38"
+    },
+    {
+      "name": "Éric Cantona",
+      "teamId": "team-2",
+      "image": "/images/éric-cantona.jpg",
+      "goals": 1,
+      "id": "player-39"
     }
   ],
   "matches": [
@@ -917,7 +924,7 @@
           "isOwnGoal": false
         },
         {
-          "playerId": "player-15",
+          "playerId": "player-39",
           "goals": 1,
           "isOwnGoal": false
         },
@@ -927,7 +934,7 @@
           "isOwnGoal": false
         }
       ],
-      "date": "2026-10-21T17:05:46.087Z"
+      "date": "2026-10-21T00:00:00.000Z"
     }
   ],
   "targetMatches": 50
