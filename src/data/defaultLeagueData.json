@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 17,
+      "played": 18,
       "won": 8,
       "drawn": 0,
-      "lost": 9,
-      "goalsFor": 86,
-      "goalsAgainst": 91,
+      "lost": 10,
+      "goalsFor": 90,
+      "goalsAgainst": 97,
       "points": 24
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 17,
-      "won": 9,
+      "played": 18,
+      "won": 10,
       "drawn": 0,
       "lost": 8,
-      "goalsFor": 91,
-      "goalsAgainst": 86,
-      "points": 27
+      "goalsFor": 97,
+      "goalsAgainst": 90,
+      "points": 30
     }
   ],
   "players": [
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 31,
+      "goals": 35,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 51,
+      "goals": 55,
       "id": "player-33"
     },
     {
@@ -326,7 +326,7 @@
       "name": "Daniele Massaro",
       "teamId": "team-2",
       "image": "/images/daniele-massaro.jpg",
-      "goals": 3,
+      "goals": 5,
       "id": "player-38"
     },
     {
@@ -1051,6 +1051,33 @@
         }
       ],
       "date": "2026-10-22T17:22:17.932Z"
+    },
+    {
+      "id": "match-18",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 6,
+      "scorers": [
+        {
+          "playerId": "player-32",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-33",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-38",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-22T18:02:28.068Z"
     }
   ],
   "targetMatches": 50
