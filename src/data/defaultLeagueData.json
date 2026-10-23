@@ -277,7 +277,7 @@
       "name": "Marcelo",
       "teamId": "team-1",
       "image": "/images/marcelo.jpg",
-      "goals": 2,
+      "goals": 1,
       "id": "player-31"
     },
     {
@@ -335,6 +335,13 @@
       "image": "/images/éric-cantona.jpg",
       "goals": 1,
       "id": "player-39"
+    },
+    {
+      "name": "Dominik Szoboszlai",
+      "teamId": "team-1",
+      "image": "/images/dominik-szoboszlai.jpg",
+      "goals": 1,
+      "id": "player-40"
     }
   ],
   "matches": [
@@ -1114,7 +1121,7 @@
           "isOwnGoal": false
         },
         {
-          "playerId": "player-31",
+          "playerId": "player-40",
           "goals": 1,
           "isOwnGoal": false
         },
@@ -1129,7 +1136,7 @@
           "isOwnGoal": false
         }
       ],
-      "date": "2026-10-23T19:29:56.645Z"
+      "date": "2026-10-23T00:00:00.000Z"
     }
   ],
   "targetMatches": 50
