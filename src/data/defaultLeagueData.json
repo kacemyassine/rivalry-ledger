@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 19,
+      "played": 20,
       "won": 8,
       "drawn": 1,
-      "lost": 10,
-      "goalsFor": 95,
-      "goalsAgainst": 102,
+      "lost": 11,
+      "goalsFor": 98,
+      "goalsAgainst": 110,
       "points": 25
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 19,
-      "won": 10,
+      "played": 20,
+      "won": 11,
       "drawn": 1,
       "lost": 8,
-      "goalsFor": 102,
-      "goalsAgainst": 95,
-      "points": 31
+      "goalsFor": 110,
+      "goalsAgainst": 98,
+      "points": 34
     }
   ],
   "players": [
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 37,
+      "goals": 39,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 57,
+      "goals": 58,
       "id": "player-33"
     },
     {
@@ -305,14 +305,14 @@
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-1",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 7,
+      "goals": 8,
       "id": "player-35"
     },
     {
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-2",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 12,
+      "goals": 18,
       "id": "player-36"
     },
     {
@@ -340,7 +340,7 @@
       "name": "Dominik Szoboszlai",
       "teamId": "team-1",
       "image": "/images/dominik-szoboszlai.jpg",
-      "goals": 1,
+      "goals": 2,
       "id": "player-40"
     }
   ],
@@ -1137,6 +1137,43 @@
         }
       ],
       "date": "2026-10-23T00:00:00.000Z"
+    },
+    {
+      "id": "match-20",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 8,
+      "scorers": [
+        {
+          "playerId": "player-36",
+          "goals": 6,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-33",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-40",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-35",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 2,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-23T20:01:52.568Z"
     }
   ],
   "targetMatches": 50
