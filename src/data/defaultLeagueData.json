@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 24,
+      "played": 25,
       "won": 10,
       "drawn": 3,
-      "lost": 11,
-      "goalsFor": 123,
-      "goalsAgainst": 130,
+      "lost": 12,
+      "goalsFor": 125,
+      "goalsAgainst": 137,
       "points": 33
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 24,
-      "won": 11,
+      "played": 25,
+      "won": 12,
       "drawn": 3,
       "lost": 10,
-      "goalsFor": 130,
-      "goalsAgainst": 123,
-      "points": 36
+      "goalsFor": 137,
+      "goalsAgainst": 125,
+      "points": 39
     }
   ],
   "players": [
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 13,
+      "goals": 14,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -284,21 +284,21 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 49,
+      "goals": 54,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 75,
+      "goals": 76,
       "id": "player-33"
     },
     {
       "name": "Javier Zanetti",
       "teamId": "team-1",
       "image": "/images/javier-zanetti.jpg",
-      "goals": 1,
+      "goals": 2,
       "id": "player-34"
     },
     {
@@ -312,7 +312,7 @@
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-2",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 20,
+      "goals": 21,
       "id": "player-36"
     },
     {
@@ -1327,6 +1327,43 @@
         }
       ],
       "date": "2026-10-24T16:29:58.464Z"
+    },
+    {
+      "id": "match-25",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 2,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-33",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-34",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 5,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-36",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-24T17:23:54.665Z"
     }
   ],
   "targetMatches": 50
