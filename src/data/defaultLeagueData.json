@@ -11,25 +11,25 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 27,
-      "won": 10,
+      "played": 28,
+      "won": 11,
       "drawn": 3,
       "lost": 14,
-      "goalsFor": 133,
-      "goalsAgainst": 154,
-      "points": 33
+      "goalsFor": 138,
+      "goalsAgainst": 158,
+      "points": 36
     },
     {
       "id": "team-2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 27,
+      "played": 28,
       "won": 14,
       "drawn": 3,
-      "lost": 10,
-      "goalsFor": 154,
-      "goalsAgainst": 133,
+      "lost": 11,
+      "goalsFor": 158,
+      "goalsAgainst": 138,
       "points": 45
     }
   ],
@@ -174,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 25,
+      "goals": 26,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -238,7 +238,7 @@
       "id": "player-26",
       "name": "Eden Hazard",
       "teamId": "team-2",
-      "goals": 5,
+      "goals": 6,
       "image": "/images/HarborUnitedPlayers/images/eden-hazard.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/eden-hazard.webp"
     },
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 64,
+      "goals": 66,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 83,
+      "goals": 88,
       "id": "player-33"
     },
     {
@@ -1438,6 +1438,38 @@
         }
       ],
       "date": "2026-10-25T15:56:07.123Z"
+    },
+    {
+      "id": "match-28",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 5,
+      "awayGoals": 4,
+      "scorers": [
+        {
+          "playerId": "player-33",
+          "goals": 5,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-26",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-26T15:45:52.634Z"
     }
   ],
   "targetMatches": 50
