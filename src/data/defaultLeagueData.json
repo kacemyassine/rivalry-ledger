@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 39,
+      "played": 40,
       "won": 19,
       "drawn": 3,
-      "lost": 17,
-      "goalsFor": 223,
-      "goalsAgainst": 227,
+      "lost": 18,
+      "goalsFor": 230,
+      "goalsAgainst": 241,
       "points": 60
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 39,
-      "won": 17,
+      "played": 40,
+      "won": 18,
       "drawn": 3,
       "lost": 19,
-      "goalsFor": 227,
-      "goalsAgainst": 223,
-      "points": 54
+      "goalsFor": 241,
+      "goalsAgainst": 230,
+      "points": 57
     }
   ],
   "players": [
@@ -102,7 +102,7 @@
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team-1",
-      "goals": 23,
+      "goals": 24,
       "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.webp"
     },
@@ -174,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 39,
+      "goals": 41,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 22,
+      "goals": 24,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -256,7 +256,7 @@
       "teamId": "team-2",
       "image": "/images/HarborUnitedPlayers/images/desire-doue.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/desire-doue.webp",
-      "goals": 6
+      "goals": 7
     },
     {
       "id": "player-29",
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 89,
+      "goals": 91,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 139,
+      "goals": 145,
       "id": "player-33"
     },
     {
@@ -326,14 +326,14 @@
       "name": "Daniele Massaro",
       "teamId": "team-2",
       "image": "/images/daniele-massaro.jpg",
-      "goals": 9,
+      "goals": 15,
       "id": "player-38"
     },
     {
       "name": "Éric Cantona",
       "teamId": "team-2",
       "image": "/images/éric-cantona.jpg",
-      "goals": 3,
+      "goals": 4,
       "id": "player-39"
     },
     {
@@ -1994,6 +1994,58 @@
         }
       ],
       "date": "2026-10-29T15:46:42.116Z"
+    },
+    {
+      "id": "match-40",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 7,
+      "awayGoals": 14,
+      "scorers": [
+        {
+          "playerId": "player-33",
+          "goals": 6,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-39",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-38",
+          "goals": 6,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-28",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-10-29T16:27:34.803Z"
     }
   ],
   "targetMatches": 50
