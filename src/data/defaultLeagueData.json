@@ -11,25 +11,25 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 49,
-      "won": 22,
+      "played": 50,
+      "won": 23,
       "drawn": 6,
       "lost": 21,
-      "goalsFor": 277,
-      "goalsAgainst": 298,
-      "points": 72
+      "goalsFor": 285,
+      "goalsAgainst": 303,
+      "points": 75
     },
     {
       "id": "team-2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 49,
+      "played": 50,
       "won": 21,
       "drawn": 6,
-      "lost": 22,
-      "goalsFor": 298,
-      "goalsAgainst": 277,
+      "lost": 23,
+      "goalsFor": 303,
+      "goalsAgainst": 285,
       "points": 69
     }
   ],
@@ -94,7 +94,7 @@
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team-1",
-      "goals": 13,
+      "goals": 15,
       "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -118,7 +118,7 @@
       "id": "player-11",
       "name": "Lionel Messi",
       "teamId": "team-1",
-      "goals": 6,
+      "goals": 7,
       "image": "/images/OceanDragonPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/OceanDragonPlayers/fullImages/lionel-messi.webp"
     },
@@ -174,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 51,
+      "goals": 52,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 31,
+      "goals": 32,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 108,
+      "goals": 109,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 171,
+      "goals": 175,
       "id": "player-33"
     },
     {
@@ -354,14 +354,14 @@
       "name": "Diego Forlán",
       "teamId": "team-1",
       "image": "/images/diego-forlán.jpg",
-      "goals": 1,
+      "goals": 2,
       "id": "player-42"
     },
     {
       "name": "Diego Forlán",
       "teamId": "team-2",
       "image": "/images/diego-forlán.jpg",
-      "goals": 0,
+      "goals": 2,
       "id": "player-43"
     }
   ],
@@ -2478,6 +2478,58 @@
         }
       ],
       "date": "2026-11-03T16:21:23.822Z"
+    },
+    {
+      "id": "match-50",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 8,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-11",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-42",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-43",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-33",
+          "goals": 4,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-11-03T17:15:00.513Z"
     }
   ],
   "targetMatches": 50
