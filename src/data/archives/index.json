@@ -19,6 +19,16 @@
       "matches": 30,
       "description": "Season of Ramadan League 2026. A battle between Ocean Dragon and Harbor United across 30 matches.",
       "image": "/images/olympusleague.jpg"
+    },
+    {
+      "id": "olympusleague",
+      "name": "OLYMPUS LEAGUE",
+      "startDate": "Oct 18, 2026",
+      "endDate": "Nov 4, 2026",
+      "winner": "Ocean Dragon",
+      "matches": 50,
+      "description": "Season of OLYMPUS LEAGUE. A battle between Ocean Dragon and Harbor United across 50 matches.",
+      "image": "/images/sakurabladeleague.jpg"
     }
   ]
 }
