@@ -11,25 +11,25 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 3,
-      "won": 1,
+      "played": 4,
+      "won": 2,
       "drawn": 0,
       "lost": 2,
-      "goalsFor": 10,
-      "goalsAgainst": 14,
-      "points": 3
+      "goalsFor": 18,
+      "goalsAgainst": 16,
+      "points": 6
     },
     {
       "id": "team-2",
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 3,
+      "played": 4,
       "won": 2,
       "drawn": 0,
-      "lost": 1,
-      "goalsFor": 14,
-      "goalsAgainst": 10,
+      "lost": 2,
+      "goalsFor": 16,
+      "goalsAgainst": 18,
       "points": 6
     }
   ],
@@ -78,7 +78,7 @@
       "id": "player-6",
       "name": "Patrick Vieira",
       "teamId": "team-1",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/OceanDragonPlayers/images/patrick-vieira.jpg",
       "fullImage": "/images/OceanDragonPlayers/fullImages/patrick-vieira.webp"
     },
@@ -94,7 +94,7 @@
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team-1",
-      "goals": 2,
+      "goals": 3,
       "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -102,7 +102,7 @@
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team-1",
-      "goals": 1,
+      "goals": 3,
       "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.webp"
     },
@@ -166,7 +166,7 @@
       "id": "player-17",
       "name": "Steven Gerrard",
       "teamId": "team-1",
-      "goals": 0,
+      "goals": 2,
       "image": "/images/OceanDragonPlayers/images/steven-gerrard.jpg",
       "fullImage": "/images/OceanDragonPlayers/fullImages/steven-gerrard.webp"
     },
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 3,
+      "goals": 4,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -291,7 +291,7 @@
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 6,
+      "goals": 7,
       "id": "player-33"
     },
     {
@@ -305,14 +305,14 @@
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-1",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 0,
+      "goals": 1,
       "id": "player-35"
     },
     {
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-2",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 3,
+      "goals": 4,
       "id": "player-36"
     },
     {
@@ -486,6 +486,58 @@
         }
       ],
       "date": "2026-11-04T18:15:08.627Z"
+    },
+    {
+      "id": "match-4",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 8,
+      "awayGoals": 2,
+      "scorers": [
+        {
+          "playerId": "player-36",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-17",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-33",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-6",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-35",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-11-05T18:14:54.124Z"
     }
   ],
   "targetMatches": 50
