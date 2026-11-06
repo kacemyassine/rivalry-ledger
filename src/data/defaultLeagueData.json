@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 6,
+      "played": 7,
       "won": 3,
       "drawn": 0,
-      "lost": 3,
+      "lost": 4,
       "goalsFor": 32,
-      "goalsAgainst": 31,
+      "goalsAgainst": 36,
       "points": 9
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 6,
-      "won": 3,
+      "played": 7,
+      "won": 4,
       "drawn": 0,
       "lost": 3,
-      "goalsFor": 31,
+      "goalsFor": 36,
       "goalsAgainst": 32,
-      "points": 9
+      "points": 12
     }
   ],
   "players": [
@@ -174,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 3,
+      "goals": 4,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 5,
+      "goals": 6,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -284,7 +284,7 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 7,
+      "goals": 10,
       "id": "player-32"
     },
     {
@@ -652,6 +652,33 @@
         }
       ],
       "date": "2026-11-06T18:01:29.323Z"
+    },
+    {
+      "id": "match-7",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 0,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-32",
+          "goals": 3,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-11-06T18:32:05.182Z"
     }
   ],
   "targetMatches": 50
