@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 8,
+      "played": 9,
       "won": 3,
       "drawn": 0,
-      "lost": 5,
-      "goalsFor": 37,
-      "goalsAgainst": 42,
+      "lost": 6,
+      "goalsFor": 41,
+      "goalsAgainst": 49,
       "points": 9
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 8,
-      "won": 5,
+      "played": 9,
+      "won": 6,
       "drawn": 0,
       "lost": 3,
-      "goalsFor": 42,
-      "goalsAgainst": 37,
-      "points": 15
+      "goalsFor": 49,
+      "goalsAgainst": 41,
+      "points": 18
     }
   ],
   "players": [
@@ -94,7 +94,7 @@
       "id": "player-8",
       "name": "Kevin De Bruyne",
       "teamId": "team-1",
-      "goals": 4,
+      "goals": 5,
       "image": "/images/OceanDragonPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -102,7 +102,7 @@
       "id": "player-9",
       "name": "Antoine Griezmann",
       "teamId": "team-1",
-      "goals": 9,
+      "goals": 10,
       "image": "/images/OceanDragonPlayers/images/antoine-griezmann.webp",
       "fullImage": "/images/OceanDragonPlayers/fullImages/antoine-griezmann.webp"
     },
@@ -190,7 +190,7 @@
       "id": "player-20",
       "name": "Kevin De Bruyne",
       "teamId": "team-2",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/kevin-de-bruyne.webp",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/kevin-de-bruyne.webp"
     },
@@ -312,21 +312,21 @@
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-2",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 9,
+      "goals": 11,
       "id": "player-36"
     },
     {
       "name": "Rui Costa",
       "teamId": "team-2",
       "image": "/images/rui-costa.png",
-      "goals": 3,
+      "goals": 5,
       "id": "player-37"
     },
     {
       "name": "Daniele Massaro",
       "teamId": "team-2",
       "image": "/images/daniele-massaro.jpg",
-      "goals": 6,
+      "goals": 8,
       "id": "player-38"
     },
     {
@@ -340,7 +340,7 @@
       "name": "Dominik Szoboszlai",
       "teamId": "team-1",
       "image": "/images/dominik-szoboszlai.jpg",
-      "goals": 0,
+      "goals": 1,
       "id": "player-40"
     },
     {
@@ -354,7 +354,7 @@
       "name": "Diego Forlán",
       "teamId": "team-1",
       "image": "/images/diego-forlán.jpg",
-      "goals": 2,
+      "goals": 3,
       "id": "player-42"
     },
     {
@@ -726,6 +726,58 @@
         }
       ],
       "date": "2026-11-07T16:16:08.964Z"
+    },
+    {
+      "id": "match-9",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 4,
+      "awayGoals": 7,
+      "scorers": [
+        {
+          "playerId": "player-38",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-9",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-8",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-40",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-42",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-36",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-37",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-20",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-11-07T16:53:36.856Z"
     }
   ],
   "targetMatches": 50
