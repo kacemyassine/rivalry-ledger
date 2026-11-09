@@ -11,12 +11,12 @@
       "name": "Ocean Dragon",
       "coach": "Wassim",
       "logo": "/images/TeamsLogos/ocean-dragon-logo.webp",
-      "played": 13,
+      "played": 14,
       "won": 4,
       "drawn": 1,
-      "lost": 8,
-      "goalsFor": 65,
-      "goalsAgainst": 73,
+      "lost": 9,
+      "goalsFor": 68,
+      "goalsAgainst": 78,
       "points": 13
     },
     {
@@ -24,13 +24,13 @@
       "name": "Harbor United",
       "coach": "Yassine",
       "logo": "/images/TeamsLogos/harbor-united-logo.webp",
-      "played": 13,
-      "won": 8,
+      "played": 14,
+      "won": 9,
       "drawn": 1,
       "lost": 4,
-      "goalsFor": 73,
-      "goalsAgainst": 65,
-      "points": 25
+      "goalsFor": 78,
+      "goalsAgainst": 68,
+      "points": 28
     }
   ],
   "players": [
@@ -150,7 +150,7 @@
       "id": "player-15",
       "name": "Giovanni van Bronckhorst",
       "teamId": "team-2",
-      "goals": 0,
+      "goals": 1,
       "image": "/images/HarborUnitedPlayers/images/giovanni-van-bronckhorst.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/giovanni-van-bronckhorst.webp"
     },
@@ -174,7 +174,7 @@
       "id": "player-18",
       "name": "Lionel Messi",
       "teamId": "team-2",
-      "goals": 8,
+      "goals": 9,
       "image": "/images/HarborUnitedPlayers/images/lionel-messi.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/lionel-messi.webp"
     },
@@ -182,7 +182,7 @@
       "id": "player-19",
       "name": "Ruud Gullit",
       "teamId": "team-2",
-      "goals": 10,
+      "goals": 11,
       "image": "/images/HarborUnitedPlayers/images/ruud-gullit.jpg",
       "fullImage": "/images/HarborUnitedPlayers/fullImages/ruud-gullit.webp"
     },
@@ -284,14 +284,14 @@
       "name": "Wayne Rooney",
       "teamId": "team-2",
       "image": "/images/wayne-rooney.jpg",
-      "goals": 19,
+      "goals": 20,
       "id": "player-32"
     },
     {
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 20,
+      "goals": 21,
       "id": "player-33"
     },
     {
@@ -305,7 +305,7 @@
       "name": "Ronaldinho Gaúcho",
       "teamId": "team-1",
       "image": "/images/ronaldinho-gaúcho.jpg",
-      "goals": 4,
+      "goals": 6,
       "id": "player-35"
     },
     {
@@ -326,7 +326,7 @@
       "name": "Daniele Massaro",
       "teamId": "team-2",
       "image": "/images/daniele-massaro.jpg",
-      "goals": 8,
+      "goals": 9,
       "id": "player-38"
     },
     {
@@ -981,6 +981,53 @@
         }
       ],
       "date": "2026-11-08T17:29:34.939Z"
+    },
+    {
+      "id": "match-14",
+      "homeTeamId": "team-1",
+      "awayTeamId": "team-2",
+      "homeTeamName": "Ocean Dragon",
+      "awayTeamName": "Harbor United",
+      "homeGoals": 3,
+      "awayGoals": 5,
+      "scorers": [
+        {
+          "playerId": "player-33",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-35",
+          "goals": 2,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-15",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-18",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-19",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-38",
+          "goals": 1,
+          "isOwnGoal": false
+        },
+        {
+          "playerId": "player-32",
+          "goals": 1,
+          "isOwnGoal": false
+        }
+      ],
+      "date": "2026-11-09T20:38:46.653Z"
     }
   ],
   "targetMatches": 50
