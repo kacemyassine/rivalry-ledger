@@ -291,14 +291,14 @@
       "name": "Sergio Agüero",
       "teamId": "team-1",
       "image": "/images/sergio-agüero.jpg",
-      "goals": 22,
+      "goals": 23,
       "id": "player-33"
     },
     {
       "name": "Javier Zanetti",
       "teamId": "team-1",
       "image": "/images/javier-zanetti.jpg",
-      "goals": 1,
+      "goals": 0,
       "id": "player-34"
     },
     {
@@ -363,6 +363,13 @@
       "image": "/images/diego-forlán.jpg",
       "goals": 1,
       "id": "player-43"
+    },
+    {
+      "name": "Fss",
+      "teamId": "team-1",
+      "image": null,
+      "goals": 0,
+      "id": "player-44"
     }
   ],
   "matches": [
@@ -1091,7 +1098,7 @@
           "isOwnGoal": false
         },
         {
-          "playerId": "player-34",
+          "playerId": "player-33",
           "goals": 1,
           "isOwnGoal": false
         },
@@ -1131,7 +1138,7 @@
           "isOwnGoal": false
         }
       ],
-      "date": "2026-11-10T18:04:26.533Z"
+      "date": "2026-11-10T00:00:00.000Z"
     }
   ],
   "targetMatches": 50
