@@ -333,7 +333,7 @@
       "name": "Éric Cantona",
       "teamId": "team-2",
       "image": "/images/éric-cantona.jpg",
-      "goals": 1,
+      "goals": 0,
       "id": "player-39"
     },
     {
@@ -363,6 +363,13 @@
       "image": "/images/diego-forlán.jpg",
       "goals": 1,
       "id": "player-43"
+    },
+    {
+      "name": "Lamine Yamal",
+      "teamId": "team-2",
+      "image": "/images/lamine-yamal.jpg",
+      "goals": 1,
+      "id": "player-44"
     }
   ],
   "matches": [
@@ -1430,7 +1437,7 @@
           "isOwnGoal": false
         },
         {
-          "playerId": "player-39",
+          "playerId": "player-44",
           "goals": 1,
           "isOwnGoal": false
         },
@@ -1440,7 +1447,7 @@
           "isOwnGoal": false
         }
       ],
-      "date": "2026-11-18T19:20:00.216Z"
+      "date": "2026-11-18T00:00:00.000Z"
     }
   ],
   "targetMatches": 50
